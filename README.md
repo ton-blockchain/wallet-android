@@ -1,6 +1,6 @@
 ## Test Gram Wallet (Android)
 
-This is the complete source code and build instructions for the TON Blockchain testnet Android wallet.
+This is the source code and build instructions for a TON Testnet Wallet implementation for Android.
 
 ### How to build
 
