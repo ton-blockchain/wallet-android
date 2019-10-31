@@ -1,0 +1,14 @@
+<resources>
+    <item name="passcode_btn_1" type="id"/>
+    <item name="passcode_btn_2" type="id"/>
+    <item name="passcode_btn_3" type="id"/>
+    <item name="passcode_btn_4" type="id"/>
+    <item name="passcode_btn_5" type="id"/>
+    <item name="passcode_btn_6" type="id"/>
+    <item name="passcode_btn_7" type="id"/>
+    <item name="passcode_btn_8" type="id"/>
+    <item name="passcode_btn_9" type="id"/>
+    <item name="passcode_btn_0" type="id"/>
+    <item name="passcode_btn_backspace" type="id"/>
+    <item name="passcode_btn_done" type="id"/>
+</resources>
