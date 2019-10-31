@@ -1,6 +1,6 @@
-## Gram Wallet for Android
+## Test Gram Wallet (Android)
 
-Gram wallet allows you to make fast and secure payments on the TON Blockchain without intermediaries.
+This is the complete source code and build instructions for the TON Blockchain testnet Android wallet.
 
 ### How to build
 
