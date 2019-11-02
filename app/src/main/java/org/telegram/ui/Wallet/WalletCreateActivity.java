@@ -1379,10 +1379,6 @@ public class WalletCreateActivity extends BaseFragment {
         }
         imageView.playAnimation();
 
-        if (Build.VERSION.SDK_INT >= 23 && AndroidUtilities.allowScreenCapture() && currentType != TYPE_SEND_DONE && currentType != TYPE_CREATE) {
-            AndroidUtilities.setFlagSecure(this, true);
-        }
-
         return fragmentView;
     }
 
@@ -1487,6 +1483,9 @@ public class WalletCreateActivity extends BaseFragment {
             } else if (currentType == TYPE_SET_PASSCODE && !backward) {
                 passcodeEditText.requestFocus();
                 AndroidUtilities.showKeyboard(passcodeEditText);
+            }
+            if (Build.VERSION.SDK_INT >= 23 && AndroidUtilities.allowScreenCapture() && currentType != TYPE_SEND_DONE && currentType != TYPE_CREATE) {
+                AndroidUtilities.setFlagSecure(this, true);
             }
         }
     }

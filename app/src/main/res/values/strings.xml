@@ -93,7 +93,6 @@
     <string name="WalletYourAddress">Your wallet address</string>
     <string name="WalletFrom">from:</string>
     <string name="WalletTo">to:</string>
-    <string name="WalletShareInfo">Share this address with other Gram\nwallet owners to receive Grams from them.</string>
     <string name="WalletReceiveYourAddress">Your Wallet Address</string>
     <string name="WalletCopyAddress">Copy wallet address</string>
     <string name="WalletCreateInvoice">Create invoice</string>
@@ -112,7 +111,10 @@
     <string name="WalletComment">Comment (optional)</string>
     <string name="WalletInvoiceInfo">You can specify the amount and purpose of the payment to save the sender some time:</string>
     <string name="WalletShareInvoiceUrl">Share Invoice URL</string>
+    <string name="WalletShareInfo">Share this address with other Gram\nwallet owners to receive Grams from them.</string>
+    <string name="WalletTestShareInfo">Share this link to receive Test Grams.\nNote: this link won\'t work for real Grams.</string>
     <string name="WalletShareInvoiceUrlInfo">Share this link with other Gram wallet owners to receive **%1$s Grams** from them.</string>
+    <string name="WalletTestShareInvoiceUrlInfo">Share this link to receive **%1$s Test Grams**.\nNote: this link won\'t work for real Grams.</string>
     <string name="WalletCreateInvoiceTitle">Create Invoice</string>
     <string name="WalletYourInvoice">Your Invoice</string>
     <string name="WalletConfirmation">Confirmation</string>

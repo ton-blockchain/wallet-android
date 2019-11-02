@@ -764,7 +764,9 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
                 }
                 accountState = state;
                 accountStateLoaded = true;
-                adapter.notifyDataSetChanged();
+                if (adapter != null) {
+                    adapter.notifyDataSetChanged();
+                }
                 if (needUpdateTransactions) {
                     loadTransactions(true);
                 } else {
@@ -958,9 +960,9 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
         descriptionText.setLineSpacing(AndroidUtilities.dp(2), 1);
         descriptionText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         if (amount == 0) {
-            descriptionText.setText(LocaleController.getString("WalletShareInfo", R.string.WalletShareInfo));
+            descriptionText.setText(LocaleController.getString("WalletTestShareInfo", R.string.WalletTestShareInfo));
         } else {
-            descriptionText.setText(AndroidUtilities.replaceTags(LocaleController.formatString("WalletShareInvoiceUrlInfo", R.string.WalletShareInvoiceUrlInfo, TonController.formatCurrency(amount))));
+            descriptionText.setText(AndroidUtilities.replaceTags(LocaleController.formatString("WalletTestShareInvoiceUrlInfo", R.string.WalletTestShareInvoiceUrlInfo, TonController.formatCurrency(amount))));
         }
         descriptionText.setPadding(AndroidUtilities.dp(32), 0, AndroidUtilities.dp(32), 0);
         linearLayout.addView(descriptionText, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 0, 0, 0));
