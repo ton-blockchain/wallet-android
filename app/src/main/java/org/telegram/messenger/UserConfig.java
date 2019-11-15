@@ -75,7 +75,7 @@ public class UserConfig extends BaseController {
                 editor.putString("walletConfig", walletConfig);
                 editor.putString("walletConfigUrl", walletConfigUrl);
                 editor.putInt("walletConfigType", walletConfigType);
-                editor.putString("walletBlockchainName", walletBlockchainName);
+                editor.putString("walletBlockchainNameV2", walletBlockchainName);
                 editor.putString("walletConfigFromUrl", walletConfigFromUrl);
                 editor.commit();
             } catch (Exception e) {
@@ -109,7 +109,7 @@ public class UserConfig extends BaseController {
             walletConfig = preferences.getString("walletConfig", "");
             walletConfigUrl = preferences.getString("walletConfigUrl", "https://test.ton.org/config.json");
             walletConfigType = preferences.getInt("walletConfigType", TonController.CONFIG_TYPE_URL);
-            walletBlockchainName = preferences.getString("walletBlockchainName", "testnet");
+            walletBlockchainName = preferences.getString("walletBlockchainNameV2", "testnet2");
             walletConfigFromUrl = preferences.getString("walletConfigFromUrl", "");
 
             configLoaded = true;

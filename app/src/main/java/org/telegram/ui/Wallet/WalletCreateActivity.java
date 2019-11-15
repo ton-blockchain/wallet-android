@@ -360,6 +360,13 @@ public class WalletCreateActivity extends BaseFragment {
                         }
                     }
                     s.replace(0, s.length(), s.toString().toLowerCase().trim());
+                    for (int a = 0; a < s.length(); a++) {
+                        char ch = s.charAt(a);
+                        if (!(ch >= 'a' && ch <= 'z')) {
+                            s.replace(a, a + 1, "");
+                            a--;
+                        }
+                    }
                     ignoreTextChange = false;
                     updateClearButton();
                     if (hintAdapter != null && !ignoreSearch) {
