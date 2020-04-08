@@ -116,6 +116,9 @@ bool downcast_call(Object &obj, const T &func) {
     case adnl_address_udp6::ID:
       func(static_cast<adnl_address_udp6 &>(obj));
       return true;
+    case adnl_address_tunnel::ID:
+      func(static_cast<adnl_address_tunnel &>(obj));
+      return true;
     case adnl_addressList::ID:
       func(static_cast<adnl_addressList &>(obj));
       return true;
@@ -161,11 +164,26 @@ bool downcast_call(Object &obj, const T &func) {
     case adnl_proxy_fast::ID:
       func(static_cast<adnl_proxy_fast &>(obj));
       return true;
+    case adnl_proxyControlPacketPing::ID:
+      func(static_cast<adnl_proxyControlPacketPing &>(obj));
+      return true;
+    case adnl_proxyControlPacketPong::ID:
+      func(static_cast<adnl_proxyControlPacketPong &>(obj));
+      return true;
+    case adnl_proxyControlPacketRegister::ID:
+      func(static_cast<adnl_proxyControlPacketRegister &>(obj));
+      return true;
+    case adnl_proxyPacketHeader::ID:
+      func(static_cast<adnl_proxyPacketHeader &>(obj));
+      return true;
     case adnl_proxyToFastHash::ID:
       func(static_cast<adnl_proxyToFastHash &>(obj));
       return true;
     case adnl_proxyToFast::ID:
       func(static_cast<adnl_proxyToFast &>(obj));
+      return true;
+    case adnl_tunnelPacketContents::ID:
+      func(static_cast<adnl_tunnelPacketContents &>(obj));
       return true;
     case adnl_config_global::ID:
       func(static_cast<adnl_config_global &>(obj));
@@ -296,8 +314,26 @@ bool downcast_call(Object &obj, const T &func) {
     case db_filedb_key_candidate::ID:
       func(static_cast<db_filedb_key_candidate &>(obj));
       return true;
+    case db_filedb_key_blockInfo::ID:
+      func(static_cast<db_filedb_key_blockInfo &>(obj));
+      return true;
     case db_filedb_value::ID:
       func(static_cast<db_filedb_value &>(obj));
+      return true;
+    case db_files_index_key::ID:
+      func(static_cast<db_files_index_key &>(obj));
+      return true;
+    case db_files_package_key::ID:
+      func(static_cast<db_files_package_key &>(obj));
+      return true;
+    case db_files_index_value::ID:
+      func(static_cast<db_files_index_value &>(obj));
+      return true;
+    case db_files_package_firstBlock::ID:
+      func(static_cast<db_files_package_firstBlock &>(obj));
+      return true;
+    case db_files_package_value::ID:
+      func(static_cast<db_files_package_value &>(obj));
       return true;
     case db_lt_el_key::ID:
       func(static_cast<db_lt_el_key &>(obj));
@@ -341,6 +377,9 @@ bool downcast_call(Object &obj, const T &func) {
     case db_state_asyncSerializer::ID:
       func(static_cast<db_state_asyncSerializer &>(obj));
       return true;
+    case db_state_dbVersion::ID:
+      func(static_cast<db_state_dbVersion &>(obj));
+      return true;
     case db_state_destroyedSessions::ID:
       func(static_cast<db_state_destroyedSessions &>(obj));
       return true;
@@ -370,6 +409,9 @@ bool downcast_call(Object &obj, const T &func) {
       return true;
     case db_state_key_hardforks::ID:
       func(static_cast<db_state_key_hardforks &>(obj));
+      return true;
+    case db_state_key_dbVersion::ID:
+      func(static_cast<db_state_key_dbVersion &>(obj));
       return true;
     case db_state_shardClient::ID:
       func(static_cast<db_state_shardClient &>(obj));
@@ -506,6 +548,9 @@ bool downcast_call(Object &obj, const T &func) {
     case engine_validator_oneStat::ID:
       func(static_cast<engine_validator_oneStat &>(obj));
       return true;
+    case engine_validator_proposalVote::ID:
+      func(static_cast<engine_validator_proposalVote &>(obj));
+      return true;
     case engine_validator_signature::ID:
       func(static_cast<engine_validator_signature &>(obj));
       return true;
@@ -526,6 +571,24 @@ bool downcast_call(Object &obj, const T &func) {
       return true;
     case fec_online::ID:
       func(static_cast<fec_online &>(obj));
+      return true;
+    case http_header::ID:
+      func(static_cast<http_header &>(obj));
+      return true;
+    case http_payloadPart::ID:
+      func(static_cast<http_payloadPart &>(obj));
+      return true;
+    case http_response::ID:
+      func(static_cast<http_response &>(obj));
+      return true;
+    case http_server_config::ID:
+      func(static_cast<http_server_config &>(obj));
+      return true;
+    case http_server_dnsEntry::ID:
+      func(static_cast<http_server_dnsEntry &>(obj));
+      return true;
+    case http_server_host::ID:
+      func(static_cast<http_server_host &>(obj));
       return true;
     case id_config_local::ID:
       func(static_cast<id_config_local &>(obj));
@@ -640,6 +703,12 @@ bool downcast_call(Object &obj, const T &func) {
       return true;
     case ton_blockIdApprove::ID:
       func(static_cast<ton_blockIdApprove &>(obj));
+      return true;
+    case tonNode_archiveNotFound::ID:
+      func(static_cast<tonNode_archiveNotFound &>(obj));
+      return true;
+    case tonNode_archiveInfo::ID:
+      func(static_cast<tonNode_archiveInfo &>(obj));
       return true;
     case tonNode_blockDescriptionEmpty::ID:
       func(static_cast<tonNode_blockDescriptionEmpty &>(obj));
@@ -886,6 +955,9 @@ bool downcast_call(Function &obj, const T &func) {
     case engine_validator_createElectionBid::ID:
       func(static_cast<engine_validator_createElectionBid &>(obj));
       return true;
+    case engine_validator_createProposalVote::ID:
+      func(static_cast<engine_validator_createProposalVote &>(obj));
+      return true;
     case engine_validator_delAdnlId::ID:
       func(static_cast<engine_validator_delAdnlId &>(obj));
       return true;
@@ -937,6 +1009,12 @@ bool downcast_call(Function &obj, const T &func) {
     case getTestObject::ID:
       func(static_cast<getTestObject &>(obj));
       return true;
+    case http_getNextPayloadPart::ID:
+      func(static_cast<http_getNextPayloadPart &>(obj));
+      return true;
+    case http_request::ID:
+      func(static_cast<http_request &>(obj));
+      return true;
     case overlay_getBroadcast::ID:
       func(static_cast<overlay_getBroadcast &>(obj));
       return true;
@@ -984,6 +1062,12 @@ bool downcast_call(Function &obj, const T &func) {
       return true;
     case tonNode_downloadZeroState::ID:
       func(static_cast<tonNode_downloadZeroState &>(obj));
+      return true;
+    case tonNode_getArchiveInfo::ID:
+      func(static_cast<tonNode_getArchiveInfo &>(obj));
+      return true;
+    case tonNode_getArchiveSlice::ID:
+      func(static_cast<tonNode_getArchiveSlice &>(obj));
       return true;
     case tonNode_getCapabilities::ID:
       func(static_cast<tonNode_getCapabilities &>(obj));
@@ -1202,6 +1286,9 @@ bool downcast_call(adnl_Address &obj, const T &func) {
     case adnl_address_udp6::ID:
       func(static_cast<adnl_address_udp6 &>(obj));
       return true;
+    case adnl_address_tunnel::ID:
+      func(static_cast<adnl_address_tunnel &>(obj));
+      return true;
     default:
       return false;
   }
@@ -1259,6 +1346,29 @@ bool downcast_call(adnl_Proxy &obj, const T &func) {
       return true;
     case adnl_proxy_fast::ID:
       func(static_cast<adnl_proxy_fast &>(obj));
+      return true;
+    default:
+      return false;
+  }
+}
+
+/**
+ * Calls specified function object with the specified object downcasted to the most-derived type.
+ * \param[in] obj Object to pass as an argument to the function object.
+ * \param[in] func Function object to which the object will be passed.
+ * \returns whether function object call has happened. Should always return true for correct parameters.
+ */
+template <class T>
+bool downcast_call(adnl_ProxyControlPacket &obj, const T &func) {
+  switch (obj.get_id()) {
+    case adnl_proxyControlPacketPing::ID:
+      func(static_cast<adnl_proxyControlPacketPing &>(obj));
+      return true;
+    case adnl_proxyControlPacketPong::ID:
+      func(static_cast<adnl_proxyControlPacketPong &>(obj));
+      return true;
+    case adnl_proxyControlPacketRegister::ID:
+      func(static_cast<adnl_proxyControlPacketRegister &>(obj));
       return true;
     default:
       return false;
@@ -1407,6 +1517,29 @@ bool downcast_call(db_filedb_Key &obj, const T &func) {
     case db_filedb_key_candidate::ID:
       func(static_cast<db_filedb_key_candidate &>(obj));
       return true;
+    case db_filedb_key_blockInfo::ID:
+      func(static_cast<db_filedb_key_blockInfo &>(obj));
+      return true;
+    default:
+      return false;
+  }
+}
+
+/**
+ * Calls specified function object with the specified object downcasted to the most-derived type.
+ * \param[in] obj Object to pass as an argument to the function object.
+ * \param[in] func Function object to which the object will be passed.
+ * \returns whether function object call has happened. Should always return true for correct parameters.
+ */
+template <class T>
+bool downcast_call(db_files_Key &obj, const T &func) {
+  switch (obj.get_id()) {
+    case db_files_index_key::ID:
+      func(static_cast<db_files_index_key &>(obj));
+      return true;
+    case db_files_package_key::ID:
+      func(static_cast<db_files_package_key &>(obj));
+      return true;
     default:
       return false;
   }
@@ -1487,6 +1620,9 @@ bool downcast_call(db_state_Key &obj, const T &func) {
       return true;
     case db_state_key_hardforks::ID:
       func(static_cast<db_state_key_hardforks &>(obj));
+      return true;
+    case db_state_key_dbVersion::ID:
+      func(static_cast<db_state_key_dbVersion &>(obj));
       return true;
     default:
       return false;
@@ -1757,6 +1893,26 @@ bool downcast_call(ton_BlockId &obj, const T &func) {
       return true;
     case ton_blockIdApprove::ID:
       func(static_cast<ton_blockIdApprove &>(obj));
+      return true;
+    default:
+      return false;
+  }
+}
+
+/**
+ * Calls specified function object with the specified object downcasted to the most-derived type.
+ * \param[in] obj Object to pass as an argument to the function object.
+ * \param[in] func Function object to which the object will be passed.
+ * \returns whether function object call has happened. Should always return true for correct parameters.
+ */
+template <class T>
+bool downcast_call(tonNode_ArchiveInfo &obj, const T &func) {
+  switch (obj.get_id()) {
+    case tonNode_archiveNotFound::ID:
+      func(static_cast<tonNode_archiveNotFound &>(obj));
+      return true;
+    case tonNode_archiveInfo::ID:
+      func(static_cast<tonNode_archiveInfo &>(obj));
       return true;
     default:
       return false;

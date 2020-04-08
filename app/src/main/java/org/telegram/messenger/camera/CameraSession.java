@@ -24,6 +24,7 @@ import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CameraSession {
 
@@ -354,7 +355,8 @@ public class CameraSession {
                     params.setZoom((int) (currentZoom * maxZoom));
 
                     if (optimizeForBarcode) {
-                        if (params.getSupportedSceneModes().contains(Camera.Parameters.SCENE_MODE_BARCODE)) {
+                        List<String> modes = params.getSupportedSceneModes();
+                        if (modes != null && modes.contains(Camera.Parameters.SCENE_MODE_BARCODE)) {
                             params.setSceneMode(Camera.Parameters.SCENE_MODE_BARCODE);
                         }
                         String desiredMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO;

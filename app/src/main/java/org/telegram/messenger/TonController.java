@@ -33,6 +33,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import org.telegram.ui.Wallet.WalletConfigLoader;
+import org.telegram.ui.Wallet.WalletTransaction;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -51,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 
@@ -75,7 +77,7 @@ public class TonController extends BaseController {
     }
 
     public interface FeeCallback {
-        void run(long result);
+        void run(long result, boolean unecrypted);
     }
 
     public interface ErrorCallback {
@@ -91,11 +93,11 @@ public class TonController extends BaseController {
     }
 
     public interface GetTransactionsCallback {
-        void run(boolean reload, ArrayList<TonApi.RawTransaction> transactions);
+        void run(boolean reload, ArrayList<WalletTransaction> transactions);
     }
 
     public interface AccountStateCallback {
-        void run(TonApi.GenericAccountState state);
+        void run(TonApi.FullAccountState state);
     }
 
     public interface BooleanCallback {
@@ -104,6 +106,10 @@ public class TonController extends BaseController {
 
     public interface BytesCallback {
         void run(byte[] param);
+    }
+
+    public interface CommentDecryptCallback {
+        void run(TonApi.MsgData msgData, String comment);
     }
 
     private static volatile TonController[] Instance = new TonController[UserConfig.MAX_ACCOUNT_COUNT];
@@ -138,9 +144,9 @@ public class TonController extends BaseController {
     private Client client;
     private boolean initied;
     private File keyDirectoty;
-    private ArrayList<TonApi.RawTransaction> cachedTransactions = new ArrayList<>();
-    private ArrayList<TonApi.RawTransaction> pendingTransactions = new ArrayList<>();
-    private TonApi.GenericAccountState cachedAccountState;
+    private ArrayList<WalletTransaction> cachedTransactions = new ArrayList<>();
+    private ArrayList<WalletTransaction> pendingTransactions = new ArrayList<>();
+    private TonApi.FullAccountState cachedAccountState;
     private TonApi.AccountAddress accountAddress;
     private long walletId;
 
@@ -153,6 +159,8 @@ public class TonController extends BaseController {
     private boolean isPrealodingWallet;
     private boolean walletLoaded;
     private int syncProgress;
+
+    private TonApi.InputKey memInputKey;
 
     private String currentSetConfig;
     private String currentSetConfigName;
@@ -181,7 +189,7 @@ public class TonController extends BaseController {
 
     public TonController(int num) {
         super(num);
-        tonCache = ApplicationLoader.applicationContext.getSharedPreferences("tonCache" + num, Activity.MODE_PRIVATE);
+        tonCache = ApplicationLoader.applicationContext.getSharedPreferences("tonCache.v3_" + num, Activity.MODE_PRIVATE);
         loadCache();
         Client.ResultHandler resultHandler = object -> {
             if (object instanceof TonApi.UpdateSyncState) {
@@ -209,27 +217,50 @@ public class TonController extends BaseController {
     private void loadCache() {
         try {
             if (tonCache.getBoolean("hasCache", false)) {
-                walletLoaded = true;
-                int stateType = tonCache.getInt("state.type", 0);
                 long balance = tonCache.getLong("state.balance", 0);
-                int seqno = tonCache.getInt("state.seqno", 0);
-                long walletId = tonCache.getLong("state.walletId", 0);
                 TonApi.InternalTransactionId transactionId = new TonApi.InternalTransactionId(tonCache.getLong("transaction.lt", 0), Base64.decode(tonCache.getString("transaction.hash", null), Base64.DEFAULT));
+                TonApi.TonBlockIdExt tonBlockIdExt = new TonApi.TonBlockIdExt(tonCache.getInt("tonblock.workchain", 0),
+                        tonCache.getLong("tonblock.shard", 0),
+                        tonCache.getInt("tonblock.seqno", 0),
+                        Base64.decode(tonCache.getString("tonblock.rootHash", null), Base64.DEFAULT),
+                        Base64.decode(tonCache.getString("tonblock.fileHash", null), Base64.DEFAULT));
                 long syncUtime = tonCache.getLong("syncUtime", 0);
-
-                if (stateType == 0) {
-                    cachedAccountState = new TonApi.GenericAccountStateRaw(new TonApi.RawAccountState(balance, null, null, transactionId, null, syncUtime));
-                } else if (stateType == 1) {
-                    cachedAccountState = new TonApi.GenericAccountStateTestWallet(new TonApi.TestWalletAccountState(balance, seqno, transactionId, syncUtime));
-                } else if (stateType == 2) {
-                    cachedAccountState = new TonApi.GenericAccountStateTestGiver(new TonApi.TestGiverAccountState(balance, seqno, transactionId, syncUtime));
-                } else if (stateType == 3) {
-                    cachedAccountState = new TonApi.GenericAccountStateUninited(new TonApi.UninitedAccountState(balance, transactionId, null, syncUtime));
-                } else if (stateType == 4) {
-                    cachedAccountState = new TonApi.GenericAccountStateWallet(new TonApi.WalletAccountState(balance, seqno, transactionId, syncUtime));
-                } else if (stateType == 5) {
-                    cachedAccountState = new TonApi.GenericAccountStateWalletV3(new TonApi.WalletV3AccountState(balance, walletId, seqno, transactionId, syncUtime));
+                int accountStateType = tonCache.getInt("accountStateType", 0);
+                TonApi.AccountState accountState;
+                switch (accountStateType) {
+                    case 0:
+                        accountState = new TonApi.RawAccountState(Base64.decode(tonCache.getString("accountstate.code", null), Base64.DEFAULT),
+                                Base64.decode(tonCache.getString("accountstate.data", null), Base64.DEFAULT),
+                                Base64.decode(tonCache.getString("accountstate.frozenHash", null), Base64.DEFAULT));
+                        break;
+                    case 1:
+                        accountState = new TonApi.TestWalletAccountState(tonCache.getInt("accountstate.seqno", 0));
+                        break;
+                    case 2:
+                        accountState = new TonApi.WalletAccountState(tonCache.getInt("accountstate.seqno", 0));
+                        break;
+                    case 3:
+                        accountState = new TonApi.WalletV3AccountState(tonCache.getLong("accountstate.walletId", 0), tonCache.getInt("accountstate.seqno", 0));
+                        break;
+                    case 4:
+                        accountState = new TonApi.WalletHighloadV1AccountState(tonCache.getLong("accountstate.walletId", 0), tonCache.getInt("accountstate.seqno", 0));
+                        break;
+                    case 5:
+                        accountState = new TonApi.WalletHighloadV2AccountState(tonCache.getLong("accountstate.walletId", 0));
+                        break;
+                    case 6:
+                        accountState = new TonApi.TestGiverAccountState(tonCache.getInt("accountstate.seqno", 0));
+                        break;
+                    case 7:
+                        accountState = new TonApi.DnsAccountState(tonCache.getLong("accountstate.walletId", 0));
+                        break;
+                    case 8:
+                    default:
+                        accountState = new TonApi.UninitedAccountState(Base64.decode(tonCache.getString("accountstate.frozenHash", null), Base64.DEFAULT));
+                        break;
                 }
+
+                cachedAccountState = new TonApi.FullAccountState(balance, transactionId, tonBlockIdExt, syncUtime, accountState);
 
                 int transactionsCount = tonCache.getInt("transactionsCount", 0);
                 for (int a = 0; a < transactionsCount; a++) {
@@ -237,15 +268,33 @@ public class TonController extends BaseController {
 
                     TonApi.RawMessage inMsg;
                     if (tonCache.contains(key + "inMsg.source")) {
+                        TonApi.MsgData msgData;
+                        int msgDataType = tonCache.getInt(key + "inMsg.msgDataType", 0);
+                        switch (msgDataType) {
+                            case 0:
+                                msgData = new TonApi.MsgDataRaw(Base64.decode(tonCache.getString(key + "inMsg.msgData.body", null), Base64.DEFAULT));
+                                break;
+                            case 1:
+                                msgData = new TonApi.MsgDataText(Base64.decode(tonCache.getString(key + "inMsg.msgData.text", null), Base64.DEFAULT));
+                                break;
+                            case 2:
+                                msgData = new TonApi.MsgDataDecryptedText(Base64.decode(tonCache.getString(key + "inMsg.msgData.text", null), Base64.DEFAULT));
+                                break;
+                            case 3:
+                            default:
+                                msgData = new TonApi.MsgDataEncryptedText(Base64.decode(tonCache.getString(key + "inMsg.msgData.text", null), Base64.DEFAULT));
+                                break;
+                        }
+
                         inMsg = new TonApi.RawMessage(
-                                tonCache.getString(key + "inMsg.source", null),
-                                tonCache.getString(key + "inMsg.destination", null),
+                                new TonApi.AccountAddress(tonCache.getString(key + "inMsg.source", null)),
+                                new TonApi.AccountAddress(tonCache.getString(key + "inMsg.destination", null)),
                                 tonCache.getLong(key + "inMsg.value", 0),
                                 tonCache.getLong(key + "inMsg.fwdFee", 0),
                                 tonCache.getLong(key + "inMsg.ihrFee", 0),
                                 tonCache.getLong(key + "inMsg.createdLt", 0),
                                 Base64.decode(tonCache.getString(key + "inMsg.bodyHash", null), Base64.DEFAULT),
-                                Base64.decode(tonCache.getString(key + "inMsg.message", null), Base64.DEFAULT)
+                                msgData
                         );
                     } else {
                         inMsg = null;
@@ -256,15 +305,34 @@ public class TonController extends BaseController {
                         outMsg = new TonApi.RawMessage[tonCache.getInt(key + "outMsgCount", 0)];
                         for (int b = 0; b < outMsg.length; b++) {
                             String key2 = key + "outMsg" + b + ".";
+
+                            TonApi.MsgData msgData;
+                            int msgDataType = tonCache.getInt(key2 + "msgDataType", 0);
+                            switch (msgDataType) {
+                                case 0:
+                                    msgData = new TonApi.MsgDataRaw(Base64.decode(tonCache.getString(key2 + "msgData.body", null), Base64.DEFAULT));
+                                    break;
+                                case 1:
+                                    msgData = new TonApi.MsgDataText(Base64.decode(tonCache.getString(key2 + "msgData.text", null), Base64.DEFAULT));
+                                    break;
+                                case 2:
+                                    msgData = new TonApi.MsgDataDecryptedText(Base64.decode(tonCache.getString(key2 + "msgData.text", null), Base64.DEFAULT));
+                                    break;
+                                case 3:
+                                default:
+                                    msgData = new TonApi.MsgDataEncryptedText(Base64.decode(tonCache.getString(key2 + "msgData.text", null), Base64.DEFAULT));
+                                    break;
+                            }
+
                             outMsg[b] = new TonApi.RawMessage(
-                                    tonCache.getString(key2 + "source", null),
-                                    tonCache.getString(key2 + "destination", null),
+                                    new TonApi.AccountAddress(tonCache.getString(key2 + "source", null)),
+                                    new TonApi.AccountAddress(tonCache.getString(key2 + "destination", null)),
                                     tonCache.getLong(key2 + "value", 0),
                                     tonCache.getLong(key2 + "fwdFee", 0),
                                     tonCache.getLong(key2 + "ihrFee", 0),
                                     tonCache.getLong(key2 + "createdLt", 0),
                                     Base64.decode(tonCache.getString(key2 + "bodyHash", null), Base64.DEFAULT),
-                                    Base64.decode(tonCache.getString(key2 + "message", null), Base64.DEFAULT)
+                                    msgData
                             );
                         }
                     } else {
@@ -280,21 +348,40 @@ public class TonController extends BaseController {
                             inMsg,
                             outMsg
                     );
-                    cachedTransactions.add(transaction);
+                    cachedTransactions.add(new WalletTransaction(transaction));
                 }
 
                 transactionsCount = tonCache.getInt("pendingCount", 0);
                 for (int a = 0; a < transactionsCount; a++) {
                     String key = "pending" + a + ".";
+
+                    TonApi.MsgData msgData;
+                    int msgDataType = tonCache.getInt(key + "msgDataType", 0);
+                    switch (msgDataType) {
+                        case 0:
+                            msgData = new TonApi.MsgDataRaw(Base64.decode(tonCache.getString(key + "msgData.body", null), Base64.DEFAULT));
+                            break;
+                        case 1:
+                            msgData = new TonApi.MsgDataText(Base64.decode(tonCache.getString(key + "msgData.text", null), Base64.DEFAULT));
+                            break;
+                        case 2:
+                            msgData = new TonApi.MsgDataDecryptedText(Base64.decode(tonCache.getString(key + "msgData.text", null), Base64.DEFAULT));
+                            break;
+                        case 3:
+                        default:
+                            msgData = new TonApi.MsgDataEncryptedText(Base64.decode(tonCache.getString(key + "msgData.text", null), Base64.DEFAULT));
+                            break;
+                    }
+
                     TonApi.RawMessage inMsg = new TonApi.RawMessage(
-                            tonCache.getString(key + "inMsg.source", null),
-                            tonCache.getString(key + "inMsg.destination", null),
+                            new TonApi.AccountAddress(tonCache.getString(key + "inMsg.source", null)),
+                            new TonApi.AccountAddress(tonCache.getString(key + "inMsg.destination", null)),
                             tonCache.getLong(key + "inMsg.value", 0),
                             0,
                             0,
                             0,
                             Base64.decode(tonCache.getString(key + "inMsg.bodyHash", null), Base64.DEFAULT),
-                            Base64.decode(tonCache.getString(key + "inMsg.message", null), Base64.DEFAULT)
+                            msgData
                     );
                     TonApi.RawTransaction transaction = new TonApi.RawTransaction(
                             tonCache.getLong(key + "utime", 0),
@@ -306,8 +393,9 @@ public class TonController extends BaseController {
                             inMsg,
                             new TonApi.RawMessage[0]
                     );
-                    pendingTransactions.add(transaction);
+                    pendingTransactions.add(new WalletTransaction(transaction));
                 }
+                walletLoaded = true;
             }
         } catch (Exception e) {
             FileLog.e(e);
@@ -324,88 +412,120 @@ public class TonController extends BaseController {
             SharedPreferences.Editor editor = tonCache.edit();
             editor.clear();
 
-            int stateType;
-            long balance;
-            int seqno;
-            TonApi.InternalTransactionId transactionId;
-            long syncUtime;
-            long walletId;
+            editor.putLong("state.balance", cachedAccountState.balance);
+            editor.putLong("transaction.lt", cachedAccountState.lastTransactionId.lt);
+            editor.putString("transaction.hash", Base64.encodeToString(cachedAccountState.lastTransactionId.hash, Base64.DEFAULT));
+            editor.putLong("syncUtime", cachedAccountState.syncUtime);
+            editor.putInt("tonblock.workchain", cachedAccountState.blockId.workchain);
+            editor.putLong("tonblock.shard", cachedAccountState.blockId.shard);
+            editor.putInt("tonblock.seqno", cachedAccountState.blockId.seqno);
+            editor.putString("tonblock.rootHash", Base64.encodeToString(cachedAccountState.blockId.rootHash, Base64.DEFAULT));
+            editor.putString("tonblock.fileHash", Base64.encodeToString(cachedAccountState.blockId.fileHash, Base64.DEFAULT));
+            byte[] frozenHash = null;
+            byte[] data = null;
+            byte[] code = null;
+            long walletId = 0;
+            int seqno = 0;
+            int accountStateType = 0;
 
-            if (cachedAccountState instanceof TonApi.GenericAccountStateRaw) {
-                TonApi.GenericAccountStateRaw state = (TonApi.GenericAccountStateRaw) cachedAccountState;
-                stateType = 0;
-                balance = state.accountState.balance;
-                seqno = 0;
-                transactionId = state.accountState.lastTransactionId;
-                syncUtime = state.accountState.syncUtime;
-                walletId = 0;
-            } else if (cachedAccountState instanceof TonApi.GenericAccountStateTestWallet) {
-                TonApi.GenericAccountStateTestWallet state = (TonApi.GenericAccountStateTestWallet) cachedAccountState;
-                stateType = 1;
-                balance = state.accountState.balance;
-                seqno = state.accountState.seqno;
-                transactionId = state.accountState.lastTransactionId;
-                syncUtime = state.accountState.syncUtime;
-                walletId = 0;
-            } else if (cachedAccountState instanceof TonApi.GenericAccountStateTestGiver) {
-                TonApi.GenericAccountStateTestGiver state = (TonApi.GenericAccountStateTestGiver) cachedAccountState;
-                stateType = 2;
-                balance = state.accountState.balance;
-                seqno = state.accountState.seqno;
-                transactionId = state.accountState.lastTransactionId;
-                syncUtime = state.accountState.syncUtime;
-                walletId = 0;
-            } else if (cachedAccountState instanceof TonApi.GenericAccountStateUninited) {
-                TonApi.GenericAccountStateUninited state = (TonApi.GenericAccountStateUninited) cachedAccountState;
-                stateType = 3;
-                balance = state.accountState.balance;
-                seqno = 0;
-                transactionId = state.accountState.lastTransactionId;
-                syncUtime = state.accountState.syncUtime;
-                walletId = 0;
-            } else if (cachedAccountState instanceof TonApi.GenericAccountStateWallet) {
-                TonApi.GenericAccountStateWallet state = (TonApi.GenericAccountStateWallet) cachedAccountState;
-                stateType = 4;
-                balance = state.accountState.balance;
-                seqno = state.accountState.seqno;
-                transactionId = state.accountState.lastTransactionId;
-                syncUtime = state.accountState.syncUtime;
-                walletId = 0;
-            } else if (cachedAccountState instanceof TonApi.GenericAccountStateWalletV3) {
-                TonApi.GenericAccountStateWalletV3 state = (TonApi.GenericAccountStateWalletV3) cachedAccountState;
-                stateType = 5;
-                balance = state.accountState.balance;
-                seqno = state.accountState.seqno;
-                transactionId = state.accountState.lastTransactionId;
-                syncUtime = state.accountState.syncUtime;
-                walletId = state.accountState.walletId;
-            } else {
-                return;
+            if (cachedAccountState.accountState instanceof TonApi.RawAccountState) {
+                TonApi.RawAccountState accountState = (TonApi.RawAccountState) cachedAccountState.accountState;
+                data = accountState.data;
+                code = accountState.code;
+                frozenHash = accountState.frozenHash;
+                accountStateType = 0;
+            } else if (cachedAccountState.accountState instanceof TonApi.TestWalletAccountState) {
+                TonApi.TestWalletAccountState accountState = (TonApi.TestWalletAccountState) cachedAccountState.accountState;
+                seqno = accountState.seqno;
+                accountStateType = 1;
+            } else if (cachedAccountState.accountState instanceof TonApi.WalletAccountState) {
+                TonApi.WalletAccountState accountState = (TonApi.WalletAccountState) cachedAccountState.accountState;
+                seqno = accountState.seqno;
+                accountStateType = 2;
+            } else if (cachedAccountState.accountState instanceof TonApi.WalletV3AccountState) {
+                TonApi.WalletV3AccountState accountState = (TonApi.WalletV3AccountState) cachedAccountState.accountState;
+                walletId = accountState.walletId;
+                seqno = accountState.seqno;
+                accountStateType = 3;
+            } else if (cachedAccountState.accountState instanceof TonApi.WalletHighloadV1AccountState) {
+                TonApi.WalletHighloadV1AccountState accountState = (TonApi.WalletHighloadV1AccountState) cachedAccountState.accountState;
+                walletId = accountState.walletId;
+                seqno = accountState.seqno;
+                accountStateType = 4;
+            } else if (cachedAccountState.accountState instanceof TonApi.WalletHighloadV2AccountState) {
+                TonApi.WalletHighloadV2AccountState accountState = (TonApi.WalletHighloadV2AccountState) cachedAccountState.accountState;
+                walletId = accountState.walletId;
+                accountStateType = 5;
+            } else if (cachedAccountState.accountState instanceof TonApi.TestGiverAccountState) {
+                TonApi.TestGiverAccountState accountState = (TonApi.TestGiverAccountState) cachedAccountState.accountState;
+                seqno = accountState.seqno;
+                accountStateType = 6;
+            } else if (cachedAccountState.accountState instanceof TonApi.DnsAccountState) {
+                TonApi.DnsAccountState accountState = (TonApi.DnsAccountState) cachedAccountState.accountState;
+                walletId = accountState.walletId;
+                accountStateType = 7;
+            } else if (cachedAccountState.accountState instanceof TonApi.UninitedAccountState) {
+                TonApi.UninitedAccountState accountState = (TonApi.UninitedAccountState) cachedAccountState.accountState;
+                frozenHash = accountState.frozenHash;
+                accountStateType = 8;
             }
 
-            editor.putInt("state.type", stateType);
-            editor.putLong("state.balance", balance);
-            editor.putInt("state.seqno", seqno);
-            editor.putLong("state.walletId", walletId);
-            editor.putLong("transaction.lt", transactionId.lt);
-            editor.putString("transaction.hash", Base64.encodeToString(transactionId.hash, Base64.DEFAULT));
-            editor.putLong("syncUtime", syncUtime);
+            editor.putInt("accountStateType", accountStateType);
+            editor.putInt("accountstate.seqno", seqno);
+            editor.putLong("accountstate.walletId", walletId);
+            if (frozenHash != null) {
+                editor.putString("accountstate.frozenHash", Base64.encodeToString(frozenHash, Base64.DEFAULT));
+            }
+            if (data != null) {
+                editor.putString("accountstate.data", Base64.encodeToString(data, Base64.DEFAULT));
+            }
+            if (code != null) {
+                editor.putString("accountstate.code", Base64.encodeToString(code, Base64.DEFAULT));
+            }
 
             int transactionsCount = Math.min(10, cachedTransactions.size());
             editor.putInt("transactionsCount", transactionsCount);
             for (int a = 0; a < transactionsCount; a++) {
                 String key = "transaction" + a + ".";
-                TonApi.RawTransaction transaction = cachedTransactions.get(a);
+                WalletTransaction walletTransaction = cachedTransactions.get(a);
+                TonApi.RawTransaction transaction = walletTransaction.rawTransaction;
 
                 if (transaction.inMsg != null) {
-                    editor.putString(key + "inMsg.source", transaction.inMsg.source);
-                    editor.putString(key + "inMsg.destination", transaction.inMsg.destination);
+                    editor.putString(key + "inMsg.source", transaction.inMsg.source.accountAddress);
+                    editor.putString(key + "inMsg.destination", transaction.inMsg.destination.accountAddress);
                     editor.putLong(key + "inMsg.value", transaction.inMsg.value);
                     editor.putLong(key + "inMsg.fwdFee", transaction.inMsg.fwdFee);
                     editor.putLong(key + "inMsg.ihrFee", transaction.inMsg.ihrFee);
                     editor.putLong(key + "inMsg.createdLt", transaction.inMsg.createdLt);
                     editor.putString(key + "inMsg.bodyHash", Base64.encodeToString(transaction.inMsg.bodyHash, Base64.DEFAULT));
-                    editor.putString(key + "inMsg.message", Base64.encodeToString(transaction.inMsg.message, Base64.DEFAULT));
+
+                    int msgDataType = 0;
+                    byte[] body = null;
+                    byte[] text = null;
+                    if (transaction.inMsg.msgData instanceof TonApi.MsgDataRaw) {
+                        TonApi.MsgDataRaw msgData = (TonApi.MsgDataRaw) transaction.inMsg.msgData;
+                        body = msgData.body;
+                        msgDataType = 0;
+                    } else if (transaction.inMsg.msgData instanceof TonApi.MsgDataText) {
+                        TonApi.MsgDataText msgData = (TonApi.MsgDataText) transaction.inMsg.msgData;
+                        text = msgData.text;
+                        msgDataType = 1;
+                    } else if (transaction.inMsg.msgData instanceof TonApi.MsgDataDecryptedText) {
+                        TonApi.MsgDataDecryptedText msgData = (TonApi.MsgDataDecryptedText) transaction.inMsg.msgData;
+                        text = msgData.text;
+                        msgDataType = 2;
+                    } else if (transaction.inMsg.msgData instanceof TonApi.MsgDataEncryptedText) {
+                        TonApi.MsgDataEncryptedText msgData = (TonApi.MsgDataEncryptedText) transaction.inMsg.msgData;
+                        text = msgData.text;
+                        msgDataType = 3;
+                    }
+                    editor.putInt(key + "inMsg.msgDataType", msgDataType);
+                    if (body != null) {
+                        editor.putString(key + "inMsg.msgData.body", Base64.encodeToString(body, Base64.DEFAULT));
+                    }
+                    if (text != null) {
+                        editor.putString(key + "inMsg.msgData.text", Base64.encodeToString(text, Base64.DEFAULT));
+                    }
                 }
 
                 if (transaction.outMsgs != null) {
@@ -413,14 +533,41 @@ public class TonController extends BaseController {
                     editor.putInt(key + "outMsgCount", outMsgCount);
                     for (int b = 0; b < outMsgCount; b++) {
                         String key2 = key + "outMsg" + b + ".";
-                        editor.putString(key2 + "source", transaction.outMsgs[b].source);
-                        editor.putString(key2 + "destination", transaction.outMsgs[b].destination);
+                        editor.putString(key2 + "source", transaction.outMsgs[b].source.accountAddress);
+                        editor.putString(key2 + "destination", transaction.outMsgs[b].destination.accountAddress);
                         editor.putLong(key2 + "value", transaction.outMsgs[b].value);
                         editor.putLong(key2 + "fwdFee", transaction.outMsgs[b].fwdFee);
                         editor.putLong(key2 + "ihrFee", transaction.outMsgs[b].ihrFee);
                         editor.putLong(key2 + "createdLt", transaction.outMsgs[b].createdLt);
                         editor.putString(key2 + "bodyHash", Base64.encodeToString(transaction.outMsgs[b].bodyHash, Base64.DEFAULT));
-                        editor.putString(key2 + "message", Base64.encodeToString(transaction.outMsgs[b].message, Base64.DEFAULT));
+
+                        int msgDataType = 0;
+                        byte[] body = null;
+                        byte[] text = null;
+                        if (transaction.outMsgs[b].msgData instanceof TonApi.MsgDataRaw) {
+                            TonApi.MsgDataRaw msgData = (TonApi.MsgDataRaw) transaction.outMsgs[b].msgData;
+                            body = msgData.body;
+                            msgDataType = 0;
+                        } else if (transaction.outMsgs[b].msgData instanceof TonApi.MsgDataText) {
+                            TonApi.MsgDataText msgData = (TonApi.MsgDataText) transaction.outMsgs[b].msgData;
+                            text = msgData.text;
+                            msgDataType = 1;
+                        } else if (transaction.outMsgs[b].msgData instanceof TonApi.MsgDataDecryptedText) {
+                            TonApi.MsgDataDecryptedText msgData = (TonApi.MsgDataDecryptedText) transaction.outMsgs[b].msgData;
+                            text = msgData.text;
+                            msgDataType = 2;
+                        } else if (transaction.outMsgs[b].msgData instanceof TonApi.MsgDataEncryptedText) {
+                            TonApi.MsgDataEncryptedText msgData = (TonApi.MsgDataEncryptedText) transaction.outMsgs[b].msgData;
+                            text = msgData.text;
+                            msgDataType = 3;
+                        }
+                        editor.putInt(key2 + "msgDataType", msgDataType);
+                        if (body != null) {
+                            editor.putString(key2 + "msgData.body", Base64.encodeToString(body, Base64.DEFAULT));
+                        }
+                        if (text != null) {
+                            editor.putString(key2 + "msgData.text", Base64.encodeToString(text, Base64.DEFAULT));
+                        }
                     }
                 }
                 editor.putLong(key + "utime", transaction.utime);
@@ -436,15 +583,42 @@ public class TonController extends BaseController {
             editor.putInt("pendingCount", transactionsCount);
             for (int a = 0; a < transactionsCount; a++) {
                 String key = "pending" + a + ".";
-                TonApi.RawTransaction transaction = pendingTransactions.get(a);
+                TonApi.RawTransaction transaction = pendingTransactions.get(a).rawTransaction;
 
-                editor.putString(key + "inMsg.source", transaction.inMsg.source);
-                editor.putString(key + "inMsg.destination", transaction.inMsg.destination);
+                editor.putString(key + "inMsg.source", transaction.inMsg.source.accountAddress);
+                editor.putString(key + "inMsg.destination", transaction.inMsg.destination.accountAddress);
                 editor.putLong(key + "inMsg.value", transaction.inMsg.value);
                 editor.putString(key + "inMsg.bodyHash", Base64.encodeToString(transaction.inMsg.bodyHash, Base64.DEFAULT));
-                editor.putString(key + "inMsg.message", Base64.encodeToString(transaction.inMsg.message, Base64.DEFAULT));
                 editor.putLong(key + "utime", transaction.utime);
                 editor.putLong(key + "validUntil", transaction.otherFee);
+
+                int msgDataType = 0;
+                byte[] body = null;
+                byte[] text = null;
+                if (transaction.inMsg.msgData instanceof TonApi.MsgDataRaw) {
+                    TonApi.MsgDataRaw msgData = (TonApi.MsgDataRaw) transaction.inMsg.msgData;
+                    body = msgData.body;
+                    msgDataType = 0;
+                } else if (transaction.inMsg.msgData instanceof TonApi.MsgDataText) {
+                    TonApi.MsgDataText msgData = (TonApi.MsgDataText) transaction.inMsg.msgData;
+                    text = msgData.text;
+                    msgDataType = 1;
+                } else if (transaction.inMsg.msgData instanceof TonApi.MsgDataDecryptedText) {
+                    TonApi.MsgDataDecryptedText msgData = (TonApi.MsgDataDecryptedText) transaction.inMsg.msgData;
+                    text = msgData.text;
+                    msgDataType = 2;
+                } else if (transaction.inMsg.msgData instanceof TonApi.MsgDataEncryptedText) {
+                    TonApi.MsgDataEncryptedText msgData = (TonApi.MsgDataEncryptedText) transaction.inMsg.msgData;
+                    text = msgData.text;
+                    msgDataType = 3;
+                }
+                editor.putInt(key + "msgDataType", msgDataType);
+                if (body != null) {
+                    editor.putString(key + "msgData.body", Base64.encodeToString(body, Base64.DEFAULT));
+                }
+                if (text != null) {
+                    editor.putString(key + "msgData.text", Base64.encodeToString(text, Base64.DEFAULT));
+                }
             }
 
             editor.putBoolean("hasCache", true);
@@ -479,15 +653,15 @@ public class TonController extends BaseController {
         walletLoaded = false;
     }
 
-    public ArrayList<TonApi.RawTransaction> getCachedTransactions() {
+    public ArrayList<WalletTransaction> getCachedTransactions() {
         return cachedTransactions;
     }
 
-    public ArrayList<TonApi.RawTransaction> getPendingTransactions() {
+    public ArrayList<WalletTransaction> getPendingTransactions() {
         return pendingTransactions;
     }
 
-    public TonApi.GenericAccountState getCachedAccountState() {
+    public TonApi.FullAccountState getCachedAccountState() {
         return cachedAccountState;
     }
 
@@ -701,13 +875,6 @@ public class TonController extends BaseController {
             return true;
         }
         TonApi.Config config = getConfig();
-        Object info = sendRequest(new TonApi.OptionsValidateConfig(config), true);
-        if (info instanceof TonApi.OptionsConfigInfo) {
-            TonApi.OptionsConfigInfo configInfo = (TonApi.OptionsConfigInfo) info;
-            walletId = configInfo.defaultWalletId;
-        } else {
-            return false;
-        }
 
         keyDirectoty = new File(ApplicationLoader.getFilesDirFixed(), "ton" + currentAccount);
         keyDirectoty.mkdirs();
@@ -715,7 +882,13 @@ public class TonController extends BaseController {
         currentSetConfigName = config.blockchainName;
         TonApi.Options options = new TonApi.Options(config, new TonApi.KeyStoreTypeDirectory(keyDirectoty.getAbsolutePath()));
         Object result = sendRequest(new TonApi.Init(options), true);
-        return initied = result instanceof TonApi.Ok;
+        if (result instanceof TonApi.OptionsInfo) {
+            TonApi.OptionsInfo optionsInfo = (TonApi.OptionsInfo) result;
+            walletId = optionsInfo.configInfo.defaultWalletId;
+            initied = true;
+            return true;
+        }
+        return false;
     }
 
     private TonApi.Config getConfig() {
@@ -789,58 +962,16 @@ public class TonController extends BaseController {
         return null;
     }
 
-    public static TonApi.InternalTransactionId getLastTransactionId(TonApi.GenericAccountState accountState) {
-        if (accountState instanceof TonApi.GenericAccountStateRaw) {
-            return ((TonApi.GenericAccountStateRaw) accountState).accountState.lastTransactionId;
-        } else if (accountState instanceof TonApi.GenericAccountStateTestWallet) {
-            return ((TonApi.GenericAccountStateTestWallet) accountState).accountState.lastTransactionId;
-        } else if (accountState instanceof TonApi.GenericAccountStateTestGiver) {
-            return ((TonApi.GenericAccountStateTestGiver) accountState).accountState.lastTransactionId;
-        } else if (accountState instanceof TonApi.GenericAccountStateUninited) {
-            return ((TonApi.GenericAccountStateUninited) accountState).accountState.lastTransactionId;
-        } else if (accountState instanceof TonApi.GenericAccountStateWallet) {
-            return ((TonApi.GenericAccountStateWallet) accountState).accountState.lastTransactionId;
-        } else if (accountState instanceof TonApi.GenericAccountStateWalletV3) {
-            return ((TonApi.GenericAccountStateWalletV3) accountState).accountState.lastTransactionId;
-        }
-        return null;
+    public static TonApi.InternalTransactionId getLastTransactionId(TonApi.FullAccountState accountState) {
+        return accountState.lastTransactionId;
     }
 
-    public static long getLastSyncTime(TonApi.GenericAccountState accountState) {
-        if (accountState instanceof TonApi.GenericAccountStateRaw) {
-            return ((TonApi.GenericAccountStateRaw) accountState).accountState.syncUtime;
-        } else if (accountState instanceof TonApi.GenericAccountStateTestWallet) {
-            return ((TonApi.GenericAccountStateTestWallet) accountState).accountState.syncUtime;
-        } else if (accountState instanceof TonApi.GenericAccountStateTestGiver) {
-            return ((TonApi.GenericAccountStateTestGiver) accountState).accountState.syncUtime;
-        } else if (accountState instanceof TonApi.GenericAccountStateUninited) {
-            return ((TonApi.GenericAccountStateUninited) accountState).accountState.syncUtime;
-        } else if (accountState instanceof TonApi.GenericAccountStateWallet) {
-            return ((TonApi.GenericAccountStateWallet) accountState).accountState.syncUtime;
-        } else if (accountState instanceof TonApi.GenericAccountStateWalletV3) {
-            return ((TonApi.GenericAccountStateWalletV3) accountState).accountState.syncUtime;
-        }
-        return 0;
+    public static long getLastSyncTime(TonApi.FullAccountState accountState) {
+        return accountState.syncUtime;
     }
 
-    public static long getBalance(TonApi.GenericAccountState accountState) {
-        long balance;
-        if (accountState instanceof TonApi.GenericAccountStateRaw) {
-            balance = ((TonApi.GenericAccountStateRaw) accountState).accountState.balance;
-        } else if (accountState instanceof TonApi.GenericAccountStateTestWallet) {
-            balance = ((TonApi.GenericAccountStateTestWallet) accountState).accountState.balance;
-        } else if (accountState instanceof TonApi.GenericAccountStateTestGiver) {
-            balance = ((TonApi.GenericAccountStateTestGiver) accountState).accountState.balance;
-        } else if (accountState instanceof TonApi.GenericAccountStateUninited) {
-            balance = ((TonApi.GenericAccountStateUninited) accountState).accountState.balance;
-        } else if (accountState instanceof TonApi.GenericAccountStateWallet) {
-            balance = ((TonApi.GenericAccountStateWallet) accountState).accountState.balance;
-        } else if (accountState instanceof TonApi.GenericAccountStateWalletV3) {
-            balance = ((TonApi.GenericAccountStateWalletV3) accountState).accountState.balance;
-        } else {
-            balance = 0;
-        }
-        return balance >= 0 ? balance : 0;
+    public static long getBalance(TonApi.FullAccountState accountState) {
+        return accountState != null && accountState.balance >= 0 ? accountState.balance : 0;
     }
 
     public boolean isValidWalletAddress(String address) {
@@ -1017,22 +1148,22 @@ public class TonController extends BaseController {
             return accountAddress.accountAddress;
         }
         initTonLib();
-        Object response = sendRequest(new TonApi.WalletV3GetAccountAddress(new TonApi.WalletV3InitialAccountState(publicKey, walletId)), true);
+        Object response = sendRequest(new TonApi.GetAccountAddress(new TonApi.WalletV3InitialAccountState(publicKey, walletId), 1), true);
         if (response instanceof TonApi.AccountAddress) {
             return (accountAddress = ((TonApi.AccountAddress) response)).accountAddress;
         }
         return null;
     }
 
-    public void checkPendingTransactionsForFailure(TonApi.GenericAccountState state) {
+    public void checkPendingTransactionsForFailure(TonApi.FullAccountState state) {
         if (state == null || pendingTransactions.isEmpty()) {
             return;
         }
         long time = getLastSyncTime(state);
         boolean pendingChanged = false;
         for (int a = 0, N = pendingTransactions.size(); a < N; a++) {
-            TonApi.RawTransaction pending = pendingTransactions.get(a);
-            if (pending.otherFee <= time) {
+            WalletTransaction pending = pendingTransactions.get(a);
+            if (pending.rawTransaction.otherFee <= time) {
                 pendingTransactions.remove(a);
                 N--;
                 a--;
@@ -1049,6 +1180,57 @@ public class TonController extends BaseController {
         }
     }
 
+    public static boolean isEncryptedTransaction(TonApi.RawTransaction transaction) {
+        if (transaction.inMsg != null) {
+            if (transaction.inMsg.msgData instanceof TonApi.MsgDataEncryptedText) {
+                return true;
+            }
+        }
+        if (transaction.outMsgs != null && transaction.outMsgs.length > 0) {
+            for (int a = 0; a < transaction.outMsgs.length; a++) {
+                if (transaction.outMsgs[a].msgData instanceof TonApi.MsgDataEncryptedText) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private HashSet<TonApi.MsgData> decryptingMessages = new HashSet<>();
+    public void decryptMessage(TonApi.MsgData msgData, TonApi.AccountAddress accountAddress, CommentDecryptCallback callback) {
+        if (memInputKey == null || msgData == null || decryptingMessages.contains(msgData)) {
+            return;
+        }
+        decryptingMessages.add(msgData);
+        TonApi.MsgDecrypt req = new TonApi.MsgDecrypt(memInputKey, new TonApi.MsgDataEncryptedArray(new TonApi.MsgDataEncrypted[]{new TonApi.MsgDataEncrypted(accountAddress, msgData)}));
+        sendRequest(req, result -> {
+            if (result instanceof TonApi.MsgDataDecryptedArray) {
+                TonApi.MsgDataDecryptedArray response = (TonApi.MsgDataDecryptedArray) result;
+                String str = null;
+                if (response.elements[0].data instanceof TonApi.MsgDataDecryptedText) {
+                    TonApi.MsgDataDecryptedText decryptedText = (TonApi.MsgDataDecryptedText) response.elements[0].data;
+                    try {
+                        str = new String(decryptedText.text, 0, decryptedText.text.length, "UTF-8");
+                    } catch (Exception e) {
+                        FileLog.e(e);
+                    }
+                }
+                if (str == null) {
+                    str = "decrypt error";
+                }
+                String strFinal = str;
+                AndroidUtilities.runOnUIThread(() -> {
+                    decryptingMessages.remove(msgData);
+                    callback.run(msgData, strFinal);
+                });
+            }
+        });
+    }
+
+    public boolean hasDecryptKey() {
+        return memInputKey != null;
+    }
+
     public void setTransactionCallback(GetTransactionsCallback callback) {
         uiTransactionCallback = callback;
     }
@@ -1058,20 +1240,24 @@ public class TonController extends BaseController {
     }
 
     private void getTransactions(boolean reload, TonApi.InternalTransactionId fromTransaction, Runnable callback) {
-        sendRequest(new TonApi.RawGetTransactions(accountAddress, fromTransaction), response -> {
+        sendRequest(new TonApi.RawGetTransactions(null, accountAddress, fromTransaction), response -> {
             if (response instanceof TonApi.RawTransactions) {
                 TonApi.RawTransactions rawTransactions = (TonApi.RawTransactions) response;
-                ArrayList<TonApi.RawTransaction> transactions = new ArrayList<>(Arrays.asList(rawTransactions.transactions));
+                ArrayList<WalletTransaction> transactions = new ArrayList<>(rawTransactions.transactions.length);
+                for (int a = 0; a < rawTransactions.transactions.length; a++) {
+                    transactions.add(new WalletTransaction(rawTransactions.transactions[a]));
+                }
+
                 AndroidUtilities.runOnUIThread(() -> {
                     walletLoaded = true;
                     boolean pendingChanged = false;
                     if (!pendingTransactions.isEmpty()) {
                         for (int a = 0, N = pendingTransactions.size(); a < N; a++) {
-                            TonApi.RawTransaction pending = pendingTransactions.get(a);
+                            WalletTransaction pending = pendingTransactions.get(a);
                             for (int b = 0, N2 = transactions.size(); b < N2; b++) {
-                                TonApi.RawTransaction transaction = transactions.get(b);
-                                if (transaction.inMsg != null) {
-                                    if (Arrays.equals(pending.inMsg.bodyHash, transaction.inMsg.bodyHash)) {
+                                WalletTransaction transaction = transactions.get(b);
+                                if (transaction.rawTransaction.inMsg != null) {
+                                    if (Arrays.equals(pending.rawTransaction.inMsg.bodyHash, transaction.rawTransaction.inMsg.bodyHash)) {
                                         pendingTransactions.remove(a);
                                         N--;
                                         a--;
@@ -1140,9 +1326,9 @@ public class TonController extends BaseController {
     }
 
     public void getAccountState(AccountStateCallback callback) {
-        sendRequest(new TonApi.GenericGetAccountState(accountAddress), response -> {
-            if (response instanceof TonApi.GenericAccountState) {
-                AndroidUtilities.runOnUIThread(() -> callback.run(cachedAccountState = (TonApi.GenericAccountState) response));
+        sendRequest(new TonApi.GetAccountState(accountAddress), response -> {
+            if (response instanceof TonApi.FullAccountState) {
+                AndroidUtilities.runOnUIThread(() -> callback.run(cachedAccountState = (TonApi.FullAccountState) response));
             } else {
                 AndroidUtilities.runOnUIThread(() -> callback.run(null));
             }
@@ -1198,6 +1384,13 @@ public class TonController extends BaseController {
         });
     }
 
+    public void fillMemInputKey(String passcode, Cipher cipherForDecrypt, Runnable onPasscodeOk, ErrorCallback onErrorRunnable) {
+        memInputKey = decryptTonData(passcode, cipherForDecrypt, onPasscodeOk, onErrorRunnable, false);
+        if (memInputKey != null && TextUtils.isEmpty(passcode)) {
+            onPasscodeOk.run();
+        }
+    }
+
     public void getSecretWords(String passcode, Cipher cipherForDecrypt, WordsCallback onFinishRunnable, ErrorCallback onErrorRunnable) {
         Utilities.globalQueue.postRunnable(() -> {
             initTonLib();
@@ -1217,8 +1410,19 @@ public class TonController extends BaseController {
     }
 
     public void getSendFee(String fromWallet, String toWallet, long amount, String message, FeeCallback feeCallback) {
+        getSendFee(fromWallet, toWallet, amount, message, false, feeCallback);
+    }
+
+    private void getSendFee(String fromWallet, String toWallet, long amount, String message, boolean unencrypted, FeeCallback feeCallback) {
         Utilities.globalQueue.postRunnable(() -> {
-            TonApi.GenericCreateSendGramsQuery req = new TonApi.GenericCreateSendGramsQuery(new TonApi.InputKeyFake(), new TonApi.AccountAddress(fromWallet), new TonApi.AccountAddress(toWallet), amount, 0, true, message != null ? message.getBytes() : new byte[0]);
+            TonApi.MsgData msgData;
+            if (unencrypted || TextUtils.isEmpty(message)) {
+                msgData = new TonApi.MsgDataText(message != null ? message.getBytes() : new byte[0]);
+            } else {
+                msgData = new TonApi.MsgDataDecryptedText(message != null ? message.getBytes() : new byte[0]);
+            }
+            TonApi.ActionMsg actionMsg = new TonApi.ActionMsg(new TonApi.MsgMessage[]{new TonApi.MsgMessage(new TonApi.AccountAddress(toWallet), null, amount, msgData)}, true);
+            TonApi.CreateQuery req = new TonApi.CreateQuery(new TonApi.InputKeyFake(), new TonApi.AccountAddress(fromWallet), 0, actionMsg);
             sendRequest(req, result -> {
                 if (result instanceof TonApi.QueryInfo) {
                     TonApi.QueryInfo queryInfo = (TonApi.QueryInfo) result;
@@ -1227,19 +1431,26 @@ public class TonController extends BaseController {
                         if (result1 instanceof TonApi.QueryFees) {
                             TonApi.QueryFees queryFees = (TonApi.QueryFees) result1;
                             long fee = queryFees.sourceFees.fwdFee + queryFees.sourceFees.gasFee + queryFees.sourceFees.inFwdFee + queryFees.sourceFees.storageFee;
-                            AndroidUtilities.runOnUIThread(() -> feeCallback.run(fee));
+                            AndroidUtilities.runOnUIThread(() -> feeCallback.run(fee, unencrypted));
                         } else {
-                            AndroidUtilities.runOnUIThread(() -> feeCallback.run(0));
+                            AndroidUtilities.runOnUIThread(() -> feeCallback.run(0, false));
                         }
                     });
                 } else {
-                    AndroidUtilities.runOnUIThread(() -> feeCallback.run(0));
+                    if (result instanceof TonApi.Error) {
+                        TonApi.Error error = (TonApi.Error) result;
+                        if (error.message != null && error.message.startsWith("MESSAGE_ENCRYPTION")) {
+                            getSendFee(fromWallet, toWallet, amount, message, true, feeCallback);
+                            return;
+                        }
+                    }
+                    AndroidUtilities.runOnUIThread(() -> feeCallback.run(0, false));
                 }
             });
         });
     }
 
-    public void sendGrams(String passcode, Cipher cipherForDecrypt, TonApi.InputKey key, String fromWallet, String toWallet, long amount, String message, Runnable onPasscodeOk, Runnable onRequestDone, Runnable onFinishRunnable, DangerousCallback onDangerousSend, ErrorCallback onErrorRunnable) {
+    public void sendGrams(String passcode, Cipher cipherForDecrypt, TonApi.InputKey key, String fromWallet, String toWallet, long amount, String message, boolean unencrypted, Runnable onPasscodeOk, Runnable onRequestDone, Runnable onFinishRunnable, DangerousCallback onDangerousSend, ErrorCallback onErrorRunnable) {
         Utilities.globalQueue.postRunnable(() -> {
             TonApi.InputKey inputKey = key;
             if (inputKey == null) {
@@ -1249,7 +1460,15 @@ public class TonController extends BaseController {
                 return;
             }
             final TonApi.InputKey inputKeyFinal = inputKey;
-            TonApi.GenericCreateSendGramsQuery req = new TonApi.GenericCreateSendGramsQuery(inputKey, new TonApi.AccountAddress(fromWallet), new TonApi.AccountAddress(toWallet), amount, 0, true, message != null ? message.getBytes() : new byte[0]);
+
+            TonApi.MsgData msgData;
+            if (unencrypted || TextUtils.isEmpty(message)) {
+                msgData = new TonApi.MsgDataText(message != null ? message.getBytes() : new byte[0]);
+            } else {
+                msgData = new TonApi.MsgDataDecryptedText(message != null ? message.getBytes() : new byte[0]);
+            }
+            TonApi.ActionMsg actionMsg = new TonApi.ActionMsg(new TonApi.MsgMessage[]{new TonApi.MsgMessage(new TonApi.AccountAddress(toWallet), null, amount, msgData)}, true);
+            TonApi.CreateQuery req = new TonApi.CreateQuery(inputKey, new TonApi.AccountAddress(fromWallet), 0, actionMsg);
             sendRequest(req, result -> {
                 if (result instanceof TonApi.QueryInfo) {
                     TonApi.QueryInfo queryInfo = (TonApi.QueryInfo) result;
@@ -1257,13 +1476,14 @@ public class TonController extends BaseController {
                     sendRequest(req2, result1 -> {
                         if (result1 instanceof TonApi.Ok) {
                             AndroidUtilities.runOnUIThread(() -> {
+                                memInputKey = inputKeyFinal;
                                 TonApi.RawMessage rawMessage = new TonApi.RawMessage();
-                                rawMessage.source = fromWallet;
-                                rawMessage.destination = toWallet;
+                                rawMessage.source = new TonApi.AccountAddress(fromWallet);
+                                rawMessage.destination = new TonApi.AccountAddress(toWallet);
                                 rawMessage.value = -amount;
-                                rawMessage.message = message != null ? message.getBytes() : new byte[0];
                                 rawMessage.bodyHash = queryInfo.bodyHash;
-                                TonApi.RawTransaction sendingTransaction = new TonApi.RawTransaction(System.currentTimeMillis() / 1000, new byte[0], new TonApi.InternalTransactionId(), 0, 0, queryInfo.validUntil, rawMessage, new TonApi.RawMessage[0]);
+                                rawMessage.msgData = new TonApi.MsgDataDecryptedText(message != null ? message.getBytes() : new byte[0]);
+                                WalletTransaction sendingTransaction = new WalletTransaction(new TonApi.RawTransaction(System.currentTimeMillis() / 1000, new byte[0], new TonApi.InternalTransactionId(), 0, 0, queryInfo.validUntil, rawMessage, new TonApi.RawMessage[0]));
                                 pendingTransactions.add(0, sendingTransaction);
                                 saveCache();
                                 getNotificationCenter().postNotificationName(NotificationCenter.walletPendingTransactionsChanged);
@@ -1293,7 +1513,7 @@ public class TonController extends BaseController {
             return;
         }
         shortPollingInProgress = true;
-        TonApi.GenericAccountState oldState = cachedAccountState;
+        TonApi.FullAccountState oldState = cachedAccountState;
         getAccountState(state -> {
             boolean needUpdateTransactions = false;
             if (state != null) {

@@ -29,6 +29,40 @@
 #include "tonlib/Client.h"
 #include "auto/tl/tonlib_api.h"
 
+extern "C" JNIEXPORT jstring JNICALL Java_drinkless_org_tonlib_MainActivity_stringFromJNI(JNIEnv *env,
+                                                                                          jobject /* this */,
+                                                                                          jstring dir) {
+  std::string hello = "Hello from C++";
+  std::string query = "{\"@type\": \"runTests\", \"dir\":\"";
+  query += env->GetStringUTFChars(dir, 0);
+  query += "\"}";
+  return env->NewStringUTF(tonlib_client_json_execute(nullptr, query.c_str()));
+
+  //return env->NewStringUTF(hello.c_str());
+}
+
+extern "C" JNIEXPORT jlong JNICALL Java_drinkless_org_tonlib_ClientJsonNative_create(JNIEnv *env, jobject /* this */) {
+  return reinterpret_cast<jlong>(tonlib_client_json_create());
+}
+extern "C" JNIEXPORT void JNICALL Java_drinkless_org_tonlib_ClientJsonNative_send(JNIEnv *env, jobject /* this */,
+                                                                                  jlong client, jstring j_query) {
+  auto query = td::jni::from_jstring(env, j_query);
+  return tonlib_client_json_send(reinterpret_cast<void *>(client), query.c_str());
+}
+extern "C" JNIEXPORT jstring JNICALL Java_drinkless_org_tonlib_ClientJsonNative_execute(JNIEnv *env, jobject /* this */,
+                                                                                        jstring j_query) {
+  auto query = td::jni::from_jstring(env, j_query);
+  return td::jni::to_jstring(env, tonlib_client_json_execute(nullptr, query.c_str()));
+}
+extern "C" JNIEXPORT jstring JNICALL Java_drinkless_org_tonlib_ClientJsonNative_receive(JNIEnv *env, jobject /* this */,
+                                                                                        jlong client, jdouble timeout) {
+  return td::jni::to_jstring(env, tonlib_client_json_receive(reinterpret_cast<void *>(client), timeout));
+}
+extern "C" JNIEXPORT void JNICALL Java_drinkless_org_tonlib_ClientJsonNative_destroy(JNIEnv *env, jobject /* this */,
+                                                                                     jlong client) {
+  return tonlib_client_json_destroy(reinterpret_cast<void *>(client));
+}
+
 // ---
 
 namespace td_jni {

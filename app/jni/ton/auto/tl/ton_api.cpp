@@ -92,6 +92,8 @@ object_ptr<Object> Object::fetch(td::TlParser &p) {
       return adnl_address_udp::fetch(p);
     case adnl_address_udp6::ID:
       return adnl_address_udp6::fetch(p);
+    case adnl_address_tunnel::ID:
+      return adnl_address_tunnel::fetch(p);
     case adnl_addressList::ID:
       return adnl_addressList::fetch(p);
     case adnl_message_createChannel::ID:
@@ -122,10 +124,20 @@ object_ptr<Object> Object::fetch(td::TlParser &p) {
       return adnl_proxy_none::fetch(p);
     case adnl_proxy_fast::ID:
       return adnl_proxy_fast::fetch(p);
+    case adnl_proxyControlPacketPing::ID:
+      return adnl_proxyControlPacketPing::fetch(p);
+    case adnl_proxyControlPacketPong::ID:
+      return adnl_proxyControlPacketPong::fetch(p);
+    case adnl_proxyControlPacketRegister::ID:
+      return adnl_proxyControlPacketRegister::fetch(p);
+    case adnl_proxyPacketHeader::ID:
+      return adnl_proxyPacketHeader::fetch(p);
     case adnl_proxyToFastHash::ID:
       return adnl_proxyToFastHash::fetch(p);
     case adnl_proxyToFast::ID:
       return adnl_proxyToFast::fetch(p);
+    case adnl_tunnelPacketContents::ID:
+      return adnl_tunnelPacketContents::fetch(p);
     case adnl_config_global::ID:
       return adnl_config_global::fetch(p);
     case adnl_db_node_key::ID:
@@ -212,8 +224,20 @@ object_ptr<Object> Object::fetch(td::TlParser &p) {
       return db_filedb_key_signatures::fetch(p);
     case db_filedb_key_candidate::ID:
       return db_filedb_key_candidate::fetch(p);
+    case db_filedb_key_blockInfo::ID:
+      return db_filedb_key_blockInfo::fetch(p);
     case db_filedb_value::ID:
       return db_filedb_value::fetch(p);
+    case db_files_index_key::ID:
+      return db_files_index_key::fetch(p);
+    case db_files_package_key::ID:
+      return db_files_package_key::fetch(p);
+    case db_files_index_value::ID:
+      return db_files_index_value::fetch(p);
+    case db_files_package_firstBlock::ID:
+      return db_files_package_firstBlock::fetch(p);
+    case db_files_package_value::ID:
+      return db_files_package_value::fetch(p);
     case db_lt_el_key::ID:
       return db_lt_el_key::fetch(p);
     case db_lt_desc_key::ID:
@@ -242,6 +266,8 @@ object_ptr<Object> Object::fetch(td::TlParser &p) {
       return db_root_key_config::fetch(p);
     case db_state_asyncSerializer::ID:
       return db_state_asyncSerializer::fetch(p);
+    case db_state_dbVersion::ID:
+      return db_state_dbVersion::fetch(p);
     case db_state_destroyedSessions::ID:
       return db_state_destroyedSessions::fetch(p);
     case db_state_gcBlockId::ID:
@@ -262,6 +288,8 @@ object_ptr<Object> Object::fetch(td::TlParser &p) {
       return db_state_key_asyncSerializer::fetch(p);
     case db_state_key_hardforks::ID:
       return db_state_key_hardforks::fetch(p);
+    case db_state_key_dbVersion::ID:
+      return db_state_key_dbVersion::fetch(p);
     case db_state_shardClient::ID:
       return db_state_shardClient::fetch(p);
     case dht_key::ID:
@@ -352,6 +380,8 @@ object_ptr<Object> Object::fetch(td::TlParser &p) {
       return engine_validator_keyHash::fetch(p);
     case engine_validator_oneStat::ID:
       return engine_validator_oneStat::fetch(p);
+    case engine_validator_proposalVote::ID:
+      return engine_validator_proposalVote::fetch(p);
     case engine_validator_signature::ID:
       return engine_validator_signature::fetch(p);
     case engine_validator_stats::ID:
@@ -366,6 +396,18 @@ object_ptr<Object> Object::fetch(td::TlParser &p) {
       return fec_roundRobin::fetch(p);
     case fec_online::ID:
       return fec_online::fetch(p);
+    case http_header::ID:
+      return http_header::fetch(p);
+    case http_payloadPart::ID:
+      return http_payloadPart::fetch(p);
+    case http_response::ID:
+      return http_response::fetch(p);
+    case http_server_config::ID:
+      return http_server_config::fetch(p);
+    case http_server_dnsEntry::ID:
+      return http_server_dnsEntry::fetch(p);
+    case http_server_host::ID:
+      return http_server_host::fetch(p);
     case id_config_local::ID:
       return id_config_local::fetch(p);
     case liteclient_config_global::ID:
@@ -442,6 +484,10 @@ object_ptr<Object> Object::fetch(td::TlParser &p) {
       return ton_blockId::fetch(p);
     case ton_blockIdApprove::ID:
       return ton_blockIdApprove::fetch(p);
+    case tonNode_archiveNotFound::ID:
+      return tonNode_archiveNotFound::fetch(p);
+    case tonNode_archiveInfo::ID:
+      return tonNode_archiveInfo::fetch(p);
     case tonNode_blockDescriptionEmpty::ID:
       return tonNode_blockDescriptionEmpty::fetch(p);
     case tonNode_blockDescription::ID:
@@ -606,6 +652,8 @@ object_ptr<Function> Function::fetch(td::TlParser &p) {
       return engine_validator_controlQuery::fetch(p);
     case engine_validator_createElectionBid::ID:
       return engine_validator_createElectionBid::fetch(p);
+    case engine_validator_createProposalVote::ID:
+      return engine_validator_createProposalVote::fetch(p);
     case engine_validator_delAdnlId::ID:
       return engine_validator_delAdnlId::fetch(p);
     case engine_validator_delDhtId::ID:
@@ -640,6 +688,10 @@ object_ptr<Function> Function::fetch(td::TlParser &p) {
       return engine_validator_sign::fetch(p);
     case getTestObject::ID:
       return getTestObject::fetch(p);
+    case http_getNextPayloadPart::ID:
+      return http_getNextPayloadPart::fetch(p);
+    case http_request::ID:
+      return http_request::fetch(p);
     case overlay_getBroadcast::ID:
       return overlay_getBroadcast::fetch(p);
     case overlay_getBroadcastList::ID:
@@ -672,6 +724,10 @@ object_ptr<Function> Function::fetch(td::TlParser &p) {
       return tonNode_downloadPersistentStateSlice::fetch(p);
     case tonNode_downloadZeroState::ID:
       return tonNode_downloadZeroState::fetch(p);
+    case tonNode_getArchiveInfo::ID:
+      return tonNode_getArchiveInfo::fetch(p);
+    case tonNode_getArchiveSlice::ID:
+      return tonNode_getArchiveSlice::fetch(p);
     case tonNode_getCapabilities::ID:
       return tonNode_getCapabilities::fetch(p);
     case tonNode_getNextBlockDescription::ID:
@@ -2185,6 +2241,8 @@ object_ptr<adnl_Address> adnl_Address::fetch(td::TlParser &p) {
       return adnl_address_udp::fetch(p);
     case adnl_address_udp6::ID:
       return adnl_address_udp6::fetch(p);
+    case adnl_address_tunnel::ID:
+      return adnl_address_tunnel::fetch(p);
     default:
       FAIL(PSTRING() << "Unknown constructor found " << td::format::as_hex(constructor));
   }
@@ -2275,6 +2333,50 @@ void adnl_address_udp6::store(td::TlStorerToString &s, const char *field_name) c
     s.store_class_begin(field_name, "adnl_address_udp6");
     s.store_field("ip", ip_);
     s.store_field("port", port_);
+    s.store_class_end();
+  }
+}
+
+adnl_address_tunnel::adnl_address_tunnel()
+  : to_()
+  , pubkey_()
+{}
+
+adnl_address_tunnel::adnl_address_tunnel(td::Bits256 const &to_, object_ptr<PublicKey> &&pubkey_)
+  : to_(to_)
+  , pubkey_(std::move(pubkey_))
+{}
+
+const std::int32_t adnl_address_tunnel::ID;
+
+object_ptr<adnl_Address> adnl_address_tunnel::fetch(td::TlParser &p) {
+  return make_object<adnl_address_tunnel>(p);
+}
+
+adnl_address_tunnel::adnl_address_tunnel(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : to_(TlFetchInt256::parse(p))
+  , pubkey_(TlFetchObject<PublicKey>::parse(p))
+#undef FAIL
+{}
+
+void adnl_address_tunnel::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(to_, s);
+  TlStoreBoxedUnknown<TlStoreObject>::store(pubkey_, s);
+}
+
+void adnl_address_tunnel::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(to_, s);
+  TlStoreBoxedUnknown<TlStoreObject>::store(pubkey_, s);
+}
+
+void adnl_address_tunnel::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "adnl_address_tunnel");
+    s.store_field("to", to_);
+    if (pubkey_ == nullptr) { s.store_field("pubkey", "null"); } else { pubkey_->store(s, "pubkey"); }
     s.store_class_end();
   }
 }
@@ -2977,8 +3079,13 @@ object_ptr<adnl_Proxy> adnl_Proxy::fetch(td::TlParser &p) {
 #undef FAIL
 }
 
-adnl_proxy_none::adnl_proxy_none() {
-}
+adnl_proxy_none::adnl_proxy_none()
+  : id_()
+{}
+
+adnl_proxy_none::adnl_proxy_none(td::Bits256 const &id_)
+  : id_(id_)
+{}
 
 const std::int32_t adnl_proxy_none::ID;
 
@@ -2988,32 +3095,36 @@ object_ptr<adnl_Proxy> adnl_proxy_none::fetch(td::TlParser &p) {
 
 adnl_proxy_none::adnl_proxy_none(td::TlParser &p)
 #define FAIL(error) p.set_error(error)
+  : id_(TlFetchInt256::parse(p))
 #undef FAIL
-{
-  (void)p;
-}
+{}
 
 void adnl_proxy_none::store(td::TlStorerCalcLength &s) const {
   (void)sizeof(s);
+  TlStoreBinary::store(id_, s);
 }
 
 void adnl_proxy_none::store(td::TlStorerUnsafe &s) const {
   (void)sizeof(s);
+  TlStoreBinary::store(id_, s);
 }
 
 void adnl_proxy_none::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
     s.store_class_begin(field_name, "adnl_proxy_none");
+    s.store_field("id", id_);
     s.store_class_end();
   }
 }
 
 adnl_proxy_fast::adnl_proxy_fast()
-  : shared_secret_()
+  : id_()
+  , shared_secret_()
 {}
 
-adnl_proxy_fast::adnl_proxy_fast(td::BufferSlice &&shared_secret_)
-  : shared_secret_(std::move(shared_secret_))
+adnl_proxy_fast::adnl_proxy_fast(td::Bits256 const &id_, td::BufferSlice &&shared_secret_)
+  : id_(id_)
+  , shared_secret_(std::move(shared_secret_))
 {}
 
 const std::int32_t adnl_proxy_fast::ID;
@@ -3024,24 +3135,247 @@ object_ptr<adnl_Proxy> adnl_proxy_fast::fetch(td::TlParser &p) {
 
 adnl_proxy_fast::adnl_proxy_fast(td::TlParser &p)
 #define FAIL(error) p.set_error(error)
-  : shared_secret_(TlFetchBytes<td::BufferSlice>::parse(p))
+  : id_(TlFetchInt256::parse(p))
+  , shared_secret_(TlFetchBytes<td::BufferSlice>::parse(p))
 #undef FAIL
 {}
 
 void adnl_proxy_fast::store(td::TlStorerCalcLength &s) const {
   (void)sizeof(s);
+  TlStoreBinary::store(id_, s);
   TlStoreString::store(shared_secret_, s);
 }
 
 void adnl_proxy_fast::store(td::TlStorerUnsafe &s) const {
   (void)sizeof(s);
+  TlStoreBinary::store(id_, s);
   TlStoreString::store(shared_secret_, s);
 }
 
 void adnl_proxy_fast::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
     s.store_class_begin(field_name, "adnl_proxy_fast");
+    s.store_field("id", id_);
     s.store_bytes_field("shared_secret", shared_secret_);
+    s.store_class_end();
+  }
+}
+
+object_ptr<adnl_ProxyControlPacket> adnl_ProxyControlPacket::fetch(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return nullptr;
+  int constructor = p.fetch_int();
+  switch (constructor) {
+    case adnl_proxyControlPacketPing::ID:
+      return adnl_proxyControlPacketPing::fetch(p);
+    case adnl_proxyControlPacketPong::ID:
+      return adnl_proxyControlPacketPong::fetch(p);
+    case adnl_proxyControlPacketRegister::ID:
+      return adnl_proxyControlPacketRegister::fetch(p);
+    default:
+      FAIL(PSTRING() << "Unknown constructor found " << td::format::as_hex(constructor));
+  }
+#undef FAIL
+}
+
+adnl_proxyControlPacketPing::adnl_proxyControlPacketPing()
+  : id_()
+{}
+
+adnl_proxyControlPacketPing::adnl_proxyControlPacketPing(td::Bits256 const &id_)
+  : id_(id_)
+{}
+
+const std::int32_t adnl_proxyControlPacketPing::ID;
+
+object_ptr<adnl_ProxyControlPacket> adnl_proxyControlPacketPing::fetch(td::TlParser &p) {
+  return make_object<adnl_proxyControlPacketPing>(p);
+}
+
+adnl_proxyControlPacketPing::adnl_proxyControlPacketPing(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : id_(TlFetchInt256::parse(p))
+#undef FAIL
+{}
+
+void adnl_proxyControlPacketPing::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(id_, s);
+}
+
+void adnl_proxyControlPacketPing::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(id_, s);
+}
+
+void adnl_proxyControlPacketPing::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "adnl_proxyControlPacketPing");
+    s.store_field("id", id_);
+    s.store_class_end();
+  }
+}
+
+adnl_proxyControlPacketPong::adnl_proxyControlPacketPong()
+  : id_()
+{}
+
+adnl_proxyControlPacketPong::adnl_proxyControlPacketPong(td::Bits256 const &id_)
+  : id_(id_)
+{}
+
+const std::int32_t adnl_proxyControlPacketPong::ID;
+
+object_ptr<adnl_ProxyControlPacket> adnl_proxyControlPacketPong::fetch(td::TlParser &p) {
+  return make_object<adnl_proxyControlPacketPong>(p);
+}
+
+adnl_proxyControlPacketPong::adnl_proxyControlPacketPong(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : id_(TlFetchInt256::parse(p))
+#undef FAIL
+{}
+
+void adnl_proxyControlPacketPong::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(id_, s);
+}
+
+void adnl_proxyControlPacketPong::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(id_, s);
+}
+
+void adnl_proxyControlPacketPong::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "adnl_proxyControlPacketPong");
+    s.store_field("id", id_);
+    s.store_class_end();
+  }
+}
+
+adnl_proxyControlPacketRegister::adnl_proxyControlPacketRegister()
+  : ip_()
+  , port_()
+{}
+
+adnl_proxyControlPacketRegister::adnl_proxyControlPacketRegister(std::int32_t ip_, std::int32_t port_)
+  : ip_(ip_)
+  , port_(port_)
+{}
+
+const std::int32_t adnl_proxyControlPacketRegister::ID;
+
+object_ptr<adnl_ProxyControlPacket> adnl_proxyControlPacketRegister::fetch(td::TlParser &p) {
+  return make_object<adnl_proxyControlPacketRegister>(p);
+}
+
+adnl_proxyControlPacketRegister::adnl_proxyControlPacketRegister(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : ip_(TlFetchInt::parse(p))
+  , port_(TlFetchInt::parse(p))
+#undef FAIL
+{}
+
+void adnl_proxyControlPacketRegister::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(ip_, s);
+  TlStoreBinary::store(port_, s);
+}
+
+void adnl_proxyControlPacketRegister::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(ip_, s);
+  TlStoreBinary::store(port_, s);
+}
+
+void adnl_proxyControlPacketRegister::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "adnl_proxyControlPacketRegister");
+    s.store_field("ip", ip_);
+    s.store_field("port", port_);
+    s.store_class_end();
+  }
+}
+
+adnl_proxyPacketHeader::adnl_proxyPacketHeader()
+  : proxy_id_()
+  , flags_()
+  , ip_()
+  , port_()
+  , adnl_start_time_()
+  , seqno_()
+  , date_()
+  , signature_()
+{}
+
+adnl_proxyPacketHeader::adnl_proxyPacketHeader(td::Bits256 const &proxy_id_, std::int32_t flags_, std::int32_t ip_, std::int32_t port_, std::int32_t adnl_start_time_, std::int64_t seqno_, std::int32_t date_, td::Bits256 const &signature_)
+  : proxy_id_(proxy_id_)
+  , flags_(flags_)
+  , ip_(ip_)
+  , port_(port_)
+  , adnl_start_time_(adnl_start_time_)
+  , seqno_(seqno_)
+  , date_(date_)
+  , signature_(signature_)
+{}
+
+const std::int32_t adnl_proxyPacketHeader::ID;
+
+object_ptr<adnl_proxyPacketHeader> adnl_proxyPacketHeader::fetch(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return nullptr;
+  object_ptr<adnl_proxyPacketHeader> res = make_object<adnl_proxyPacketHeader>();
+  std::int32_t var0;
+  res->proxy_id_ = TlFetchInt256::parse(p);
+  if ((var0 = res->flags_ = TlFetchInt::parse(p)) < 0) { FAIL("Variable of type # can't be negative"); }
+  if (var0 & 1) { res->ip_ = TlFetchInt::parse(p); }
+  if (var0 & 1) { res->port_ = TlFetchInt::parse(p); }
+  if (var0 & 2) { res->adnl_start_time_ = TlFetchInt::parse(p); }
+  if (var0 & 4) { res->seqno_ = TlFetchLong::parse(p); }
+  if (var0 & 8) { res->date_ = TlFetchInt::parse(p); }
+  res->signature_ = TlFetchInt256::parse(p);
+  if (p.get_error()) { FAIL(""); }
+  return res;
+#undef FAIL
+}
+
+void adnl_proxyPacketHeader::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  std::int32_t var0;
+  TlStoreBinary::store(proxy_id_, s);
+  TlStoreBinary::store((var0 = flags_), s);
+  if (var0 & 1) { TlStoreBinary::store(ip_, s); }
+  if (var0 & 1) { TlStoreBinary::store(port_, s); }
+  if (var0 & 2) { TlStoreBinary::store(adnl_start_time_, s); }
+  if (var0 & 4) { TlStoreBinary::store(seqno_, s); }
+  if (var0 & 8) { TlStoreBinary::store(date_, s); }
+  TlStoreBinary::store(signature_, s);
+}
+
+void adnl_proxyPacketHeader::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  std::int32_t var0;
+  TlStoreBinary::store(proxy_id_, s);
+  TlStoreBinary::store((var0 = flags_), s);
+  if (var0 & 1) { TlStoreBinary::store(ip_, s); }
+  if (var0 & 1) { TlStoreBinary::store(port_, s); }
+  if (var0 & 2) { TlStoreBinary::store(adnl_start_time_, s); }
+  if (var0 & 4) { TlStoreBinary::store(seqno_, s); }
+  if (var0 & 8) { TlStoreBinary::store(date_, s); }
+  TlStoreBinary::store(signature_, s);
+}
+
+void adnl_proxyPacketHeader::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "adnl_proxyPacketHeader");
+  std::int32_t var0;
+    s.store_field("proxy_id", proxy_id_);
+    s.store_field("flags", (var0 = flags_));
+    if (var0 & 1) { s.store_field("ip", ip_); }
+    if (var0 & 1) { s.store_field("port", port_); }
+    if (var0 & 2) { s.store_field("adnl_start_time", adnl_start_time_); }
+    if (var0 & 4) { s.store_field("seqno", seqno_); }
+    if (var0 & 8) { s.store_field("date", date_); }
+    s.store_field("signature", signature_);
     s.store_class_end();
   }
 }
@@ -3160,6 +3494,89 @@ void adnl_proxyToFast::store(td::TlStorerToString &s, const char *field_name) co
     s.store_field("port", port_);
     s.store_field("date", date_);
     s.store_field("signature", signature_);
+    s.store_class_end();
+  }
+}
+
+adnl_tunnelPacketContents::adnl_tunnelPacketContents()
+  : rand1_()
+  , flags_()
+  , from_ip_()
+  , from_port_()
+  , message_()
+  , statistics_()
+  , payment_()
+  , rand2_()
+{}
+
+adnl_tunnelPacketContents::adnl_tunnelPacketContents(td::BufferSlice &&rand1_, std::int32_t flags_, std::int32_t from_ip_, std::int32_t from_port_, td::BufferSlice &&message_, td::BufferSlice &&statistics_, td::BufferSlice &&payment_, td::BufferSlice &&rand2_)
+  : rand1_(std::move(rand1_))
+  , flags_(flags_)
+  , from_ip_(from_ip_)
+  , from_port_(from_port_)
+  , message_(std::move(message_))
+  , statistics_(std::move(statistics_))
+  , payment_(std::move(payment_))
+  , rand2_(std::move(rand2_))
+{}
+
+const std::int32_t adnl_tunnelPacketContents::ID;
+
+object_ptr<adnl_tunnelPacketContents> adnl_tunnelPacketContents::fetch(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return nullptr;
+  object_ptr<adnl_tunnelPacketContents> res = make_object<adnl_tunnelPacketContents>();
+  std::int32_t var0;
+  res->rand1_ = TlFetchBytes<td::BufferSlice>::parse(p);
+  if ((var0 = res->flags_ = TlFetchInt::parse(p)) < 0) { FAIL("Variable of type # can't be negative"); }
+  if (var0 & 1) { res->from_ip_ = TlFetchInt::parse(p); }
+  if (var0 & 1) { res->from_port_ = TlFetchInt::parse(p); }
+  if (var0 & 2) { res->message_ = TlFetchBytes<td::BufferSlice>::parse(p); }
+  if (var0 & 4) { res->statistics_ = TlFetchBytes<td::BufferSlice>::parse(p); }
+  if (var0 & 8) { res->payment_ = TlFetchBytes<td::BufferSlice>::parse(p); }
+  res->rand2_ = TlFetchBytes<td::BufferSlice>::parse(p);
+  if (p.get_error()) { FAIL(""); }
+  return res;
+#undef FAIL
+}
+
+void adnl_tunnelPacketContents::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  std::int32_t var0;
+  TlStoreString::store(rand1_, s);
+  TlStoreBinary::store((var0 = flags_), s);
+  if (var0 & 1) { TlStoreBinary::store(from_ip_, s); }
+  if (var0 & 1) { TlStoreBinary::store(from_port_, s); }
+  if (var0 & 2) { TlStoreString::store(message_, s); }
+  if (var0 & 4) { TlStoreString::store(statistics_, s); }
+  if (var0 & 8) { TlStoreString::store(payment_, s); }
+  TlStoreString::store(rand2_, s);
+}
+
+void adnl_tunnelPacketContents::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  std::int32_t var0;
+  TlStoreString::store(rand1_, s);
+  TlStoreBinary::store((var0 = flags_), s);
+  if (var0 & 1) { TlStoreBinary::store(from_ip_, s); }
+  if (var0 & 1) { TlStoreBinary::store(from_port_, s); }
+  if (var0 & 2) { TlStoreString::store(message_, s); }
+  if (var0 & 4) { TlStoreString::store(statistics_, s); }
+  if (var0 & 8) { TlStoreString::store(payment_, s); }
+  TlStoreString::store(rand2_, s);
+}
+
+void adnl_tunnelPacketContents::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "adnl_tunnelPacketContents");
+  std::int32_t var0;
+    s.store_bytes_field("rand1", rand1_);
+    s.store_field("flags", (var0 = flags_));
+    if (var0 & 1) { s.store_field("from_ip", from_ip_); }
+    if (var0 & 1) { s.store_field("from_port", from_port_); }
+    if (var0 & 2) { s.store_bytes_field("message", message_); }
+    if (var0 & 4) { s.store_bytes_field("statistics", statistics_); }
+    if (var0 & 8) { s.store_bytes_field("payment", payment_); }
+    s.store_bytes_field("rand2", rand2_);
     s.store_class_end();
   }
 }
@@ -4352,9 +4769,10 @@ db_block_info::db_block_info()
   , lt_()
   , ts_()
   , state_()
+  , masterchain_ref_seqno_()
 {}
 
-db_block_info::db_block_info(object_ptr<tonNode_blockIdExt> &&id_, std::int32_t flags_, object_ptr<tonNode_blockIdExt> &&prev_left_, object_ptr<tonNode_blockIdExt> &&prev_right_, object_ptr<tonNode_blockIdExt> &&next_left_, object_ptr<tonNode_blockIdExt> &&next_right_, std::int64_t lt_, std::int32_t ts_, td::Bits256 const &state_)
+db_block_info::db_block_info(object_ptr<tonNode_blockIdExt> &&id_, std::int32_t flags_, object_ptr<tonNode_blockIdExt> &&prev_left_, object_ptr<tonNode_blockIdExt> &&prev_right_, object_ptr<tonNode_blockIdExt> &&next_left_, object_ptr<tonNode_blockIdExt> &&next_right_, std::int64_t lt_, std::int32_t ts_, td::Bits256 const &state_, std::int32_t masterchain_ref_seqno_)
   : id_(std::move(id_))
   , flags_(flags_)
   , prev_left_(std::move(prev_left_))
@@ -4364,6 +4782,7 @@ db_block_info::db_block_info(object_ptr<tonNode_blockIdExt> &&id_, std::int32_t 
   , lt_(lt_)
   , ts_(ts_)
   , state_(state_)
+  , masterchain_ref_seqno_(masterchain_ref_seqno_)
 {}
 
 const std::int32_t db_block_info::ID;
@@ -4381,6 +4800,7 @@ object_ptr<db_block_Info> db_block_info::fetch(td::TlParser &p) {
   if (var0 & 8192) { res->lt_ = TlFetchLong::parse(p); }
   if (var0 & 16384) { res->ts_ = TlFetchInt::parse(p); }
   if (var0 & 131072) { res->state_ = TlFetchInt256::parse(p); }
+  if (var0 & 8388608) { res->masterchain_ref_seqno_ = TlFetchInt::parse(p); }
   if (p.get_error()) { FAIL(""); }
   return std::move(res);
 #undef FAIL
@@ -4398,6 +4818,7 @@ void db_block_info::store(td::TlStorerCalcLength &s) const {
   if (var0 & 8192) { TlStoreBinary::store(lt_, s); }
   if (var0 & 16384) { TlStoreBinary::store(ts_, s); }
   if (var0 & 131072) { TlStoreBinary::store(state_, s); }
+  if (var0 & 8388608) { TlStoreBinary::store(masterchain_ref_seqno_, s); }
 }
 
 void db_block_info::store(td::TlStorerUnsafe &s) const {
@@ -4412,6 +4833,7 @@ void db_block_info::store(td::TlStorerUnsafe &s) const {
   if (var0 & 8192) { TlStoreBinary::store(lt_, s); }
   if (var0 & 16384) { TlStoreBinary::store(ts_, s); }
   if (var0 & 131072) { TlStoreBinary::store(state_, s); }
+  if (var0 & 8388608) { TlStoreBinary::store(masterchain_ref_seqno_, s); }
 }
 
 void db_block_info::store(td::TlStorerToString &s, const char *field_name) const {
@@ -4427,6 +4849,7 @@ void db_block_info::store(td::TlStorerToString &s, const char *field_name) const
     if (var0 & 8192) { s.store_field("lt", lt_); }
     if (var0 & 16384) { s.store_field("ts", ts_); }
     if (var0 & 131072) { s.store_field("state", state_); }
+    if (var0 & 8388608) { s.store_field("masterchain_ref_seqno", masterchain_ref_seqno_); }
     s.store_class_end();
   }
 }
@@ -4882,6 +5305,8 @@ object_ptr<db_filedb_Key> db_filedb_Key::fetch(td::TlParser &p) {
       return db_filedb_key_signatures::fetch(p);
     case db_filedb_key_candidate::ID:
       return db_filedb_key_candidate::fetch(p);
+    case db_filedb_key_blockInfo::ID:
+      return db_filedb_key_blockInfo::fetch(p);
     default:
       FAIL(PSTRING() << "Unknown constructor found " << td::format::as_hex(constructor));
   }
@@ -5191,6 +5616,44 @@ void db_filedb_key_candidate::store(td::TlStorerToString &s, const char *field_n
   }
 }
 
+db_filedb_key_blockInfo::db_filedb_key_blockInfo()
+  : block_id_()
+{}
+
+db_filedb_key_blockInfo::db_filedb_key_blockInfo(object_ptr<tonNode_blockIdExt> &&block_id_)
+  : block_id_(std::move(block_id_))
+{}
+
+const std::int32_t db_filedb_key_blockInfo::ID;
+
+object_ptr<db_filedb_Key> db_filedb_key_blockInfo::fetch(td::TlParser &p) {
+  return make_object<db_filedb_key_blockInfo>(p);
+}
+
+db_filedb_key_blockInfo::db_filedb_key_blockInfo(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : block_id_(TlFetchObject<tonNode_blockIdExt>::parse(p))
+#undef FAIL
+{}
+
+void db_filedb_key_blockInfo::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreObject::store(block_id_, s);
+}
+
+void db_filedb_key_blockInfo::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreObject::store(block_id_, s);
+}
+
+void db_filedb_key_blockInfo::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "db_filedb_key_blockInfo");
+    if (block_id_ == nullptr) { s.store_field("block_id", "null"); } else { block_id_->store(s, "block_id"); }
+    s.store_class_end();
+  }
+}
+
 db_filedb_value::db_filedb_value()
   : key_()
   , prev_()
@@ -5243,6 +5706,275 @@ void db_filedb_value::store(td::TlStorerToString &s, const char *field_name) con
     s.store_field("prev", prev_);
     s.store_field("next", next_);
     s.store_field("file_hash", file_hash_);
+    s.store_class_end();
+  }
+}
+
+object_ptr<db_files_Key> db_files_Key::fetch(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return nullptr;
+  int constructor = p.fetch_int();
+  switch (constructor) {
+    case db_files_index_key::ID:
+      return db_files_index_key::fetch(p);
+    case db_files_package_key::ID:
+      return db_files_package_key::fetch(p);
+    default:
+      FAIL(PSTRING() << "Unknown constructor found " << td::format::as_hex(constructor));
+  }
+#undef FAIL
+}
+
+db_files_index_key::db_files_index_key() {
+}
+
+const std::int32_t db_files_index_key::ID;
+
+object_ptr<db_files_Key> db_files_index_key::fetch(td::TlParser &p) {
+  return make_object<db_files_index_key>(p);
+}
+
+db_files_index_key::db_files_index_key(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+#undef FAIL
+{
+  (void)p;
+}
+
+void db_files_index_key::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+}
+
+void db_files_index_key::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+}
+
+void db_files_index_key::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "db_files_index_key");
+    s.store_class_end();
+  }
+}
+
+db_files_package_key::db_files_package_key()
+  : package_id_()
+  , key_()
+  , temp_()
+{}
+
+db_files_package_key::db_files_package_key(std::int32_t package_id_, bool key_, bool temp_)
+  : package_id_(package_id_)
+  , key_(key_)
+  , temp_(temp_)
+{}
+
+const std::int32_t db_files_package_key::ID;
+
+object_ptr<db_files_Key> db_files_package_key::fetch(td::TlParser &p) {
+  return make_object<db_files_package_key>(p);
+}
+
+db_files_package_key::db_files_package_key(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : package_id_(TlFetchInt::parse(p))
+  , key_(TlFetchBool::parse(p))
+  , temp_(TlFetchBool::parse(p))
+#undef FAIL
+{}
+
+void db_files_package_key::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(package_id_, s);
+  TlStoreBool::store(key_, s);
+  TlStoreBool::store(temp_, s);
+}
+
+void db_files_package_key::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(package_id_, s);
+  TlStoreBool::store(key_, s);
+  TlStoreBool::store(temp_, s);
+}
+
+void db_files_package_key::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "db_files_package_key");
+    s.store_field("package_id", package_id_);
+    s.store_field("key", key_);
+    s.store_field("temp", temp_);
+    s.store_class_end();
+  }
+}
+
+db_files_index_value::db_files_index_value()
+  : packages_()
+  , key_packages_()
+  , temp_packages_()
+{}
+
+db_files_index_value::db_files_index_value(std::vector<std::int32_t> &&packages_, std::vector<std::int32_t> &&key_packages_, std::vector<std::int32_t> &&temp_packages_)
+  : packages_(std::move(packages_))
+  , key_packages_(std::move(key_packages_))
+  , temp_packages_(std::move(temp_packages_))
+{}
+
+const std::int32_t db_files_index_value::ID;
+
+object_ptr<db_files_index_value> db_files_index_value::fetch(td::TlParser &p) {
+  return make_object<db_files_index_value>(p);
+}
+
+db_files_index_value::db_files_index_value(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : packages_(TlFetchVector<TlFetchInt>::parse(p))
+  , key_packages_(TlFetchVector<TlFetchInt>::parse(p))
+  , temp_packages_(TlFetchVector<TlFetchInt>::parse(p))
+#undef FAIL
+{}
+
+void db_files_index_value::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreVector<TlStoreBinary>::store(packages_, s);
+  TlStoreVector<TlStoreBinary>::store(key_packages_, s);
+  TlStoreVector<TlStoreBinary>::store(temp_packages_, s);
+}
+
+void db_files_index_value::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreVector<TlStoreBinary>::store(packages_, s);
+  TlStoreVector<TlStoreBinary>::store(key_packages_, s);
+  TlStoreVector<TlStoreBinary>::store(temp_packages_, s);
+}
+
+void db_files_index_value::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "db_files_index_value");
+    { const std::vector<std::int32_t> &v = packages_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "vector[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("packages", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { s.store_field("", v[i]); } s.store_class_end(); }
+    { const std::vector<std::int32_t> &v = key_packages_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "vector[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("key_packages", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { s.store_field("", v[i]); } s.store_class_end(); }
+    { const std::vector<std::int32_t> &v = temp_packages_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "vector[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("temp_packages", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { s.store_field("", v[i]); } s.store_class_end(); }
+    s.store_class_end();
+  }
+}
+
+db_files_package_firstBlock::db_files_package_firstBlock()
+  : workchain_()
+  , shard_()
+  , seqno_()
+  , unixtime_()
+  , lt_()
+{}
+
+db_files_package_firstBlock::db_files_package_firstBlock(std::int32_t workchain_, std::int64_t shard_, std::int32_t seqno_, std::int32_t unixtime_, std::int64_t lt_)
+  : workchain_(workchain_)
+  , shard_(shard_)
+  , seqno_(seqno_)
+  , unixtime_(unixtime_)
+  , lt_(lt_)
+{}
+
+const std::int32_t db_files_package_firstBlock::ID;
+
+object_ptr<db_files_package_firstBlock> db_files_package_firstBlock::fetch(td::TlParser &p) {
+  return make_object<db_files_package_firstBlock>(p);
+}
+
+db_files_package_firstBlock::db_files_package_firstBlock(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : workchain_(TlFetchInt::parse(p))
+  , shard_(TlFetchLong::parse(p))
+  , seqno_(TlFetchInt::parse(p))
+  , unixtime_(TlFetchInt::parse(p))
+  , lt_(TlFetchLong::parse(p))
+#undef FAIL
+{}
+
+void db_files_package_firstBlock::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(workchain_, s);
+  TlStoreBinary::store(shard_, s);
+  TlStoreBinary::store(seqno_, s);
+  TlStoreBinary::store(unixtime_, s);
+  TlStoreBinary::store(lt_, s);
+}
+
+void db_files_package_firstBlock::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(workchain_, s);
+  TlStoreBinary::store(shard_, s);
+  TlStoreBinary::store(seqno_, s);
+  TlStoreBinary::store(unixtime_, s);
+  TlStoreBinary::store(lt_, s);
+}
+
+void db_files_package_firstBlock::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "db_files_package_firstBlock");
+    s.store_field("workchain", workchain_);
+    s.store_field("shard", shard_);
+    s.store_field("seqno", seqno_);
+    s.store_field("unixtime", unixtime_);
+    s.store_field("lt", lt_);
+    s.store_class_end();
+  }
+}
+
+db_files_package_value::db_files_package_value()
+  : package_id_()
+  , key_()
+  , temp_()
+  , firstblocks_()
+  , deleted_()
+{}
+
+db_files_package_value::db_files_package_value(std::int32_t package_id_, bool key_, bool temp_, std::vector<object_ptr<db_files_package_firstBlock>> &&firstblocks_, bool deleted_)
+  : package_id_(package_id_)
+  , key_(key_)
+  , temp_(temp_)
+  , firstblocks_(std::move(firstblocks_))
+  , deleted_(deleted_)
+{}
+
+const std::int32_t db_files_package_value::ID;
+
+object_ptr<db_files_package_value> db_files_package_value::fetch(td::TlParser &p) {
+  return make_object<db_files_package_value>(p);
+}
+
+db_files_package_value::db_files_package_value(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : package_id_(TlFetchInt::parse(p))
+  , key_(TlFetchBool::parse(p))
+  , temp_(TlFetchBool::parse(p))
+  , firstblocks_(TlFetchVector<TlFetchObject<db_files_package_firstBlock>>::parse(p))
+  , deleted_(TlFetchBool::parse(p))
+#undef FAIL
+{}
+
+void db_files_package_value::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(package_id_, s);
+  TlStoreBool::store(key_, s);
+  TlStoreBool::store(temp_, s);
+  TlStoreVector<TlStoreObject>::store(firstblocks_, s);
+  TlStoreBool::store(deleted_, s);
+}
+
+void db_files_package_value::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(package_id_, s);
+  TlStoreBool::store(key_, s);
+  TlStoreBool::store(temp_, s);
+  TlStoreVector<TlStoreObject>::store(firstblocks_, s);
+  TlStoreBool::store(deleted_, s);
+}
+
+void db_files_package_value::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "db_files_package_value");
+    s.store_field("package_id", package_id_);
+    s.store_field("key", key_);
+    s.store_field("temp", temp_);
+    { const std::vector<object_ptr<db_files_package_firstBlock>> &v = firstblocks_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "vector[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("firstblocks", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { if (v[i] == nullptr) { s.store_field("", "null"); } else { v[i]->store(s, ""); } } s.store_class_end(); }
+    s.store_field("deleted", deleted_);
     s.store_class_end();
   }
 }
@@ -5889,6 +6621,44 @@ void db_state_asyncSerializer::store(td::TlStorerToString &s, const char *field_
   }
 }
 
+db_state_dbVersion::db_state_dbVersion()
+  : version_()
+{}
+
+db_state_dbVersion::db_state_dbVersion(std::int32_t version_)
+  : version_(version_)
+{}
+
+const std::int32_t db_state_dbVersion::ID;
+
+object_ptr<db_state_dbVersion> db_state_dbVersion::fetch(td::TlParser &p) {
+  return make_object<db_state_dbVersion>(p);
+}
+
+db_state_dbVersion::db_state_dbVersion(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : version_(TlFetchInt::parse(p))
+#undef FAIL
+{}
+
+void db_state_dbVersion::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(version_, s);
+}
+
+void db_state_dbVersion::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(version_, s);
+}
+
+void db_state_dbVersion::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "db_state_dbVersion");
+    s.store_field("version", version_);
+    s.store_class_end();
+  }
+}
+
 db_state_destroyedSessions::db_state_destroyedSessions()
   : sessions_()
 {}
@@ -6057,6 +6827,8 @@ object_ptr<db_state_Key> db_state_Key::fetch(td::TlParser &p) {
       return db_state_key_asyncSerializer::fetch(p);
     case db_state_key_hardforks::ID:
       return db_state_key_hardforks::fetch(p);
+    case db_state_key_dbVersion::ID:
+      return db_state_key_dbVersion::fetch(p);
     default:
       FAIL(PSTRING() << "Unknown constructor found " << td::format::as_hex(constructor));
   }
@@ -6245,6 +7017,37 @@ void db_state_key_hardforks::store(td::TlStorerUnsafe &s) const {
 void db_state_key_hardforks::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
     s.store_class_begin(field_name, "db_state_key_hardforks");
+    s.store_class_end();
+  }
+}
+
+db_state_key_dbVersion::db_state_key_dbVersion() {
+}
+
+const std::int32_t db_state_key_dbVersion::ID;
+
+object_ptr<db_state_Key> db_state_key_dbVersion::fetch(td::TlParser &p) {
+  return make_object<db_state_key_dbVersion>(p);
+}
+
+db_state_key_dbVersion::db_state_key_dbVersion(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+#undef FAIL
+{
+  (void)p;
+}
+
+void db_state_key_dbVersion::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+}
+
+void db_state_key_dbVersion::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+}
+
+void db_state_key_dbVersion::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "db_state_key_dbVersion");
     s.store_class_end();
   }
 }
@@ -8343,6 +9146,50 @@ void engine_validator_oneStat::store(td::TlStorerToString &s, const char *field_
   }
 }
 
+engine_validator_proposalVote::engine_validator_proposalVote()
+  : perm_key_()
+  , to_send_()
+{}
+
+engine_validator_proposalVote::engine_validator_proposalVote(td::Bits256 const &perm_key_, td::BufferSlice &&to_send_)
+  : perm_key_(perm_key_)
+  , to_send_(std::move(to_send_))
+{}
+
+const std::int32_t engine_validator_proposalVote::ID;
+
+object_ptr<engine_validator_proposalVote> engine_validator_proposalVote::fetch(td::TlParser &p) {
+  return make_object<engine_validator_proposalVote>(p);
+}
+
+engine_validator_proposalVote::engine_validator_proposalVote(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : perm_key_(TlFetchInt256::parse(p))
+  , to_send_(TlFetchBytes<td::BufferSlice>::parse(p))
+#undef FAIL
+{}
+
+void engine_validator_proposalVote::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(perm_key_, s);
+  TlStoreString::store(to_send_, s);
+}
+
+void engine_validator_proposalVote::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(perm_key_, s);
+  TlStoreString::store(to_send_, s);
+}
+
+void engine_validator_proposalVote::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "engine_validator_proposalVote");
+    s.store_field("perm_key", perm_key_);
+    s.store_bytes_field("to_send", to_send_);
+    s.store_class_end();
+  }
+}
+
 engine_validator_signature::engine_validator_signature()
   : signature_()
 {}
@@ -8650,6 +9497,300 @@ void fec_online::store(td::TlStorerToString &s, const char *field_name) const {
     s.store_field("data_size", data_size_);
     s.store_field("symbol_size", symbol_size_);
     s.store_field("symbols_count", symbols_count_);
+    s.store_class_end();
+  }
+}
+
+http_header::http_header()
+  : name_()
+  , value_()
+{}
+
+http_header::http_header(std::string const &name_, std::string const &value_)
+  : name_(std::move(name_))
+  , value_(std::move(value_))
+{}
+
+const std::int32_t http_header::ID;
+
+object_ptr<http_header> http_header::fetch(td::TlParser &p) {
+  return make_object<http_header>(p);
+}
+
+http_header::http_header(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : name_(TlFetchString<std::string>::parse(p))
+  , value_(TlFetchString<std::string>::parse(p))
+#undef FAIL
+{}
+
+void http_header::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreString::store(name_, s);
+  TlStoreString::store(value_, s);
+}
+
+void http_header::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreString::store(name_, s);
+  TlStoreString::store(value_, s);
+}
+
+void http_header::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "http_header");
+    s.store_field("name", name_);
+    s.store_field("value", value_);
+    s.store_class_end();
+  }
+}
+
+http_payloadPart::http_payloadPart()
+  : data_()
+  , trailer_()
+  , last_()
+{}
+
+http_payloadPart::http_payloadPart(td::BufferSlice &&data_, std::vector<object_ptr<http_header>> &&trailer_, bool last_)
+  : data_(std::move(data_))
+  , trailer_(std::move(trailer_))
+  , last_(last_)
+{}
+
+const std::int32_t http_payloadPart::ID;
+
+object_ptr<http_payloadPart> http_payloadPart::fetch(td::TlParser &p) {
+  return make_object<http_payloadPart>(p);
+}
+
+http_payloadPart::http_payloadPart(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : data_(TlFetchBytes<td::BufferSlice>::parse(p))
+  , trailer_(TlFetchVector<TlFetchObject<http_header>>::parse(p))
+  , last_(TlFetchBool::parse(p))
+#undef FAIL
+{}
+
+void http_payloadPart::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreString::store(data_, s);
+  TlStoreVector<TlStoreObject>::store(trailer_, s);
+  TlStoreBool::store(last_, s);
+}
+
+void http_payloadPart::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreString::store(data_, s);
+  TlStoreVector<TlStoreObject>::store(trailer_, s);
+  TlStoreBool::store(last_, s);
+}
+
+void http_payloadPart::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "http_payloadPart");
+    s.store_bytes_field("data", data_);
+    { const std::vector<object_ptr<http_header>> &v = trailer_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "vector[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("trailer", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { if (v[i] == nullptr) { s.store_field("", "null"); } else { v[i]->store(s, ""); } } s.store_class_end(); }
+    s.store_field("last", last_);
+    s.store_class_end();
+  }
+}
+
+http_response::http_response()
+  : http_version_()
+  , status_code_()
+  , reason_()
+  , headers_()
+{}
+
+http_response::http_response(std::string const &http_version_, std::int32_t status_code_, std::string const &reason_, std::vector<object_ptr<http_header>> &&headers_)
+  : http_version_(std::move(http_version_))
+  , status_code_(status_code_)
+  , reason_(std::move(reason_))
+  , headers_(std::move(headers_))
+{}
+
+const std::int32_t http_response::ID;
+
+object_ptr<http_response> http_response::fetch(td::TlParser &p) {
+  return make_object<http_response>(p);
+}
+
+http_response::http_response(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : http_version_(TlFetchString<std::string>::parse(p))
+  , status_code_(TlFetchInt::parse(p))
+  , reason_(TlFetchString<std::string>::parse(p))
+  , headers_(TlFetchVector<TlFetchObject<http_header>>::parse(p))
+#undef FAIL
+{}
+
+void http_response::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreString::store(http_version_, s);
+  TlStoreBinary::store(status_code_, s);
+  TlStoreString::store(reason_, s);
+  TlStoreVector<TlStoreObject>::store(headers_, s);
+}
+
+void http_response::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreString::store(http_version_, s);
+  TlStoreBinary::store(status_code_, s);
+  TlStoreString::store(reason_, s);
+  TlStoreVector<TlStoreObject>::store(headers_, s);
+}
+
+void http_response::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "http_response");
+    s.store_field("http_version", http_version_);
+    s.store_field("status_code", status_code_);
+    s.store_field("reason", reason_);
+    { const std::vector<object_ptr<http_header>> &v = headers_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "vector[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("headers", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { if (v[i] == nullptr) { s.store_field("", "null"); } else { v[i]->store(s, ""); } } s.store_class_end(); }
+    s.store_class_end();
+  }
+}
+
+http_server_config::http_server_config()
+  : dhs_()
+  , local_hosts_()
+{}
+
+http_server_config::http_server_config(std::vector<object_ptr<http_server_dnsEntry>> &&dhs_, std::vector<object_ptr<http_server_host>> &&local_hosts_)
+  : dhs_(std::move(dhs_))
+  , local_hosts_(std::move(local_hosts_))
+{}
+
+const std::int32_t http_server_config::ID;
+
+object_ptr<http_server_config> http_server_config::fetch(td::TlParser &p) {
+  return make_object<http_server_config>(p);
+}
+
+http_server_config::http_server_config(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : dhs_(TlFetchVector<TlFetchObject<http_server_dnsEntry>>::parse(p))
+  , local_hosts_(TlFetchVector<TlFetchObject<http_server_host>>::parse(p))
+#undef FAIL
+{}
+
+void http_server_config::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreVector<TlStoreObject>::store(dhs_, s);
+  TlStoreVector<TlStoreObject>::store(local_hosts_, s);
+}
+
+void http_server_config::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreVector<TlStoreObject>::store(dhs_, s);
+  TlStoreVector<TlStoreObject>::store(local_hosts_, s);
+}
+
+void http_server_config::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "http_server_config");
+    { const std::vector<object_ptr<http_server_dnsEntry>> &v = dhs_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "vector[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("dhs", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { if (v[i] == nullptr) { s.store_field("", "null"); } else { v[i]->store(s, ""); } } s.store_class_end(); }
+    { const std::vector<object_ptr<http_server_host>> &v = local_hosts_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "vector[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("local_hosts", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { if (v[i] == nullptr) { s.store_field("", "null"); } else { v[i]->store(s, ""); } } s.store_class_end(); }
+    s.store_class_end();
+  }
+}
+
+http_server_dnsEntry::http_server_dnsEntry()
+  : domain_()
+  , addr_()
+{}
+
+http_server_dnsEntry::http_server_dnsEntry(std::string const &domain_, object_ptr<adnl_id_short> &&addr_)
+  : domain_(std::move(domain_))
+  , addr_(std::move(addr_))
+{}
+
+const std::int32_t http_server_dnsEntry::ID;
+
+object_ptr<http_server_dnsEntry> http_server_dnsEntry::fetch(td::TlParser &p) {
+  return make_object<http_server_dnsEntry>(p);
+}
+
+http_server_dnsEntry::http_server_dnsEntry(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : domain_(TlFetchString<std::string>::parse(p))
+  , addr_(TlFetchObject<adnl_id_short>::parse(p))
+#undef FAIL
+{}
+
+void http_server_dnsEntry::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreString::store(domain_, s);
+  TlStoreObject::store(addr_, s);
+}
+
+void http_server_dnsEntry::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreString::store(domain_, s);
+  TlStoreObject::store(addr_, s);
+}
+
+void http_server_dnsEntry::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "http_server_dnsEntry");
+    s.store_field("domain", domain_);
+    if (addr_ == nullptr) { s.store_field("addr", "null"); } else { addr_->store(s, "addr"); }
+    s.store_class_end();
+  }
+}
+
+http_server_host::http_server_host()
+  : domains_()
+  , ip_()
+  , port_()
+  , adnl_id_()
+{}
+
+http_server_host::http_server_host(std::vector<std::string> &&domains_, std::int32_t ip_, std::int32_t port_, object_ptr<adnl_id_short> &&adnl_id_)
+  : domains_(std::move(domains_))
+  , ip_(ip_)
+  , port_(port_)
+  , adnl_id_(std::move(adnl_id_))
+{}
+
+const std::int32_t http_server_host::ID;
+
+object_ptr<http_server_host> http_server_host::fetch(td::TlParser &p) {
+  return make_object<http_server_host>(p);
+}
+
+http_server_host::http_server_host(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : domains_(TlFetchVector<TlFetchString<std::string>>::parse(p))
+  , ip_(TlFetchInt::parse(p))
+  , port_(TlFetchInt::parse(p))
+  , adnl_id_(TlFetchObject<adnl_id_short>::parse(p))
+#undef FAIL
+{}
+
+void http_server_host::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreVector<TlStoreString>::store(domains_, s);
+  TlStoreBinary::store(ip_, s);
+  TlStoreBinary::store(port_, s);
+  TlStoreObject::store(adnl_id_, s);
+}
+
+void http_server_host::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreVector<TlStoreString>::store(domains_, s);
+  TlStoreBinary::store(ip_, s);
+  TlStoreBinary::store(port_, s);
+  TlStoreObject::store(adnl_id_, s);
+}
+
+void http_server_host::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "http_server_host");
+    { const std::vector<std::string> &v = domains_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "vector[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("domains", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { s.store_field("", v[i]); } s.store_class_end(); }
+    s.store_field("ip", ip_);
+    s.store_field("port", port_);
+    if (adnl_id_ == nullptr) { s.store_field("adnl_id", "null"); } else { adnl_id_->store(s, "adnl_id"); }
     s.store_class_end();
   }
 }
@@ -10554,6 +11695,89 @@ void ton_blockIdApprove::store(td::TlStorerToString &s, const char *field_name) 
     s.store_class_begin(field_name, "ton_blockIdApprove");
     s.store_field("root_cell_hash", root_cell_hash_);
     s.store_field("file_hash", file_hash_);
+    s.store_class_end();
+  }
+}
+
+object_ptr<tonNode_ArchiveInfo> tonNode_ArchiveInfo::fetch(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return nullptr;
+  int constructor = p.fetch_int();
+  switch (constructor) {
+    case tonNode_archiveNotFound::ID:
+      return tonNode_archiveNotFound::fetch(p);
+    case tonNode_archiveInfo::ID:
+      return tonNode_archiveInfo::fetch(p);
+    default:
+      FAIL(PSTRING() << "Unknown constructor found " << td::format::as_hex(constructor));
+  }
+#undef FAIL
+}
+
+tonNode_archiveNotFound::tonNode_archiveNotFound() {
+}
+
+const std::int32_t tonNode_archiveNotFound::ID;
+
+object_ptr<tonNode_ArchiveInfo> tonNode_archiveNotFound::fetch(td::TlParser &p) {
+  return make_object<tonNode_archiveNotFound>(p);
+}
+
+tonNode_archiveNotFound::tonNode_archiveNotFound(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+#undef FAIL
+{
+  (void)p;
+}
+
+void tonNode_archiveNotFound::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+}
+
+void tonNode_archiveNotFound::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+}
+
+void tonNode_archiveNotFound::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "tonNode_archiveNotFound");
+    s.store_class_end();
+  }
+}
+
+tonNode_archiveInfo::tonNode_archiveInfo()
+  : id_()
+{}
+
+tonNode_archiveInfo::tonNode_archiveInfo(std::int64_t id_)
+  : id_(id_)
+{}
+
+const std::int32_t tonNode_archiveInfo::ID;
+
+object_ptr<tonNode_ArchiveInfo> tonNode_archiveInfo::fetch(td::TlParser &p) {
+  return make_object<tonNode_archiveInfo>(p);
+}
+
+tonNode_archiveInfo::tonNode_archiveInfo(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : id_(TlFetchLong::parse(p))
+#undef FAIL
+{}
+
+void tonNode_archiveInfo::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(id_, s);
+}
+
+void tonNode_archiveInfo::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(id_, s);
+}
+
+void tonNode_archiveInfo::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "tonNode_archiveInfo");
+    s.store_field("id", id_);
     s.store_class_end();
   }
 }
@@ -14363,6 +15587,52 @@ engine_validator_createElectionBid::ReturnType engine_validator_createElectionBi
 #undef FAIL
 }
 
+engine_validator_createProposalVote::engine_validator_createProposalVote()
+  : vote_()
+{}
+
+engine_validator_createProposalVote::engine_validator_createProposalVote(td::BufferSlice &&vote_)
+  : vote_(std::move(vote_))
+{}
+
+const std::int32_t engine_validator_createProposalVote::ID;
+
+object_ptr<engine_validator_createProposalVote> engine_validator_createProposalVote::fetch(td::TlParser &p) {
+  return make_object<engine_validator_createProposalVote>(p);
+}
+
+engine_validator_createProposalVote::engine_validator_createProposalVote(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : vote_(TlFetchBytes<td::BufferSlice>::parse(p))
+#undef FAIL
+{}
+
+void engine_validator_createProposalVote::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  s.store_binary(498278765);
+  TlStoreString::store(vote_, s);
+}
+
+void engine_validator_createProposalVote::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  s.store_binary(498278765);
+  TlStoreString::store(vote_, s);
+}
+
+void engine_validator_createProposalVote::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "engine_validator_createProposalVote");
+    s.store_bytes_field("vote", vote_);
+    s.store_class_end();
+  }
+}
+
+engine_validator_createProposalVote::ReturnType engine_validator_createProposalVote::fetch_result(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return ReturnType()
+  return TlFetchBoxed<TlFetchObject<engine_validator_proposalVote>, 2137401069>::parse(p);
+#undef FAIL
+}
+
 engine_validator_delAdnlId::engine_validator_delAdnlId()
   : key_hash_()
 {}
@@ -15164,6 +16434,134 @@ getTestObject::ReturnType getTestObject::fetch_result(td::TlParser &p) {
 #undef FAIL
 }
 
+http_getNextPayloadPart::http_getNextPayloadPart()
+  : id_()
+  , seqno_()
+  , max_chunk_size_()
+{}
+
+http_getNextPayloadPart::http_getNextPayloadPart(td::Bits256 const &id_, std::int32_t seqno_, std::int32_t max_chunk_size_)
+  : id_(id_)
+  , seqno_(seqno_)
+  , max_chunk_size_(max_chunk_size_)
+{}
+
+const std::int32_t http_getNextPayloadPart::ID;
+
+object_ptr<http_getNextPayloadPart> http_getNextPayloadPart::fetch(td::TlParser &p) {
+  return make_object<http_getNextPayloadPart>(p);
+}
+
+http_getNextPayloadPart::http_getNextPayloadPart(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : id_(TlFetchInt256::parse(p))
+  , seqno_(TlFetchInt::parse(p))
+  , max_chunk_size_(TlFetchInt::parse(p))
+#undef FAIL
+{}
+
+void http_getNextPayloadPart::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  s.store_binary(-1871422196);
+  TlStoreBinary::store(id_, s);
+  TlStoreBinary::store(seqno_, s);
+  TlStoreBinary::store(max_chunk_size_, s);
+}
+
+void http_getNextPayloadPart::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  s.store_binary(-1871422196);
+  TlStoreBinary::store(id_, s);
+  TlStoreBinary::store(seqno_, s);
+  TlStoreBinary::store(max_chunk_size_, s);
+}
+
+void http_getNextPayloadPart::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "http_getNextPayloadPart");
+    s.store_field("id", id_);
+    s.store_field("seqno", seqno_);
+    s.store_field("max_chunk_size", max_chunk_size_);
+    s.store_class_end();
+  }
+}
+
+http_getNextPayloadPart::ReturnType http_getNextPayloadPart::fetch_result(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return ReturnType()
+  return TlFetchBoxed<TlFetchObject<http_payloadPart>, 693819236>::parse(p);
+#undef FAIL
+}
+
+http_request::http_request()
+  : id_()
+  , method_()
+  , url_()
+  , http_version_()
+  , headers_()
+{}
+
+http_request::http_request(td::Bits256 const &id_, std::string const &method_, std::string const &url_, std::string const &http_version_, std::vector<object_ptr<http_header>> &&headers_)
+  : id_(id_)
+  , method_(std::move(method_))
+  , url_(std::move(url_))
+  , http_version_(std::move(http_version_))
+  , headers_(std::move(headers_))
+{}
+
+const std::int32_t http_request::ID;
+
+object_ptr<http_request> http_request::fetch(td::TlParser &p) {
+  return make_object<http_request>(p);
+}
+
+http_request::http_request(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : id_(TlFetchInt256::parse(p))
+  , method_(TlFetchString<std::string>::parse(p))
+  , url_(TlFetchString<std::string>::parse(p))
+  , http_version_(TlFetchString<std::string>::parse(p))
+  , headers_(TlFetchVector<TlFetchObject<http_header>>::parse(p))
+#undef FAIL
+{}
+
+void http_request::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  s.store_binary(1639027169);
+  TlStoreBinary::store(id_, s);
+  TlStoreString::store(method_, s);
+  TlStoreString::store(url_, s);
+  TlStoreString::store(http_version_, s);
+  TlStoreVector<TlStoreObject>::store(headers_, s);
+}
+
+void http_request::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  s.store_binary(1639027169);
+  TlStoreBinary::store(id_, s);
+  TlStoreString::store(method_, s);
+  TlStoreString::store(url_, s);
+  TlStoreString::store(http_version_, s);
+  TlStoreVector<TlStoreObject>::store(headers_, s);
+}
+
+void http_request::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "http_request");
+    s.store_field("id", id_);
+    s.store_field("method", method_);
+    s.store_field("url", url_);
+    s.store_field("http_version", http_version_);
+    { const std::vector<object_ptr<http_header>> &v = headers_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "vector[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("headers", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { if (v[i] == nullptr) { s.store_field("", "null"); } else { v[i]->store(s, ""); } } s.store_class_end(); }
+    s.store_class_end();
+  }
+}
+
+http_request::ReturnType http_request::fetch_result(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return ReturnType()
+  return TlFetchBoxed<TlFetchObject<http_response>, -273307789>::parse(p);
+#undef FAIL
+}
+
 overlay_getBroadcast::overlay_getBroadcast()
   : hash_()
 {}
@@ -15919,6 +17317,110 @@ void tonNode_downloadZeroState::store(td::TlStorerToString &s, const char *field
 }
 
 tonNode_downloadZeroState::ReturnType tonNode_downloadZeroState::fetch_result(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return ReturnType()
+  return TlFetchBoxed<TlFetchObject<tonNode_data>, 1443505284>::parse(p);
+#undef FAIL
+}
+
+tonNode_getArchiveInfo::tonNode_getArchiveInfo()
+  : masterchain_seqno_()
+{}
+
+tonNode_getArchiveInfo::tonNode_getArchiveInfo(std::int32_t masterchain_seqno_)
+  : masterchain_seqno_(masterchain_seqno_)
+{}
+
+const std::int32_t tonNode_getArchiveInfo::ID;
+
+object_ptr<tonNode_getArchiveInfo> tonNode_getArchiveInfo::fetch(td::TlParser &p) {
+  return make_object<tonNode_getArchiveInfo>(p);
+}
+
+tonNode_getArchiveInfo::tonNode_getArchiveInfo(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : masterchain_seqno_(TlFetchInt::parse(p))
+#undef FAIL
+{}
+
+void tonNode_getArchiveInfo::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  s.store_binary(2066602305);
+  TlStoreBinary::store(masterchain_seqno_, s);
+}
+
+void tonNode_getArchiveInfo::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  s.store_binary(2066602305);
+  TlStoreBinary::store(masterchain_seqno_, s);
+}
+
+void tonNode_getArchiveInfo::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "tonNode_getArchiveInfo");
+    s.store_field("masterchain_seqno", masterchain_seqno_);
+    s.store_class_end();
+  }
+}
+
+tonNode_getArchiveInfo::ReturnType tonNode_getArchiveInfo::fetch_result(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return ReturnType()
+  return TlFetchObject<tonNode_ArchiveInfo>::parse(p);
+#undef FAIL
+}
+
+tonNode_getArchiveSlice::tonNode_getArchiveSlice()
+  : archive_id_()
+  , offset_()
+  , max_size_()
+{}
+
+tonNode_getArchiveSlice::tonNode_getArchiveSlice(std::int64_t archive_id_, std::int64_t offset_, std::int32_t max_size_)
+  : archive_id_(archive_id_)
+  , offset_(offset_)
+  , max_size_(max_size_)
+{}
+
+const std::int32_t tonNode_getArchiveSlice::ID;
+
+object_ptr<tonNode_getArchiveSlice> tonNode_getArchiveSlice::fetch(td::TlParser &p) {
+  return make_object<tonNode_getArchiveSlice>(p);
+}
+
+tonNode_getArchiveSlice::tonNode_getArchiveSlice(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : archive_id_(TlFetchLong::parse(p))
+  , offset_(TlFetchLong::parse(p))
+  , max_size_(TlFetchInt::parse(p))
+#undef FAIL
+{}
+
+void tonNode_getArchiveSlice::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  s.store_binary(540758376);
+  TlStoreBinary::store(archive_id_, s);
+  TlStoreBinary::store(offset_, s);
+  TlStoreBinary::store(max_size_, s);
+}
+
+void tonNode_getArchiveSlice::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  s.store_binary(540758376);
+  TlStoreBinary::store(archive_id_, s);
+  TlStoreBinary::store(offset_, s);
+  TlStoreBinary::store(max_size_, s);
+}
+
+void tonNode_getArchiveSlice::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "tonNode_getArchiveSlice");
+    s.store_field("archive_id", archive_id_);
+    s.store_field("offset", offset_);
+    s.store_field("max_size", max_size_);
+    s.store_class_end();
+  }
+}
+
+tonNode_getArchiveSlice::ReturnType tonNode_getArchiveSlice::fetch_result(td::TlParser &p) {
 #define FAIL(error) p.set_error(error); return ReturnType()
   return TlFetchBoxed<TlFetchObject<tonNode_data>, 1443505284>::parse(p);
 #undef FAIL

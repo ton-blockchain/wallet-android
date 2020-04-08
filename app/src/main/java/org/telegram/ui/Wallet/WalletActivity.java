@@ -11,7 +11,9 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -57,6 +59,7 @@ import org.telegram.ui.ActionBar.SimpleTextView;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.CameraScanActivity;
 import org.telegram.ui.Components.AlertsCreator;
+import org.telegram.ui.Components.BiometricPromtHelper;
 import org.telegram.ui.Components.PullForegroundDrawable;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
@@ -89,19 +92,23 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
     private GradientDrawable backgroundDrawable;
 
     private String walletAddress;
-    private TonApi.GenericAccountState accountState;
+    private TonApi.FullAccountState accountState;
     private boolean accountStateLoaded;
     private long lastUpdateTime;
     private boolean loadingTransactions;
     private boolean transactionsEndReached;
 
+    private BiometricPromtHelper biometricPromtHelper;
+
     private String openTransferAfterOpen;
 
-    private TonApi.RawTransaction lastTransaction;
+    private WalletTransaction lastTransaction;
     private boolean loadingAccountState;
-    private HashMap<Long, TonApi.RawTransaction> transactionsDict = new HashMap<>();
+    private HashMap<Long, WalletTransaction> transactionsDict = new HashMap<>();
     private ArrayList<String> sections = new ArrayList<>();
-    private HashMap<String, ArrayList<TonApi.RawTransaction>> sectionArrays = new HashMap<>();
+    private HashMap<String, ArrayList<WalletTransaction>> sectionArrays = new HashMap<>();
+
+    private boolean askCredentialsOnResume;
 
     private float[] radii;
 
@@ -125,6 +132,8 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
     public static final int CAMERA_PERMISSION_REQUEST_CODE = 34;
 
     private Runnable shortPollRunnable = this::loadAccountState;
+
+    public static final int SEND_ACTIVITY_RESULT_CODE = 35;
 
     public class PullRecyclerView extends RecyclerListView {
 
@@ -340,6 +349,8 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
 
     @Override
     public View createView(Context context) {
+        biometricPromtHelper = new BiometricPromtHelper(this);
+
         pullForegroundDrawable = new PullForegroundDrawable(LocaleController.getString("WalletSwipeToRefresh", R.string.WalletSwipeToRefresh), LocaleController.getString("WalletReleaseToRefresh", R.string.WalletReleaseToRefresh)) {
             @Override
             protected float getViewOffset() {
@@ -386,8 +397,14 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
 
         listView = new PullRecyclerView(context);
         listView.setSectionsType(2);
+        listView.setItemAnimator(null);
         listView.setPinnedHeaderShadowDrawable(pinnedHeaderShadowDrawable);
         listView.setLayoutManager(layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false) {
+            @Override
+            public boolean supportsPredictiveItemAnimations() {
+                return false;
+            }
+
             @Override
             public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler, RecyclerView.State state) {
                 boolean isDragging = listView.getScrollState() == RecyclerView.SCROLL_STATE_DRAGGING;
@@ -518,6 +535,11 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
                 if (cell.isEmpty()) {
                     return;
                 }
+                WalletTransaction transaction = cell.getCurrentTransaction();
+                if (TonController.isEncryptedTransaction(transaction.rawTransaction) && !getTonController().hasDecryptKey()) {
+                    askForDecryptCredentials();
+                    return;
+                }
                 walletActionSheet = new WalletActionSheet(this, walletAddress, cell.getAddress(), cell.getComment(), cell.getAmount(), cell.getDate(), cell.getStorageFee(), cell.getTransactionFee());
                 walletActionSheet.setDelegate(new WalletActionSheet.WalletActionSheetDelegate() {
                     @Override
@@ -559,12 +581,19 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
         if (adapter != null) {
             adapter.notifyDataSetChanged();
         }
+        if (askCredentialsOnResume) {
+            askForDecryptCredentials();
+            askCredentialsOnResume = false;
+        }
         scheduleShortPoll();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        if (biometricPromtHelper != null) {
+            biometricPromtHelper.onPause();
+        }
         if (walletActionSheet != null) {
             walletActionSheet.onPause();
         }
@@ -581,6 +610,15 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
 
     @Override
     public void onActivityResultFragment(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SEND_ACTIVITY_RESULT_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                getTonController().fillMemInputKey(null, null, () -> {
+                    if (adapter != null) {
+                        adapter.notifyDataSetChanged();
+                    }
+                }, null);
+            }
+        }
         if (walletActionSheet != null) {
             walletActionSheet.onActivityResultFragment(requestCode, resultCode, data);
         }
@@ -723,7 +761,7 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
 
     private TonApi.InternalTransactionId getLastTransactionId(boolean reload) {
         if (!reload && lastTransaction != null) {
-            return lastTransaction.transactionId;
+            return lastTransaction.rawTransaction.transactionId;
         }
         return TonController.getLastTransactionId(accountState);
     }
@@ -756,7 +794,7 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
                     if (oldTransaction != null && newTransaction != null && oldTransaction.lt == newTransaction.lt && !sections.isEmpty()) {
                         needUpdateTransactions = false;
                         String dateKey = sections.get(sections.size() - 1);
-                        ArrayList<TonApi.RawTransaction> arrayList = sectionArrays.get(dateKey);
+                        ArrayList<WalletTransaction> arrayList = sectionArrays.get(dateKey);
                         if (arrayList != null && !arrayList.isEmpty()) {
                             lastTransaction = arrayList.get(arrayList.size() - 1);
                         }
@@ -764,9 +802,7 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
                 }
                 accountState = state;
                 accountStateLoaded = true;
-                if (adapter != null) {
-                    adapter.notifyDataSetChanged();
-                }
+                adapter.notifyDataSetChanged();
                 if (needUpdateTransactions) {
                     loadTransactions(true);
                 } else {
@@ -794,17 +830,17 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
         scheduleShortPoll();
     }
 
-    private boolean fillTransactions(ArrayList<TonApi.RawTransaction> arrayList, boolean reload) {
+    private boolean fillTransactions(ArrayList<WalletTransaction> arrayList, boolean reload) {
         boolean cleared = sections.isEmpty();
         if (arrayList != null && !arrayList.isEmpty() && reload) {
-            TonApi.RawTransaction transaction = arrayList.get(arrayList.size() - 1);
+            WalletTransaction transaction = arrayList.get(arrayList.size() - 1);
             for (int b = 0, N2 = sections.size(); b < N2; b++) {
                 if (PENDING_KEY.equals(sections.get(b))) {
                     continue;
                 }
                 String key = sections.get(b);
-                ArrayList<TonApi.RawTransaction> existingTransactions = sectionArrays.get(key);
-                if (existingTransactions.get(0).utime < transaction.utime) {
+                ArrayList<WalletTransaction> existingTransactions = sectionArrays.get(key);
+                if (existingTransactions.get(0).rawTransaction.utime < transaction.rawTransaction.utime) {
                     sections.clear();
                     sectionArrays.clear();
                     transactionsDict.clear();
@@ -819,7 +855,7 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
             }
         }
 
-        ArrayList<TonApi.RawTransaction> pendingTransactions = getTonController().getPendingTransactions();
+        ArrayList<WalletTransaction> pendingTransactions = getTonController().getPendingTransactions();
         if (pendingTransactions.isEmpty()) {
             if (sectionArrays.containsKey(PENDING_KEY)) {
                 sectionArrays.remove(PENDING_KEY);
@@ -837,17 +873,21 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
 
         Calendar calendar = Calendar.getInstance();
         boolean added = false;
+        boolean askCredentials = false;
         for (int a = 0, N = arrayList.size(); a < N; a++) {
-            TonApi.RawTransaction transaction = arrayList.get(a);
-            if (transactionsDict.containsKey(transaction.transactionId.lt)) {
+            WalletTransaction transaction = arrayList.get(a);
+            if (transactionsDict.containsKey(transaction.rawTransaction.transactionId.lt)) {
                 continue;
             }
-            calendar.setTimeInMillis(transaction.utime * 1000);
+            if (!getTonController().hasDecryptKey() && TonController.isEncryptedTransaction(transaction.rawTransaction)) {
+                askCredentials = true;
+            }
+            calendar.setTimeInMillis(transaction.rawTransaction.utime * 1000);
             int dateDay = calendar.get(Calendar.DAY_OF_YEAR);
             int dateYear = calendar.get(Calendar.YEAR);
             int dateMonth = calendar.get(Calendar.MONTH);
             String dateKey = String.format(Locale.US, "%d_%02d_%02d", dateYear, dateMonth, dateDay);
-            ArrayList<TonApi.RawTransaction> transactions = sectionArrays.get(dateKey);
+            ArrayList<WalletTransaction> transactions = sectionArrays.get(dateKey);
             if (transactions == null) {
                 int addToIndex = sections.size();
                 for (int b = 0, N2 = sections.size(); b < N2; b++) {
@@ -855,8 +895,8 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
                         continue;
                     }
                     String key = sections.get(b);
-                    ArrayList<TonApi.RawTransaction> existingTransactions = sectionArrays.get(key);
-                    if (existingTransactions.get(0).utime < transaction.utime) {
+                    ArrayList<WalletTransaction> existingTransactions = sectionArrays.get(key);
+                    if (existingTransactions.get(0).rawTransaction.utime < transaction.rawTransaction.utime) {
                         addToIndex = b;
                         break;
                     }
@@ -871,9 +911,41 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
             } else {
                 transactions.add(transaction);
             }
-            transactionsDict.put(transaction.transactionId.lt, transaction);
+            transactionsDict.put(transaction.rawTransaction.transactionId.lt, transaction);
+        }
+        if (askCredentials) {
+            if (getParentActivity() != null && !isPaused) {
+                askForDecryptCredentials();
+            } else {
+                askCredentialsOnResume = true;
+            }
         }
         return added;
+    }
+
+    private void askForDecryptCredentials() {
+        switch (getTonController().getKeyProtectionType()) {
+            case TonController.KEY_PROTECTION_TYPE_LOCKSCREEN: {
+                if (Build.VERSION.SDK_INT >= 23) {
+                    KeyguardManager keyguardManager = (KeyguardManager) ApplicationLoader.applicationContext.getSystemService(Context.KEYGUARD_SERVICE);
+                    Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(LocaleController.getString("Wallet", R.string.Wallet), LocaleController.getString("WalletDecryptConfirmCredentials", R.string.WalletDecryptConfirmCredentials));
+                    getParentActivity().startActivityForResult(intent, SEND_ACTIVITY_RESULT_CODE);
+                }
+                break;
+            }
+            case TonController.KEY_PROTECTION_TYPE_BIOMETRIC: {
+                biometricPromtHelper.promtWithCipher(getTonController().getCipherForDecrypt(), LocaleController.getString("WalletDecryptConfirmCredentials", R.string.WalletDecryptConfirmCredentials), (cipher) -> getTonController().fillMemInputKey(null, cipher, () -> {
+                    if (adapter != null) {
+                        adapter.notifyDataSetChanged();
+                    }
+                }, null));
+                break;
+            }
+            case TonController.KEY_PROTECTION_TYPE_NONE: {
+                presentFragment(new WalletPasscodeActivity(WalletPasscodeActivity.TYPE_MEM_INPUT_KEY));
+                break;
+            }
+        }
     }
 
     private void loadTransactions(boolean reload) {
@@ -960,9 +1032,9 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
         descriptionText.setLineSpacing(AndroidUtilities.dp(2), 1);
         descriptionText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         if (amount == 0) {
-            descriptionText.setText(LocaleController.getString("WalletTestShareInfo", R.string.WalletTestShareInfo));
+            descriptionText.setText(LocaleController.getString("WalletShareInfo", R.string.WalletShareInfo));
         } else {
-            descriptionText.setText(AndroidUtilities.replaceTags(LocaleController.formatString("WalletTestShareInvoiceUrlInfo", R.string.WalletTestShareInvoiceUrlInfo, TonController.formatCurrency(amount))));
+            descriptionText.setText(AndroidUtilities.replaceTags(LocaleController.formatString("WalletShareInvoiceUrlInfo", R.string.WalletShareInvoiceUrlInfo, TonController.formatCurrency(amount))));
         }
         descriptionText.setPadding(AndroidUtilities.dp(32), 0, AndroidUtilities.dp(32), 0);
         linearLayout.addView(descriptionText, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 0, 0, 0));
@@ -1071,7 +1143,12 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
                     break;
                 }
                 case 1: {
-                    view = new WalletTransactionCell(context);
+                    view = new WalletTransactionCell(context) {
+                        @Override
+                        protected void updateRowWithTransaction(WalletTransaction transaction) {
+                            adapter.notifyDataSetChanged();
+                        }
+                    };
                     break;
                 }
                 case 2: {
@@ -1157,7 +1234,7 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
                     WalletTransactionCell transactionCell = (WalletTransactionCell) holder.itemView;
                     section -= 1;
                     String key = sections.get(section);
-                    ArrayList<TonApi.RawTransaction> arrayList = sectionArrays.get(key);
+                    ArrayList<WalletTransaction> arrayList = sectionArrays.get(key);
                     transactionCell.setTransaction(arrayList.get(position - 1), position != arrayList.size());
                     break;
                 }
@@ -1173,8 +1250,8 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
                     if (PENDING_KEY.equals(key)) {
                         dateCell.setText(LocaleController.getString("WalletPendingTransactions", R.string.WalletPendingTransactions));
                     } else {
-                        ArrayList<TonApi.RawTransaction> arrayList = sectionArrays.get(key);
-                        dateCell.setDate(arrayList.get(0).utime);
+                        ArrayList<WalletTransaction> arrayList = sectionArrays.get(key);
+                        dateCell.setDate(arrayList.get(0).rawTransaction.utime);
                     }
                     break;
                 }
@@ -1244,8 +1321,8 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
                     if (PENDING_KEY.equals(key)) {
                         dateCell.setText(LocaleController.getString("WalletPendingTransactions", R.string.WalletPendingTransactions));
                     } else {
-                        ArrayList<TonApi.RawTransaction> arrayList = sectionArrays.get(key);
-                        dateCell.setDate(arrayList.get(0).utime);
+                        ArrayList<WalletTransaction> arrayList = sectionArrays.get(key);
+                        dateCell.setDate(arrayList.get(0).rawTransaction.utime);
                     }
                 }
             }

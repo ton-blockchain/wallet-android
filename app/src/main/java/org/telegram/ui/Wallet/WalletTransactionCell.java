@@ -22,9 +22,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.TonController;
+import org.telegram.messenger.UserConfig;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.TypefaceSpan;
@@ -42,6 +44,8 @@ public class WalletTransactionCell extends LinearLayout {
     private TextView commentTextView;
     private TextView feeTextView;
     private ImageView clockImage;
+    private ImageView encryptedImageView;
+    private LinearLayout addressLinearLayout;
 
     private boolean drawDivider;
     private Typeface defaultTypeFace;
@@ -50,6 +54,9 @@ public class WalletTransactionCell extends LinearLayout {
     private long currentStorageFee;
     private long currentTransactionFee;
     private boolean isEmpty;
+    private WalletTransaction currentTransaction;
+
+    private int currentAccount = UserConfig.selectedAccount;
 
     public WalletTransactionCell(Context context) {
         super(context);
@@ -84,11 +91,20 @@ public class WalletTransactionCell extends LinearLayout {
         dateTextView.setTextColor(Theme.getColor(Theme.key_wallet_dateText));
         linearLayout.addView(dateTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.RIGHT | Gravity.TOP, 0, 8, 0, 0));
 
+        addressLinearLayout = new LinearLayout(context);
+        addressLinearLayout.setOrientation(HORIZONTAL);
+        addView(addressLinearLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 18, 6, 16, 6));
+
         addressValueTextView = new TextView(context);
         addressValueTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
         addressValueTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmono.ttf"));
         addressValueTextView.setTextColor(Theme.getColor(Theme.key_wallet_blackText));
-        addView(addressValueTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 18, 6, 0, 10));
+        addressLinearLayout.addView(addressValueTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 1.0f, Gravity.LEFT | Gravity.TOP));
+
+        encryptedImageView = new ImageView(context);
+        encryptedImageView.setImageResource(R.drawable.wallet_lock);
+        encryptedImageView.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_wallet_dateText), PorterDuff.Mode.MULTIPLY));
+        addressLinearLayout.addView(encryptedImageView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.RIGHT | Gravity.CENTER_VERTICAL));
 
         commentTextView = new TextView(context);
         commentTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
@@ -105,20 +121,66 @@ public class WalletTransactionCell extends LinearLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
     }
+    
+    private String getMessageText(WalletTransaction walletTransaction, TonApi.AccountAddress accountAddress, TonApi.MsgData messageData) {
+        try {
+            if (messageData instanceof TonApi.MsgDataRaw) {
+                return null;
+            } else if (messageData instanceof TonApi.MsgDataText) {
+                TonApi.MsgDataText msgData = (TonApi.MsgDataText) messageData;
+                if (encryptedImageView.getVisibility() != INVISIBLE) {
+                    encryptedImageView.setVisibility(INVISIBLE);
+                }
+                return new String(msgData.text, 0, msgData.text.length, "UTF-8");
+            } else if (messageData instanceof TonApi.MsgDataDecryptedText) {
+                TonApi.MsgDataDecryptedText msgData = (TonApi.MsgDataDecryptedText) messageData;
+                if (encryptedImageView.getVisibility() != VISIBLE) {
+                    encryptedImageView.setVisibility(VISIBLE);
+                }
+                return new String(msgData.text, 0, msgData.text.length, "UTF-8");
+            } else if (messageData instanceof TonApi.MsgDataEncryptedText) {
+                String text = walletTransaction.getDecryptedMessage(messageData);
+                if (text == null) {
+                    TonController.getInstance(currentAccount).decryptMessage(messageData, accountAddress, (msgData, comment) -> {
+                        walletTransaction.putDecryptedMessage(msgData, comment);
+                        updateRowWithTransaction(walletTransaction);
+                    });
+                }
+                if (encryptedImageView.getVisibility() != VISIBLE) {
+                    encryptedImageView.setVisibility(VISIBLE);
+                }
+                return text != null ? text : LocaleController.getString("WalletEncryptedMessage", R.string.WalletEncryptedMessage);
+            }
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+        return null;
+    }
 
-    public void setTransaction(TonApi.RawTransaction transaction, boolean divider) {
+    public WalletTransaction getCurrentTransaction() {
+        return currentTransaction;
+    }
+
+    protected void updateRowWithTransaction(WalletTransaction transaction) {
+
+    }
+
+    public void setTransaction(WalletTransaction walletTransaction, boolean divider) {
+        currentTransaction = walletTransaction;
+        encryptedImageView.setVisibility(INVISIBLE);
+        TonApi.RawTransaction transaction = walletTransaction.rawTransaction;
         StringBuilder builder;
         long value = 0;
-        byte[] message = null;
+        String message = null;
         if (transaction.inMsg != null) {
             value += transaction.inMsg.value;
-            message = transaction.inMsg.message;
+            message = getMessageText(walletTransaction, transaction.inMsg.source, transaction.inMsg.msgData);
         }
         if (transaction.outMsgs != null && transaction.outMsgs.length > 0) {
             for (int a = 0; a < transaction.outMsgs.length; a++) {
                 value -= transaction.outMsgs[a].value;
-                if (message == null || message.length == 0) {
-                    message = transaction.outMsgs[a].message;
+                if (TextUtils.isEmpty(message)) {
+                    message = getMessageText(walletTransaction, transaction.outMsgs[a].source, transaction.outMsgs[a].msgData);
                 }
             }
         }
@@ -127,18 +189,18 @@ public class WalletTransactionCell extends LinearLayout {
         isEmpty = false;
         boolean isPending = false;
         if (value > 0) {
-            builder = new StringBuilder(transaction.inMsg.source);
+            builder = new StringBuilder(transaction.inMsg.source.accountAddress);
             valueTextView.setTextColor(Theme.getColor(Theme.key_wallet_greenText));
             fromTextView.setText(LocaleController.getString("WalletFrom", R.string.WalletFrom));
             text = String.format("+%s", TonController.formatCurrency(value));
         } else {
             if (transaction.transactionId.lt == 0) {
-                builder = new StringBuilder(transaction.inMsg.destination);
+                builder = new StringBuilder(transaction.inMsg.destination.accountAddress);
                 fromTextView.setText(LocaleController.getString("WalletTo", R.string.WalletTo));
                 clockImage.setVisibility(VISIBLE);
                 isPending = true;
             } else if (transaction.outMsgs != null && transaction.outMsgs.length > 0) {
-                builder = new StringBuilder(transaction.outMsgs[0].destination);
+                builder = new StringBuilder(transaction.outMsgs[0].destination.accountAddress);
                 fromTextView.setText(LocaleController.getString("WalletTo", R.string.WalletTo));
             } else {
                 //builder = new StringBuilder(LocaleController.getString("WalletProcessingFee", R.string.WalletProcessingFee));
@@ -179,14 +241,14 @@ public class WalletTransactionCell extends LinearLayout {
             feeTextView.setVisibility(GONE);
         }
 
-        if (message != null && message.length > 0) {
-            commentTextView.setText(new String(message));
+        if (!TextUtils.isEmpty(message)) {
+            commentTextView.setText(message);
             commentTextView.setVisibility(VISIBLE);
         } else {
             commentTextView.setVisibility(GONE);
         }
 
-        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) addressValueTextView.getLayoutParams();
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) addressLinearLayout.getLayoutParams();
         if (commentTextView.getVisibility() == VISIBLE || feeTextView.getVisibility() == VISIBLE) {
             layoutParams.bottomMargin = AndroidUtilities.dp(1);
         } else {

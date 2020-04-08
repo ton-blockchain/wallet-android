@@ -46,6 +46,14 @@ std::string to_string(const object_ptr<T> &value) {
 
 class accountAddress;
 
+class accountRevisionList;
+
+class AccountState;
+
+class Action;
+
+class adnlAddress;
+
 class bip39Hints;
 
 class config;
@@ -60,7 +68,13 @@ class exportedKey;
 
 class exportedPemKey;
 
+class exportedUnencryptedKey;
+
 class fees;
+
+class fullAccountState;
+
+class InitialAccountState;
 
 class InputKey;
 
@@ -78,29 +92,47 @@ class ok;
 
 class options;
 
-class sendGramsResult;
-
 class SyncState;
 
 class unpackedAccountAddress;
 
 class Update;
 
-class generic_AccountState;
+class dns_Action;
+
+class dns_entry;
+
+class dns_EntryData;
+
+class dns_resolved;
+
+class ton_blockId;
 
 class internal_transactionId;
 
 class liteServer_info;
 
+class msg_Data;
+
+class msg_dataDecrypted;
+
+class msg_dataDecryptedArray;
+
+class msg_dataEncrypted;
+
+class msg_dataEncryptedArray;
+
+class msg_message;
+
 class options_configInfo;
+
+class options_info;
 
 class query_fees;
 
 class query_info;
 
-class raw_accountState;
-
-class raw_initialAccountState;
+class raw_fullAccountState;
 
 class raw_message;
 
@@ -114,13 +146,11 @@ class smc_MethodId;
 
 class smc_runResult;
 
-class testGiver_accountState;
-
-class testWallet_accountState;
-
-class testWallet_initialAccountState;
+class ton_blockIdExt;
 
 class tvm_cell;
+
+class tvm_list;
 
 class tvm_numberDecimal;
 
@@ -128,15 +158,7 @@ class tvm_slice;
 
 class tvm_StackEntry;
 
-class uninited_accountState;
-
-class wallet_accountState;
-
-class wallet_initialAccountState;
-
-class wallet_v3_accountState;
-
-class wallet_v3_initialAccountState;
+class tvm_tuple;
 
 class Object;
 
@@ -184,6 +206,366 @@ class accountAddress final : public Object {
   }
 
   static object_ptr<accountAddress> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class accountRevisionList final : public Object {
+ public:
+  static jclass Class;
+  std::vector<std::int32_t> revisions_;
+  static jfieldID revisions_fieldID;
+
+  accountRevisionList();
+
+  explicit accountRevisionList(std::vector<std::int32_t> &&revisions_);
+
+  static const std::int32_t ID = 120583012;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<accountRevisionList> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class AccountState: public Object {
+ public:
+  static jclass Class;
+
+  static object_ptr<AccountState> fetch(JNIEnv *env, jobject &p);
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class raw_accountState final : public AccountState {
+ public:
+  static jclass Class;
+  std::string code_;
+  static jfieldID code_fieldID;
+  std::string data_;
+  static jfieldID data_fieldID;
+  std::string frozen_hash_;
+  static jfieldID frozen_hash_fieldID;
+
+  raw_accountState();
+
+  raw_accountState(std::string const &code_, std::string const &data_, std::string const &frozen_hash_);
+
+  static const std::int32_t ID = -531917254;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<AccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class testWallet_accountState final : public AccountState {
+ public:
+  static jclass Class;
+  std::int32_t seqno_;
+  static jfieldID seqno_fieldID;
+
+  testWallet_accountState();
+
+  explicit testWallet_accountState(std::int32_t seqno_);
+
+  static const std::int32_t ID = -2053909931;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<AccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class wallet_accountState final : public AccountState {
+ public:
+  static jclass Class;
+  std::int32_t seqno_;
+  static jfieldID seqno_fieldID;
+
+  wallet_accountState();
+
+  explicit wallet_accountState(std::int32_t seqno_);
+
+  static const std::int32_t ID = -390017192;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<AccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class wallet_v3_accountState final : public AccountState {
+ public:
+  static jclass Class;
+  std::int64_t wallet_id_;
+  static jfieldID wallet_id_fieldID;
+  std::int32_t seqno_;
+  static jfieldID seqno_fieldID;
+
+  wallet_v3_accountState();
+
+  wallet_v3_accountState(std::int64_t wallet_id_, std::int32_t seqno_);
+
+  static const std::int32_t ID = -1619351478;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<AccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class wallet_highload_v1_accountState final : public AccountState {
+ public:
+  static jclass Class;
+  std::int64_t wallet_id_;
+  static jfieldID wallet_id_fieldID;
+  std::int32_t seqno_;
+  static jfieldID seqno_fieldID;
+
+  wallet_highload_v1_accountState();
+
+  wallet_highload_v1_accountState(std::int64_t wallet_id_, std::int32_t seqno_);
+
+  static const std::int32_t ID = 1616372956;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<AccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class wallet_highload_v2_accountState final : public AccountState {
+ public:
+  static jclass Class;
+  std::int64_t wallet_id_;
+  static jfieldID wallet_id_fieldID;
+
+  wallet_highload_v2_accountState();
+
+  explicit wallet_highload_v2_accountState(std::int64_t wallet_id_);
+
+  static const std::int32_t ID = -1803723441;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<AccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class testGiver_accountState final : public AccountState {
+ public:
+  static jclass Class;
+  std::int32_t seqno_;
+  static jfieldID seqno_fieldID;
+
+  testGiver_accountState();
+
+  explicit testGiver_accountState(std::int32_t seqno_);
+
+  static const std::int32_t ID = -696813142;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<AccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class dns_accountState final : public AccountState {
+ public:
+  static jclass Class;
+  std::int64_t wallet_id_;
+  static jfieldID wallet_id_fieldID;
+
+  dns_accountState();
+
+  explicit dns_accountState(std::int64_t wallet_id_);
+
+  static const std::int32_t ID = 1727715434;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<AccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class uninited_accountState final : public AccountState {
+ public:
+  static jclass Class;
+  std::string frozen_hash_;
+  static jfieldID frozen_hash_fieldID;
+
+  uninited_accountState();
+
+  explicit uninited_accountState(std::string const &frozen_hash_);
+
+  static const std::int32_t ID = 1522374408;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<AccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class Action: public Object {
+ public:
+  static jclass Class;
+
+  static object_ptr<Action> fetch(JNIEnv *env, jobject &p);
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class actionNoop final : public Action {
+ public:
+  static jclass Class;
+
+  actionNoop();
+
+  static const std::int32_t ID = 1135848603;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<Action> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class actionMsg final : public Action {
+ public:
+  static jclass Class;
+  std::vector<object_ptr<msg_message>> messages_;
+  static jfieldID messages_fieldID;
+  bool allow_send_to_uninited_;
+  static jfieldID allow_send_to_uninited_fieldID;
+
+  actionMsg();
+
+  actionMsg(std::vector<object_ptr<msg_message>> &&messages_, bool allow_send_to_uninited_);
+
+  static const std::int32_t ID = 246839120;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<Action> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class actionDns final : public Action {
+ public:
+  static jclass Class;
+  std::vector<object_ptr<dns_Action>> actions_;
+  static jfieldID actions_fieldID;
+
+  actionDns();
+
+  explicit actionDns(std::vector<object_ptr<dns_Action>> &&actions_);
+
+  static const std::int32_t ID = 1193750561;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<Action> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class adnlAddress final : public Object {
+ public:
+  static jclass Class;
+  std::string adnl_address_;
+  static jfieldID adnl_address_fieldID;
+
+  adnlAddress();
+
+  explicit adnlAddress(std::string const &adnl_address_);
+
+  static const std::int32_t ID = 70358284;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<adnlAddress> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 
@@ -368,6 +750,30 @@ class exportedPemKey final : public Object {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
+class exportedUnencryptedKey final : public Object {
+ public:
+  static jclass Class;
+  td::SecureString data_;
+  static jfieldID data_fieldID;
+
+  exportedUnencryptedKey();
+
+  explicit exportedUnencryptedKey(td::SecureString &&data_);
+
+  static const std::int32_t ID = 730045160;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<exportedUnencryptedKey> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
 class fees final : public Object {
  public:
   static jclass Class;
@@ -390,6 +796,245 @@ class fees final : public Object {
   }
 
   static object_ptr<fees> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class fullAccountState final : public Object {
+ public:
+  static jclass Class;
+  std::int64_t balance_;
+  static jfieldID balance_fieldID;
+  object_ptr<internal_transactionId> last_transaction_id_;
+  static jfieldID last_transaction_id_fieldID;
+  object_ptr<ton_blockIdExt> block_id_;
+  static jfieldID block_id_fieldID;
+  std::int64_t sync_utime_;
+  static jfieldID sync_utime_fieldID;
+  object_ptr<AccountState> account_state_;
+  static jfieldID account_state_fieldID;
+
+  fullAccountState();
+
+  fullAccountState(std::int64_t balance_, object_ptr<internal_transactionId> &&last_transaction_id_, object_ptr<ton_blockIdExt> &&block_id_, std::int64_t sync_utime_, object_ptr<AccountState> &&account_state_);
+
+  static const std::int32_t ID = -686286006;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<fullAccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class InitialAccountState: public Object {
+ public:
+  static jclass Class;
+
+  static object_ptr<InitialAccountState> fetch(JNIEnv *env, jobject &p);
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class raw_initialAccountState final : public InitialAccountState {
+ public:
+  static jclass Class;
+  std::string code_;
+  static jfieldID code_fieldID;
+  std::string data_;
+  static jfieldID data_fieldID;
+
+  raw_initialAccountState();
+
+  raw_initialAccountState(std::string const &code_, std::string const &data_);
+
+  static const std::int32_t ID = -337945529;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<InitialAccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class testGiver_initialAccountState final : public InitialAccountState {
+ public:
+  static jclass Class;
+
+  testGiver_initialAccountState();
+
+  static const std::int32_t ID = -1448412176;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<InitialAccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class testWallet_initialAccountState final : public InitialAccountState {
+ public:
+  static jclass Class;
+  std::string public_key_;
+  static jfieldID public_key_fieldID;
+
+  testWallet_initialAccountState();
+
+  explicit testWallet_initialAccountState(std::string const &public_key_);
+
+  static const std::int32_t ID = 819380068;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<InitialAccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class wallet_initialAccountState final : public InitialAccountState {
+ public:
+  static jclass Class;
+  std::string public_key_;
+  static jfieldID public_key_fieldID;
+
+  wallet_initialAccountState();
+
+  explicit wallet_initialAccountState(std::string const &public_key_);
+
+  static const std::int32_t ID = -1122166790;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<InitialAccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class wallet_v3_initialAccountState final : public InitialAccountState {
+ public:
+  static jclass Class;
+  std::string public_key_;
+  static jfieldID public_key_fieldID;
+  std::int64_t wallet_id_;
+  static jfieldID wallet_id_fieldID;
+
+  wallet_v3_initialAccountState();
+
+  wallet_v3_initialAccountState(std::string const &public_key_, std::int64_t wallet_id_);
+
+  static const std::int32_t ID = -118074048;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<InitialAccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class wallet_highload_v1_initialAccountState final : public InitialAccountState {
+ public:
+  static jclass Class;
+  std::string public_key_;
+  static jfieldID public_key_fieldID;
+  std::int64_t wallet_id_;
+  static jfieldID wallet_id_fieldID;
+
+  wallet_highload_v1_initialAccountState();
+
+  wallet_highload_v1_initialAccountState(std::string const &public_key_, std::int64_t wallet_id_);
+
+  static const std::int32_t ID = -327901626;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<InitialAccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class wallet_highload_v2_initialAccountState final : public InitialAccountState {
+ public:
+  static jclass Class;
+  std::string public_key_;
+  static jfieldID public_key_fieldID;
+  std::int64_t wallet_id_;
+  static jfieldID wallet_id_fieldID;
+
+  wallet_highload_v2_initialAccountState();
+
+  wallet_highload_v2_initialAccountState(std::string const &public_key_, std::int64_t wallet_id_);
+
+  static const std::int32_t ID = 1966373161;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<InitialAccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class dns_initialAccountState final : public InitialAccountState {
+ public:
+  static jclass Class;
+  std::string public_key_;
+  static jfieldID public_key_fieldID;
+  std::int64_t wallet_id_;
+  static jfieldID wallet_id_fieldID;
+
+  dns_initialAccountState();
+
+  dns_initialAccountState(std::string const &public_key_, std::int64_t wallet_id_);
+
+  static const std::int32_t ID = 1842062527;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<InitialAccountState> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 
@@ -701,32 +1346,6 @@ class options final : public Object {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
-class sendGramsResult final : public Object {
- public:
-  static jclass Class;
-  std::int64_t sent_until_;
-  static jfieldID sent_until_fieldID;
-  std::string body_hash_;
-  static jfieldID body_hash_fieldID;
-
-  sendGramsResult();
-
-  sendGramsResult(std::int64_t sent_until_, std::string const &body_hash_);
-
-  static const std::int32_t ID = 426872238;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  static object_ptr<sendGramsResult> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
 class SyncState: public Object {
  public:
   static jclass Class;
@@ -873,31 +1492,27 @@ class updateSyncState final : public Update {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
-class generic_AccountState: public Object {
+class dns_Action: public Object {
  public:
   static jclass Class;
 
-  static object_ptr<generic_AccountState> fetch(JNIEnv *env, jobject &p);
+  static object_ptr<dns_Action> fetch(JNIEnv *env, jobject &p);
 
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
-class generic_accountStateRaw final : public generic_AccountState {
+class dns_actionDeleteAll final : public dns_Action {
  public:
   static jclass Class;
-  object_ptr<raw_accountState> account_state_;
-  static jfieldID account_state_fieldID;
 
-  generic_accountStateRaw();
+  dns_actionDeleteAll();
 
-  explicit generic_accountStateRaw(object_ptr<raw_accountState> &&account_state_);
-
-  static const std::int32_t ID = -1387096685;
+  static const std::int32_t ID = 1067356318;
   std::int32_t get_id() const final {
     return ID;
   }
 
-  static object_ptr<generic_AccountState> fetch(JNIEnv *env, jobject &p);
+  static object_ptr<dns_Action> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 
@@ -906,22 +1521,24 @@ class generic_accountStateRaw final : public generic_AccountState {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
-class generic_accountStateTestWallet final : public generic_AccountState {
+class dns_actionDelete final : public dns_Action {
  public:
   static jclass Class;
-  object_ptr<testWallet_accountState> account_state_;
-  static jfieldID account_state_fieldID;
+  std::string name_;
+  static jfieldID name_fieldID;
+  std::int32_t category_;
+  static jfieldID category_fieldID;
 
-  generic_accountStateTestWallet();
+  dns_actionDelete();
 
-  explicit generic_accountStateTestWallet(object_ptr<testWallet_accountState> &&account_state_);
+  dns_actionDelete(std::string const &name_, std::int32_t category_);
 
-  static const std::int32_t ID = -1041955397;
+  static const std::int32_t ID = 775206882;
   std::int32_t get_id() const final {
     return ID;
   }
 
-  static object_ptr<generic_AccountState> fetch(JNIEnv *env, jobject &p);
+  static object_ptr<dns_Action> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 
@@ -930,22 +1547,22 @@ class generic_accountStateTestWallet final : public generic_AccountState {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
-class generic_accountStateWallet final : public generic_AccountState {
+class dns_actionSet final : public dns_Action {
  public:
   static jclass Class;
-  object_ptr<wallet_accountState> account_state_;
-  static jfieldID account_state_fieldID;
+  object_ptr<dns_entry> entry_;
+  static jfieldID entry_fieldID;
 
-  generic_accountStateWallet();
+  dns_actionSet();
 
-  explicit generic_accountStateWallet(object_ptr<wallet_accountState> &&account_state_);
+  explicit dns_actionSet(object_ptr<dns_entry> &&entry_);
 
-  static const std::int32_t ID = 942582925;
+  static const std::int32_t ID = -1374965309;
   std::int32_t get_id() const final {
     return ID;
   }
 
-  static object_ptr<generic_AccountState> fetch(JNIEnv *env, jobject &p);
+  static object_ptr<dns_Action> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 
@@ -954,22 +1571,26 @@ class generic_accountStateWallet final : public generic_AccountState {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
-class generic_accountStateWalletV3 final : public generic_AccountState {
+class dns_entry final : public Object {
  public:
   static jclass Class;
-  object_ptr<wallet_v3_accountState> account_state_;
-  static jfieldID account_state_fieldID;
+  std::string name_;
+  static jfieldID name_fieldID;
+  std::int32_t category_;
+  static jfieldID category_fieldID;
+  object_ptr<dns_EntryData> entry_;
+  static jfieldID entry_fieldID;
 
-  generic_accountStateWalletV3();
+  dns_entry();
 
-  explicit generic_accountStateWalletV3(object_ptr<wallet_v3_accountState> &&account_state_);
+  dns_entry(std::string const &name_, std::int32_t category_, object_ptr<dns_EntryData> &&entry_);
 
-  static const std::int32_t ID = -281349583;
+  static const std::int32_t ID = -1842435400;
   std::int32_t get_id() const final {
     return ID;
   }
 
-  static object_ptr<generic_AccountState> fetch(JNIEnv *env, jobject &p);
+  static object_ptr<dns_entry> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 
@@ -978,22 +1599,31 @@ class generic_accountStateWalletV3 final : public generic_AccountState {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
-class generic_accountStateTestGiver final : public generic_AccountState {
+class dns_EntryData: public Object {
  public:
   static jclass Class;
-  object_ptr<testGiver_accountState> account_state_;
-  static jfieldID account_state_fieldID;
 
-  generic_accountStateTestGiver();
+  static object_ptr<dns_EntryData> fetch(JNIEnv *env, jobject &p);
 
-  explicit generic_accountStateTestGiver(object_ptr<testGiver_accountState> &&account_state_);
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
 
-  static const std::int32_t ID = 1134654598;
+class dns_entryDataUnknown final : public dns_EntryData {
+ public:
+  static jclass Class;
+  std::string bytes_;
+  static jfieldID bytes_fieldID;
+
+  dns_entryDataUnknown();
+
+  explicit dns_entryDataUnknown(std::string const &bytes_);
+
+  static const std::int32_t ID = -1285893248;
   std::int32_t get_id() const final {
     return ID;
   }
 
-  static object_ptr<generic_AccountState> fetch(JNIEnv *env, jobject &p);
+  static object_ptr<dns_EntryData> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 
@@ -1002,22 +1632,146 @@ class generic_accountStateTestGiver final : public generic_AccountState {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
-class generic_accountStateUninited final : public generic_AccountState {
+class dns_entryDataText final : public dns_EntryData {
  public:
   static jclass Class;
-  object_ptr<uninited_accountState> account_state_;
-  static jfieldID account_state_fieldID;
+  std::string text_;
+  static jfieldID text_fieldID;
 
-  generic_accountStateUninited();
+  dns_entryDataText();
 
-  explicit generic_accountStateUninited(object_ptr<uninited_accountState> &&account_state_);
+  explicit dns_entryDataText(std::string const &text_);
 
-  static const std::int32_t ID = -908702008;
+  static const std::int32_t ID = -792485614;
   std::int32_t get_id() const final {
     return ID;
   }
 
-  static object_ptr<generic_AccountState> fetch(JNIEnv *env, jobject &p);
+  static object_ptr<dns_EntryData> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class dns_entryDataNextResolver final : public dns_EntryData {
+ public:
+  static jclass Class;
+  object_ptr<accountAddress> resolver_;
+  static jfieldID resolver_fieldID;
+
+  dns_entryDataNextResolver();
+
+  explicit dns_entryDataNextResolver(object_ptr<accountAddress> &&resolver_);
+
+  static const std::int32_t ID = 330382792;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<dns_EntryData> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class dns_entryDataSmcAddress final : public dns_EntryData {
+ public:
+  static jclass Class;
+  object_ptr<accountAddress> smc_address_;
+  static jfieldID smc_address_fieldID;
+
+  dns_entryDataSmcAddress();
+
+  explicit dns_entryDataSmcAddress(object_ptr<accountAddress> &&smc_address_);
+
+  static const std::int32_t ID = -1759937982;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<dns_EntryData> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class dns_entryDataAdnlAddress final : public dns_EntryData {
+ public:
+  static jclass Class;
+  object_ptr<adnlAddress> adnl_address_;
+  static jfieldID adnl_address_fieldID;
+
+  dns_entryDataAdnlAddress();
+
+  explicit dns_entryDataAdnlAddress(object_ptr<adnlAddress> &&adnl_address_);
+
+  static const std::int32_t ID = -1114064368;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<dns_EntryData> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class dns_resolved final : public Object {
+ public:
+  static jclass Class;
+  std::vector<object_ptr<dns_entry>> entries_;
+  static jfieldID entries_fieldID;
+
+  dns_resolved();
+
+  explicit dns_resolved(std::vector<object_ptr<dns_entry>> &&entries_);
+
+  static const std::int32_t ID = 2090272150;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<dns_resolved> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class ton_blockId final : public Object {
+ public:
+  static jclass Class;
+  std::int32_t workchain_;
+  static jfieldID workchain_fieldID;
+  std::int64_t shard_;
+  static jfieldID shard_fieldID;
+  std::int32_t seqno_;
+  static jfieldID seqno_fieldID;
+
+  ton_blockId();
+
+  ton_blockId(std::int32_t workchain_, std::int64_t shard_, std::int32_t seqno_);
+
+  static const std::int32_t ID = -1185382494;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<ton_blockId> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 
@@ -1080,6 +1834,241 @@ class liteServer_info final : public Object {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
+class msg_Data: public Object {
+ public:
+  static jclass Class;
+
+  static object_ptr<msg_Data> fetch(JNIEnv *env, jobject &p);
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class msg_dataRaw final : public msg_Data {
+ public:
+  static jclass Class;
+  std::string body_;
+  static jfieldID body_fieldID;
+
+  msg_dataRaw();
+
+  explicit msg_dataRaw(std::string const &body_);
+
+  static const std::int32_t ID = 38878511;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<msg_Data> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class msg_dataText final : public msg_Data {
+ public:
+  static jclass Class;
+  std::string text_;
+  static jfieldID text_fieldID;
+
+  msg_dataText();
+
+  explicit msg_dataText(std::string const &text_);
+
+  static const std::int32_t ID = -341560688;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<msg_Data> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class msg_dataDecryptedText final : public msg_Data {
+ public:
+  static jclass Class;
+  std::string text_;
+  static jfieldID text_fieldID;
+
+  msg_dataDecryptedText();
+
+  explicit msg_dataDecryptedText(std::string const &text_);
+
+  static const std::int32_t ID = -1289133895;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<msg_Data> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class msg_dataEncryptedText final : public msg_Data {
+ public:
+  static jclass Class;
+  std::string text_;
+  static jfieldID text_fieldID;
+
+  msg_dataEncryptedText();
+
+  explicit msg_dataEncryptedText(std::string const &text_);
+
+  static const std::int32_t ID = -296612902;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<msg_Data> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class msg_dataDecrypted final : public Object {
+ public:
+  static jclass Class;
+  std::string proof_;
+  static jfieldID proof_fieldID;
+  object_ptr<msg_Data> data_;
+  static jfieldID data_fieldID;
+
+  msg_dataDecrypted();
+
+  msg_dataDecrypted(std::string const &proof_, object_ptr<msg_Data> &&data_);
+
+  static const std::int32_t ID = 195649769;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<msg_dataDecrypted> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class msg_dataDecryptedArray final : public Object {
+ public:
+  static jclass Class;
+  std::vector<object_ptr<msg_dataDecrypted>> elements_;
+  static jfieldID elements_fieldID;
+
+  msg_dataDecryptedArray();
+
+  explicit msg_dataDecryptedArray(std::vector<object_ptr<msg_dataDecrypted>> &&elements_);
+
+  static const std::int32_t ID = -480491767;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<msg_dataDecryptedArray> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class msg_dataEncrypted final : public Object {
+ public:
+  static jclass Class;
+  object_ptr<accountAddress> source_;
+  static jfieldID source_fieldID;
+  object_ptr<msg_Data> data_;
+  static jfieldID data_fieldID;
+
+  msg_dataEncrypted();
+
+  msg_dataEncrypted(object_ptr<accountAddress> &&source_, object_ptr<msg_Data> &&data_);
+
+  static const std::int32_t ID = 564215121;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<msg_dataEncrypted> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class msg_dataEncryptedArray final : public Object {
+ public:
+  static jclass Class;
+  std::vector<object_ptr<msg_dataEncrypted>> elements_;
+  static jfieldID elements_fieldID;
+
+  msg_dataEncryptedArray();
+
+  explicit msg_dataEncryptedArray(std::vector<object_ptr<msg_dataEncrypted>> &&elements_);
+
+  static const std::int32_t ID = 608655794;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<msg_dataEncryptedArray> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class msg_message final : public Object {
+ public:
+  static jclass Class;
+  object_ptr<accountAddress> destination_;
+  static jfieldID destination_fieldID;
+  std::string public_key_;
+  static jfieldID public_key_fieldID;
+  std::int64_t amount_;
+  static jfieldID amount_fieldID;
+  object_ptr<msg_Data> data_;
+  static jfieldID data_fieldID;
+
+  msg_message();
+
+  msg_message(object_ptr<accountAddress> &&destination_, std::string const &public_key_, std::int64_t amount_, object_ptr<msg_Data> &&data_);
+
+  static const std::int32_t ID = -2110533580;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<msg_message> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
 class options_configInfo final : public Object {
  public:
   static jclass Class;
@@ -1090,7 +2079,7 @@ class options_configInfo final : public Object {
 
   explicit options_configInfo(std::int64_t default_wallet_id_);
 
-  static const std::int32_t ID = 165216422;
+  static const std::int32_t ID = 451217371;
   std::int32_t get_id() const final {
     return ID;
   }
@@ -1104,19 +2093,43 @@ class options_configInfo final : public Object {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
+class options_info final : public Object {
+ public:
+  static jclass Class;
+  object_ptr<options_configInfo> config_info_;
+  static jfieldID config_info_fieldID;
+
+  options_info();
+
+  explicit options_info(object_ptr<options_configInfo> &&config_info_);
+
+  static const std::int32_t ID = -64676736;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<options_info> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
 class query_fees final : public Object {
  public:
   static jclass Class;
   object_ptr<fees> source_fees_;
   static jfieldID source_fees_fieldID;
-  object_ptr<fees> destination_fees_;
+  std::vector<object_ptr<fees>> destination_fees_;
   static jfieldID destination_fees_fieldID;
 
   query_fees();
 
-  query_fees(object_ptr<fees> &&source_fees_, object_ptr<fees> &&destination_fees_);
+  query_fees(object_ptr<fees> &&source_fees_, std::vector<object_ptr<fees>> &&destination_fees_);
 
-  static const std::int32_t ID = 725267759;
+  static const std::int32_t ID = 1614616510;
   std::int32_t get_id() const final {
     return ID;
   }
@@ -1158,7 +2171,7 @@ class query_info final : public Object {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
-class raw_accountState final : public Object {
+class raw_fullAccountState final : public Object {
  public:
   static jclass Class;
   std::int64_t balance_;
@@ -1169,47 +2182,23 @@ class raw_accountState final : public Object {
   static jfieldID data_fieldID;
   object_ptr<internal_transactionId> last_transaction_id_;
   static jfieldID last_transaction_id_fieldID;
+  object_ptr<ton_blockIdExt> block_id_;
+  static jfieldID block_id_fieldID;
   std::string frozen_hash_;
   static jfieldID frozen_hash_fieldID;
   std::int64_t sync_utime_;
   static jfieldID sync_utime_fieldID;
 
-  raw_accountState();
+  raw_fullAccountState();
 
-  raw_accountState(std::int64_t balance_, std::string const &code_, std::string const &data_, object_ptr<internal_transactionId> &&last_transaction_id_, std::string const &frozen_hash_, std::int64_t sync_utime_);
+  raw_fullAccountState(std::int64_t balance_, std::string const &code_, std::string const &data_, object_ptr<internal_transactionId> &&last_transaction_id_, object_ptr<ton_blockIdExt> &&block_id_, std::string const &frozen_hash_, std::int64_t sync_utime_);
 
-  static const std::int32_t ID = 1205935434;
+  static const std::int32_t ID = -1465398385;
   std::int32_t get_id() const final {
     return ID;
   }
 
-  static object_ptr<raw_accountState> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class raw_initialAccountState final : public Object {
- public:
-  static jclass Class;
-  std::string code_;
-  static jfieldID code_fieldID;
-  std::string data_;
-  static jfieldID data_fieldID;
-
-  raw_initialAccountState();
-
-  raw_initialAccountState(std::string const &code_, std::string const &data_);
-
-  static const std::int32_t ID = 777456197;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  static object_ptr<raw_initialAccountState> fetch(JNIEnv *env, jobject &p);
+  static object_ptr<raw_fullAccountState> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 
@@ -1221,9 +2210,9 @@ class raw_initialAccountState final : public Object {
 class raw_message final : public Object {
  public:
   static jclass Class;
-  std::string source_;
+  object_ptr<accountAddress> source_;
   static jfieldID source_fieldID;
-  std::string destination_;
+  object_ptr<accountAddress> destination_;
   static jfieldID destination_fieldID;
   std::int64_t value_;
   static jfieldID value_fieldID;
@@ -1235,14 +2224,14 @@ class raw_message final : public Object {
   static jfieldID created_lt_fieldID;
   std::string body_hash_;
   static jfieldID body_hash_fieldID;
-  std::string message_;
-  static jfieldID message_fieldID;
+  object_ptr<msg_Data> msg_data_;
+  static jfieldID msg_data_fieldID;
 
   raw_message();
 
-  raw_message(std::string const &source_, std::string const &destination_, std::int64_t value_, std::int64_t fwd_fee_, std::int64_t ihr_fee_, std::int64_t created_lt_, std::string const &body_hash_, std::string const &message_);
+  raw_message(object_ptr<accountAddress> &&source_, object_ptr<accountAddress> &&destination_, std::int64_t value_, std::int64_t fwd_fee_, std::int64_t ihr_fee_, std::int64_t created_lt_, std::string const &body_hash_, object_ptr<msg_Data> &&msg_data_);
 
-  static const std::int32_t ID = -906281442;
+  static const std::int32_t ID = 1368093263;
   std::int32_t get_id() const final {
     return ID;
   }
@@ -1429,82 +2418,30 @@ class smc_runResult final : public Object {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
-class testGiver_accountState final : public Object {
+class ton_blockIdExt final : public Object {
  public:
   static jclass Class;
-  std::int64_t balance_;
-  static jfieldID balance_fieldID;
+  std::int32_t workchain_;
+  static jfieldID workchain_fieldID;
+  std::int64_t shard_;
+  static jfieldID shard_fieldID;
   std::int32_t seqno_;
   static jfieldID seqno_fieldID;
-  object_ptr<internal_transactionId> last_transaction_id_;
-  static jfieldID last_transaction_id_fieldID;
-  std::int64_t sync_utime_;
-  static jfieldID sync_utime_fieldID;
+  std::string root_hash_;
+  static jfieldID root_hash_fieldID;
+  std::string file_hash_;
+  static jfieldID file_hash_fieldID;
 
-  testGiver_accountState();
+  ton_blockIdExt();
 
-  testGiver_accountState(std::int64_t balance_, std::int32_t seqno_, object_ptr<internal_transactionId> &&last_transaction_id_, std::int64_t sync_utime_);
+  ton_blockIdExt(std::int32_t workchain_, std::int64_t shard_, std::int32_t seqno_, std::string const &root_hash_, std::string const &file_hash_);
 
-  static const std::int32_t ID = 860930426;
+  static const std::int32_t ID = 2031156378;
   std::int32_t get_id() const final {
     return ID;
   }
 
-  static object_ptr<testGiver_accountState> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class testWallet_accountState final : public Object {
- public:
-  static jclass Class;
-  std::int64_t balance_;
-  static jfieldID balance_fieldID;
-  std::int32_t seqno_;
-  static jfieldID seqno_fieldID;
-  object_ptr<internal_transactionId> last_transaction_id_;
-  static jfieldID last_transaction_id_fieldID;
-  std::int64_t sync_utime_;
-  static jfieldID sync_utime_fieldID;
-
-  testWallet_accountState();
-
-  testWallet_accountState(std::int64_t balance_, std::int32_t seqno_, object_ptr<internal_transactionId> &&last_transaction_id_, std::int64_t sync_utime_);
-
-  static const std::int32_t ID = 305698744;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  static object_ptr<testWallet_accountState> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class testWallet_initialAccountState final : public Object {
- public:
-  static jclass Class;
-  std::string public_key_;
-  static jfieldID public_key_fieldID;
-
-  testWallet_initialAccountState();
-
-  explicit testWallet_initialAccountState(std::string const &public_key_);
-
-  static const std::int32_t ID = -1231516227;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  static object_ptr<testWallet_initialAccountState> fetch(JNIEnv *env, jobject &p);
+  static object_ptr<ton_blockIdExt> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 
@@ -1523,12 +2460,36 @@ class tvm_cell final : public Object {
 
   explicit tvm_cell(std::string const &bytes_);
 
-  static const std::int32_t ID = -859530316;
+  static const std::int32_t ID = -413424735;
   std::int32_t get_id() const final {
     return ID;
   }
 
   static object_ptr<tvm_cell> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class tvm_list final : public Object {
+ public:
+  static jclass Class;
+  std::vector<object_ptr<tvm_StackEntry>> elements_;
+  static jfieldID elements_fieldID;
+
+  tvm_list();
+
+  explicit tvm_list(std::vector<object_ptr<tvm_StackEntry>> &&elements_);
+
+  static const std::int32_t ID = 1270320392;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<tvm_list> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 
@@ -1571,7 +2532,7 @@ class tvm_slice final : public Object {
 
   explicit tvm_slice(std::string const &bytes_);
 
-  static const std::int32_t ID = -1069968387;
+  static const std::int32_t ID = 537299687;
   std::int32_t get_id() const final {
     return ID;
   }
@@ -1666,6 +2627,54 @@ class tvm_stackEntryNumber final : public tvm_StackEntry {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
+class tvm_stackEntryTuple final : public tvm_StackEntry {
+ public:
+  static jclass Class;
+  object_ptr<tvm_tuple> tuple_;
+  static jfieldID tuple_fieldID;
+
+  tvm_stackEntryTuple();
+
+  explicit tvm_stackEntryTuple(object_ptr<tvm_tuple> &&tuple_);
+
+  static const std::int32_t ID = -157391908;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<tvm_StackEntry> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class tvm_stackEntryList final : public tvm_StackEntry {
+ public:
+  static jclass Class;
+  object_ptr<tvm_list> list_;
+  static jfieldID list_fieldID;
+
+  tvm_stackEntryList();
+
+  explicit tvm_stackEntryList(object_ptr<tvm_list> &&list_);
+
+  static const std::int32_t ID = -1186714229;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<tvm_StackEntry> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
 class tvm_stackEntryUnsupported final : public tvm_StackEntry {
  public:
   static jclass Class;
@@ -1686,140 +2695,22 @@ class tvm_stackEntryUnsupported final : public tvm_StackEntry {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
-class uninited_accountState final : public Object {
+class tvm_tuple final : public Object {
  public:
   static jclass Class;
-  std::int64_t balance_;
-  static jfieldID balance_fieldID;
-  object_ptr<internal_transactionId> last_transaction_id_;
-  static jfieldID last_transaction_id_fieldID;
-  std::string frozen_hash_;
-  static jfieldID frozen_hash_fieldID;
-  std::int64_t sync_utime_;
-  static jfieldID sync_utime_fieldID;
+  std::vector<object_ptr<tvm_StackEntry>> elements_;
+  static jfieldID elements_fieldID;
 
-  uninited_accountState();
+  tvm_tuple();
 
-  uninited_accountState(std::int64_t balance_, object_ptr<internal_transactionId> &&last_transaction_id_, std::string const &frozen_hash_, std::int64_t sync_utime_);
+  explicit tvm_tuple(std::vector<object_ptr<tvm_StackEntry>> &&elements_);
 
-  static const std::int32_t ID = -918880075;
+  static const std::int32_t ID = -1363953053;
   std::int32_t get_id() const final {
     return ID;
   }
 
-  static object_ptr<uninited_accountState> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class wallet_accountState final : public Object {
- public:
-  static jclass Class;
-  std::int64_t balance_;
-  static jfieldID balance_fieldID;
-  std::int32_t seqno_;
-  static jfieldID seqno_fieldID;
-  object_ptr<internal_transactionId> last_transaction_id_;
-  static jfieldID last_transaction_id_fieldID;
-  std::int64_t sync_utime_;
-  static jfieldID sync_utime_fieldID;
-
-  wallet_accountState();
-
-  wallet_accountState(std::int64_t balance_, std::int32_t seqno_, object_ptr<internal_transactionId> &&last_transaction_id_, std::int64_t sync_utime_);
-
-  static const std::int32_t ID = -1919815977;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  static object_ptr<wallet_accountState> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class wallet_initialAccountState final : public Object {
- public:
-  static jclass Class;
-  std::string public_key_;
-  static jfieldID public_key_fieldID;
-
-  wallet_initialAccountState();
-
-  explicit wallet_initialAccountState(std::string const &public_key_);
-
-  static const std::int32_t ID = -1079249978;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  static object_ptr<wallet_initialAccountState> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class wallet_v3_accountState final : public Object {
- public:
-  static jclass Class;
-  std::int64_t balance_;
-  static jfieldID balance_fieldID;
-  std::int64_t wallet_id_;
-  static jfieldID wallet_id_fieldID;
-  std::int32_t seqno_;
-  static jfieldID seqno_fieldID;
-  object_ptr<internal_transactionId> last_transaction_id_;
-  static jfieldID last_transaction_id_fieldID;
-  std::int64_t sync_utime_;
-  static jfieldID sync_utime_fieldID;
-
-  wallet_v3_accountState();
-
-  wallet_v3_accountState(std::int64_t balance_, std::int64_t wallet_id_, std::int32_t seqno_, object_ptr<internal_transactionId> &&last_transaction_id_, std::int64_t sync_utime_);
-
-  static const std::int32_t ID = 1977698154;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  static object_ptr<wallet_v3_accountState> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class wallet_v3_initialAccountState final : public Object {
- public:
-  static jclass Class;
-  std::string public_key_;
-  static jfieldID public_key_fieldID;
-  std::int64_t wallet_id_;
-  static jfieldID wallet_id_fieldID;
-
-  wallet_v3_initialAccountState();
-
-  wallet_v3_initialAccountState(std::string const &public_key_, std::int64_t wallet_id_);
-
-  static const std::int32_t ID = 283460879;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  static object_ptr<wallet_v3_initialAccountState> fetch(JNIEnv *env, jobject &p);
+  static object_ptr<tvm_tuple> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 
@@ -1944,6 +2835,40 @@ class createNewKey final : public Function {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
+class createQuery final : public Function {
+ public:
+  static jclass Class;
+  object_ptr<InputKey> private_key_;
+  static jfieldID private_key_fieldID;
+  object_ptr<accountAddress> address_;
+  static jfieldID address_fieldID;
+  std::int32_t timeout_;
+  static jfieldID timeout_fieldID;
+  object_ptr<Action> action_;
+  static jfieldID action_fieldID;
+
+  createQuery();
+
+  createQuery(object_ptr<InputKey> &&private_key_, object_ptr<accountAddress> &&address_, std::int32_t timeout_, object_ptr<Action> &&action_);
+
+  static const std::int32_t ID = -1316835098;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<query_info>;
+
+  static object_ptr<createQuery> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(JNIEnv *env, jobject &p);
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
 class decrypt final : public Function {
  public:
   static jclass Class;
@@ -2016,6 +2941,40 @@ class deleteKey final : public Function {
   using ReturnType = object_ptr<ok>;
 
   static object_ptr<deleteKey> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(JNIEnv *env, jobject &p);
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class dns_resolve final : public Function {
+ public:
+  static jclass Class;
+  object_ptr<accountAddress> account_address_;
+  static jfieldID account_address_fieldID;
+  std::string name_;
+  static jfieldID name_fieldID;
+  std::int32_t category_;
+  static jfieldID category_fieldID;
+  std::int32_t ttl_;
+  static jfieldID ttl_fieldID;
+
+  dns_resolve();
+
+  dns_resolve(object_ptr<accountAddress> &&account_address_, std::string const &name_, std::int32_t category_, std::int32_t ttl_);
+
+  static const std::int32_t ID = -149238065;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<dns_resolved>;
+
+  static object_ptr<dns_resolve> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 
@@ -2144,36 +3103,24 @@ class exportPemKey final : public Function {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
-class generic_createSendGramsQuery final : public Function {
+class exportUnencryptedKey final : public Function {
  public:
   static jclass Class;
-  object_ptr<InputKey> private_key_;
-  static jfieldID private_key_fieldID;
-  object_ptr<accountAddress> source_;
-  static jfieldID source_fieldID;
-  object_ptr<accountAddress> destination_;
-  static jfieldID destination_fieldID;
-  std::int64_t amount_;
-  static jfieldID amount_fieldID;
-  std::int32_t timeout_;
-  static jfieldID timeout_fieldID;
-  bool allow_send_to_uninited_;
-  static jfieldID allow_send_to_uninited_fieldID;
-  std::string message_;
-  static jfieldID message_fieldID;
+  object_ptr<InputKey> input_key_;
+  static jfieldID input_key_fieldID;
 
-  generic_createSendGramsQuery();
+  exportUnencryptedKey();
 
-  generic_createSendGramsQuery(object_ptr<InputKey> &&private_key_, object_ptr<accountAddress> &&source_, object_ptr<accountAddress> &&destination_, std::int64_t amount_, std::int32_t timeout_, bool allow_send_to_uninited_, std::string const &message_);
+  explicit exportUnencryptedKey(object_ptr<InputKey> &&input_key_);
 
-  static const std::int32_t ID = 208206338;
+  static const std::int32_t ID = -634665152;
   std::int32_t get_id() const final {
     return ID;
   }
 
-  using ReturnType = object_ptr<query_info>;
+  using ReturnType = object_ptr<exportedUnencryptedKey>;
 
-  static object_ptr<generic_createSendGramsQuery> fetch(JNIEnv *env, jobject &p);
+  static object_ptr<exportUnencryptedKey> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 
@@ -2184,64 +3131,54 @@ class generic_createSendGramsQuery final : public Function {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
-class generic_getAccountState final : public Function {
+class getAccountAddress final : public Function {
+ public:
+  static jclass Class;
+  object_ptr<InitialAccountState> initial_account_state_;
+  static jfieldID initial_account_state_fieldID;
+  std::int32_t revision_;
+  static jfieldID revision_fieldID;
+
+  getAccountAddress();
+
+  getAccountAddress(object_ptr<InitialAccountState> &&initial_account_state_, std::int32_t revision_);
+
+  static const std::int32_t ID = -1159101819;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<accountAddress>;
+
+  static object_ptr<getAccountAddress> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(JNIEnv *env, jobject &p);
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class getAccountState final : public Function {
  public:
   static jclass Class;
   object_ptr<accountAddress> account_address_;
   static jfieldID account_address_fieldID;
 
-  generic_getAccountState();
+  getAccountState();
 
-  explicit generic_getAccountState(object_ptr<accountAddress> &&account_address_);
+  explicit getAccountState(object_ptr<accountAddress> &&account_address_);
 
-  static const std::int32_t ID = -657000446;
+  static const std::int32_t ID = -2116357050;
   std::int32_t get_id() const final {
     return ID;
   }
 
-  using ReturnType = object_ptr<generic_AccountState>;
+  using ReturnType = object_ptr<fullAccountState>;
 
-  static object_ptr<generic_getAccountState> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static ReturnType fetch_result(JNIEnv *env, jobject &p);
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class generic_sendGrams final : public Function {
- public:
-  static jclass Class;
-  object_ptr<InputKey> private_key_;
-  static jfieldID private_key_fieldID;
-  object_ptr<accountAddress> source_;
-  static jfieldID source_fieldID;
-  object_ptr<accountAddress> destination_;
-  static jfieldID destination_fieldID;
-  std::int64_t amount_;
-  static jfieldID amount_fieldID;
-  std::int32_t timeout_;
-  static jfieldID timeout_fieldID;
-  bool allow_send_to_uninited_;
-  static jfieldID allow_send_to_uninited_fieldID;
-  std::string message_;
-  static jfieldID message_fieldID;
-
-  generic_sendGrams();
-
-  generic_sendGrams(object_ptr<InputKey> &&private_key_, object_ptr<accountAddress> &&source_, object_ptr<accountAddress> &&destination_, std::int64_t amount_, std::int32_t timeout_, bool allow_send_to_uninited_, std::string const &message_);
-
-  static const std::int32_t ID = -553513162;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  using ReturnType = object_ptr<sendGramsResult>;
-
-  static object_ptr<generic_sendGrams> fetch(JNIEnv *env, jobject &p);
+  static object_ptr<getAccountState> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 
@@ -2380,6 +3317,34 @@ class getLogVerbosityLevel final : public Function {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
+class guessAccountRevision final : public Function {
+ public:
+  static jclass Class;
+  object_ptr<InitialAccountState> initial_account_state_;
+  static jfieldID initial_account_state_fieldID;
+
+  guessAccountRevision();
+
+  explicit guessAccountRevision(object_ptr<InitialAccountState> &&initial_account_state_);
+
+  static const std::int32_t ID = 1463344293;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<accountRevisionList>;
+
+  static object_ptr<guessAccountRevision> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(JNIEnv *env, jobject &p);
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
 class importEncryptedKey final : public Function {
  public:
   static jclass Class;
@@ -2476,6 +3441,36 @@ class importPemKey final : public Function {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
+class importUnencryptedKey final : public Function {
+ public:
+  static jclass Class;
+  td::SecureString local_password_;
+  static jfieldID local_password_fieldID;
+  object_ptr<exportedUnencryptedKey> exported_unencrypted_key_;
+  static jfieldID exported_unencrypted_key_fieldID;
+
+  importUnencryptedKey();
+
+  importUnencryptedKey(td::SecureString &&local_password_, object_ptr<exportedUnencryptedKey> &&exported_unencrypted_key_);
+
+  static const std::int32_t ID = -1184671467;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<key>;
+
+  static object_ptr<importUnencryptedKey> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(JNIEnv *env, jobject &p);
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
 class init final : public Function {
  public:
   static jclass Class;
@@ -2486,12 +3481,12 @@ class init final : public Function {
 
   explicit init(object_ptr<options> &&options_);
 
-  static const std::int32_t ID = -2014661877;
+  static const std::int32_t ID = -1000594762;
   std::int32_t get_id() const final {
     return ID;
   }
 
-  using ReturnType = object_ptr<ok>;
+  using ReturnType = object_ptr<options_info>;
 
   static object_ptr<init> fetch(JNIEnv *env, jobject &p);
 
@@ -2550,6 +3545,66 @@ class liteServer_getInfo final : public Function {
   using ReturnType = object_ptr<liteServer_info>;
 
   static object_ptr<liteServer_getInfo> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(JNIEnv *env, jobject &p);
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class msg_decrypt final : public Function {
+ public:
+  static jclass Class;
+  object_ptr<InputKey> input_key_;
+  static jfieldID input_key_fieldID;
+  object_ptr<msg_dataEncryptedArray> data_;
+  static jfieldID data_fieldID;
+
+  msg_decrypt();
+
+  msg_decrypt(object_ptr<InputKey> &&input_key_, object_ptr<msg_dataEncryptedArray> &&data_);
+
+  static const std::int32_t ID = 223596297;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<msg_dataDecryptedArray>;
+
+  static object_ptr<msg_decrypt> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(JNIEnv *env, jobject &p);
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class msg_decryptWithProof final : public Function {
+ public:
+  static jclass Class;
+  std::string proof_;
+  static jfieldID proof_fieldID;
+  object_ptr<msg_dataEncrypted> data_;
+  static jfieldID data_fieldID;
+
+  msg_decryptWithProof();
+
+  msg_decryptWithProof(std::string const &proof_, object_ptr<msg_dataEncrypted> &&data_);
+
+  static const std::int32_t ID = -2111649663;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<msg_Data>;
+
+  static object_ptr<msg_decryptWithProof> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 
@@ -2630,12 +3685,12 @@ class options_setConfig final : public Function {
 
   explicit options_setConfig(object_ptr<config> &&config_);
 
-  static const std::int32_t ID = 646497241;
+  static const std::int32_t ID = 1870064579;
   std::int32_t get_id() const final {
     return ID;
   }
 
-  using ReturnType = object_ptr<ok>;
+  using ReturnType = object_ptr<options_configInfo>;
 
   static object_ptr<options_setConfig> fetch(JNIEnv *env, jobject &p);
 
@@ -2884,34 +3939,6 @@ class raw_createQuery final : public Function {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
-class raw_getAccountAddress final : public Function {
- public:
-  static jclass Class;
-  object_ptr<raw_initialAccountState> initital_account_state_;
-  static jfieldID initital_account_state_fieldID;
-
-  raw_getAccountAddress();
-
-  explicit raw_getAccountAddress(object_ptr<raw_initialAccountState> &&initital_account_state_);
-
-  static const std::int32_t ID = -521283849;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  using ReturnType = object_ptr<accountAddress>;
-
-  static object_ptr<raw_getAccountAddress> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static ReturnType fetch_result(JNIEnv *env, jobject &p);
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
 class raw_getAccountState final : public Function {
  public:
   static jclass Class;
@@ -2922,12 +3949,12 @@ class raw_getAccountState final : public Function {
 
   explicit raw_getAccountState(object_ptr<accountAddress> &&account_address_);
 
-  static const std::int32_t ID = 663706721;
+  static const std::int32_t ID = -1327847118;
   std::int32_t get_id() const final {
     return ID;
   }
 
-  using ReturnType = object_ptr<raw_accountState>;
+  using ReturnType = object_ptr<raw_fullAccountState>;
 
   static object_ptr<raw_getAccountState> fetch(JNIEnv *env, jobject &p);
 
@@ -2943,6 +3970,8 @@ class raw_getAccountState final : public Function {
 class raw_getTransactions final : public Function {
  public:
   static jclass Class;
+  object_ptr<InputKey> private_key_;
+  static jfieldID private_key_fieldID;
   object_ptr<accountAddress> account_address_;
   static jfieldID account_address_fieldID;
   object_ptr<internal_transactionId> from_transaction_id_;
@@ -2950,9 +3979,9 @@ class raw_getTransactions final : public Function {
 
   raw_getTransactions();
 
-  raw_getTransactions(object_ptr<accountAddress> &&account_address_, object_ptr<internal_transactionId> &&from_transaction_id_);
+  raw_getTransactions(object_ptr<InputKey> &&private_key_, object_ptr<accountAddress> &&account_address_, object_ptr<internal_transactionId> &&from_transaction_id_);
 
-  static const std::int32_t ID = 935377269;
+  static const std::int32_t ID = 1029612317;
   std::int32_t get_id() const final {
     return ID;
   }
@@ -3262,216 +4291,14 @@ class sync final : public Function {
 
   sync();
 
-  static const std::int32_t ID = -1617065525;
+  static const std::int32_t ID = -1875977070;
   std::int32_t get_id() const final {
     return ID;
   }
 
-  using ReturnType = object_ptr<ok>;
+  using ReturnType = object_ptr<ton_blockIdExt>;
 
   static object_ptr<sync> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static ReturnType fetch_result(JNIEnv *env, jobject &p);
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class testGiver_getAccountAddress final : public Function {
- public:
-  static jclass Class;
-
-  testGiver_getAccountAddress();
-
-  static const std::int32_t ID = -540100768;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  using ReturnType = object_ptr<accountAddress>;
-
-  static object_ptr<testGiver_getAccountAddress> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static ReturnType fetch_result(JNIEnv *env, jobject &p);
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class testGiver_getAccountState final : public Function {
- public:
-  static jclass Class;
-
-  testGiver_getAccountState();
-
-  static const std::int32_t ID = 267738275;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  using ReturnType = object_ptr<testGiver_accountState>;
-
-  static object_ptr<testGiver_getAccountState> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static ReturnType fetch_result(JNIEnv *env, jobject &p);
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class testGiver_sendGrams final : public Function {
- public:
-  static jclass Class;
-  object_ptr<accountAddress> destination_;
-  static jfieldID destination_fieldID;
-  std::int32_t seqno_;
-  static jfieldID seqno_fieldID;
-  std::int64_t amount_;
-  static jfieldID amount_fieldID;
-  std::string message_;
-  static jfieldID message_fieldID;
-
-  testGiver_sendGrams();
-
-  testGiver_sendGrams(object_ptr<accountAddress> &&destination_, std::int32_t seqno_, std::int64_t amount_, std::string const &message_);
-
-  static const std::int32_t ID = -1785750375;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  using ReturnType = object_ptr<sendGramsResult>;
-
-  static object_ptr<testGiver_sendGrams> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static ReturnType fetch_result(JNIEnv *env, jobject &p);
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class testWallet_getAccountAddress final : public Function {
- public:
-  static jclass Class;
-  object_ptr<testWallet_initialAccountState> initital_account_state_;
-  static jfieldID initital_account_state_fieldID;
-
-  testWallet_getAccountAddress();
-
-  explicit testWallet_getAccountAddress(object_ptr<testWallet_initialAccountState> &&initital_account_state_);
-
-  static const std::int32_t ID = -1557748223;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  using ReturnType = object_ptr<accountAddress>;
-
-  static object_ptr<testWallet_getAccountAddress> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static ReturnType fetch_result(JNIEnv *env, jobject &p);
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class testWallet_getAccountState final : public Function {
- public:
-  static jclass Class;
-  object_ptr<accountAddress> account_address_;
-  static jfieldID account_address_fieldID;
-
-  testWallet_getAccountState();
-
-  explicit testWallet_getAccountState(object_ptr<accountAddress> &&account_address_);
-
-  static const std::int32_t ID = 654082364;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  using ReturnType = object_ptr<testWallet_accountState>;
-
-  static object_ptr<testWallet_getAccountState> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static ReturnType fetch_result(JNIEnv *env, jobject &p);
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class testWallet_init final : public Function {
- public:
-  static jclass Class;
-  object_ptr<InputKey> private_key_;
-  static jfieldID private_key_fieldID;
-
-  testWallet_init();
-
-  explicit testWallet_init(object_ptr<InputKey> &&private_key_);
-
-  static const std::int32_t ID = -1417409140;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  using ReturnType = object_ptr<ok>;
-
-  static object_ptr<testWallet_init> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static ReturnType fetch_result(JNIEnv *env, jobject &p);
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class testWallet_sendGrams final : public Function {
- public:
-  static jclass Class;
-  object_ptr<InputKey> private_key_;
-  static jfieldID private_key_fieldID;
-  object_ptr<accountAddress> destination_;
-  static jfieldID destination_fieldID;
-  std::int32_t seqno_;
-  static jfieldID seqno_fieldID;
-  std::int64_t amount_;
-  static jfieldID amount_fieldID;
-  std::string message_;
-  static jfieldID message_fieldID;
-
-  testWallet_sendGrams();
-
-  testWallet_sendGrams(object_ptr<InputKey> &&private_key_, object_ptr<accountAddress> &&destination_, std::int32_t seqno_, std::int64_t amount_, std::string const &message_);
-
-  static const std::int32_t ID = 573748322;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  using ReturnType = object_ptr<sendGramsResult>;
-
-  static object_ptr<testWallet_sendGrams> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 
@@ -3510,146 +4337,26 @@ class unpackAccountAddress final : public Function {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
-class wallet_getAccountAddress final : public Function {
+class withBlock final : public Function {
  public:
   static jclass Class;
-  object_ptr<wallet_initialAccountState> initital_account_state_;
-  static jfieldID initital_account_state_fieldID;
+  object_ptr<ton_blockIdExt> id_;
+  static jfieldID id_fieldID;
+  object_ptr<Function> function_;
+  static jfieldID function_fieldID;
 
-  wallet_getAccountAddress();
+  withBlock();
 
-  explicit wallet_getAccountAddress(object_ptr<wallet_initialAccountState> &&initital_account_state_);
+  withBlock(object_ptr<ton_blockIdExt> &&id_, object_ptr<Function> &&function_);
 
-  static const std::int32_t ID = -1004103180;
+  static const std::int32_t ID = -789093723;
   std::int32_t get_id() const final {
     return ID;
   }
 
-  using ReturnType = object_ptr<accountAddress>;
+  using ReturnType = object_ptr<Object>;
 
-  static object_ptr<wallet_getAccountAddress> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static ReturnType fetch_result(JNIEnv *env, jobject &p);
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class wallet_getAccountState final : public Function {
- public:
-  static jclass Class;
-  object_ptr<accountAddress> account_address_;
-  static jfieldID account_address_fieldID;
-
-  wallet_getAccountState();
-
-  explicit wallet_getAccountState(object_ptr<accountAddress> &&account_address_);
-
-  static const std::int32_t ID = 462294850;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  using ReturnType = object_ptr<wallet_accountState>;
-
-  static object_ptr<wallet_getAccountState> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static ReturnType fetch_result(JNIEnv *env, jobject &p);
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class wallet_init final : public Function {
- public:
-  static jclass Class;
-  object_ptr<InputKey> private_key_;
-  static jfieldID private_key_fieldID;
-
-  wallet_init();
-
-  explicit wallet_init(object_ptr<InputKey> &&private_key_);
-
-  static const std::int32_t ID = -395706309;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  using ReturnType = object_ptr<ok>;
-
-  static object_ptr<wallet_init> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static ReturnType fetch_result(JNIEnv *env, jobject &p);
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class wallet_sendGrams final : public Function {
- public:
-  static jclass Class;
-  object_ptr<InputKey> private_key_;
-  static jfieldID private_key_fieldID;
-  object_ptr<accountAddress> destination_;
-  static jfieldID destination_fieldID;
-  std::int32_t seqno_;
-  static jfieldID seqno_fieldID;
-  std::int64_t valid_until_;
-  static jfieldID valid_until_fieldID;
-  std::int64_t amount_;
-  static jfieldID amount_fieldID;
-  std::string message_;
-  static jfieldID message_fieldID;
-
-  wallet_sendGrams();
-
-  wallet_sendGrams(object_ptr<InputKey> &&private_key_, object_ptr<accountAddress> &&destination_, std::int32_t seqno_, std::int64_t valid_until_, std::int64_t amount_, std::string const &message_);
-
-  static const std::int32_t ID = 297317621;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  using ReturnType = object_ptr<sendGramsResult>;
-
-  static object_ptr<wallet_sendGrams> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static ReturnType fetch_result(JNIEnv *env, jobject &p);
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class wallet_v3_getAccountAddress final : public Function {
- public:
-  static jclass Class;
-  object_ptr<wallet_v3_initialAccountState> initital_account_state_;
-  static jfieldID initital_account_state_fieldID;
-
-  wallet_v3_getAccountAddress();
-
-  explicit wallet_v3_getAccountAddress(object_ptr<wallet_v3_initialAccountState> &&initital_account_state_);
-
-  static const std::int32_t ID = 1011655671;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  using ReturnType = object_ptr<accountAddress>;
-
-  static object_ptr<wallet_v3_getAccountAddress> fetch(JNIEnv *env, jobject &p);
+  static object_ptr<withBlock> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 

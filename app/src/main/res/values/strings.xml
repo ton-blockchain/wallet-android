@@ -189,6 +189,9 @@
     <string name="WalletSendSyncInProgress">Please wait while the wallet finishes syncing with the TON Blockchain.</string>
     <string name="GramWalletInfo">The gram wallet allows you to make fast and secure blockchain-based payments without intermediaries.</string>
     <string name="WalletDeleteInfo">This will disconnect the wallet from this app. You will be able to restore your wallet using 24 secret words – or import another wallet.\n\nWallets are located in the TON Blockchain, which is not controlled by Telegram. If you want a wallet to be deleted, simply transfer all the grams from it and leave it empty.</string>
+    <string name="WalletEncryptedMessage">Encrypted message</string>
+    <string name="WalletDecryptConfirmCredentials">Please confirm your credentials to decrypt transactions messages.</string>
+    <string name="WalletCantEncryptComment">**Note:** Your comment \"%1$s\" will **not be encrypted**.</string>
     <string name="WalletTosUrl"> </string>
     <string name="CreateMyWalletTerms"> </string>
     <!--plural-->

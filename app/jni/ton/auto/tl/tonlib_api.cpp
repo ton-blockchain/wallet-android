@@ -27,6 +27,34 @@ object_ptr<Object> Object::fetch(JNIEnv *env, jobject &p) {
   switch (id) {
     case accountAddress::ID:
       return accountAddress::fetch(env, p);
+    case accountRevisionList::ID:
+      return accountRevisionList::fetch(env, p);
+    case raw_accountState::ID:
+      return raw_accountState::fetch(env, p);
+    case testWallet_accountState::ID:
+      return testWallet_accountState::fetch(env, p);
+    case wallet_accountState::ID:
+      return wallet_accountState::fetch(env, p);
+    case wallet_v3_accountState::ID:
+      return wallet_v3_accountState::fetch(env, p);
+    case wallet_highload_v1_accountState::ID:
+      return wallet_highload_v1_accountState::fetch(env, p);
+    case wallet_highload_v2_accountState::ID:
+      return wallet_highload_v2_accountState::fetch(env, p);
+    case testGiver_accountState::ID:
+      return testGiver_accountState::fetch(env, p);
+    case dns_accountState::ID:
+      return dns_accountState::fetch(env, p);
+    case uninited_accountState::ID:
+      return uninited_accountState::fetch(env, p);
+    case actionNoop::ID:
+      return actionNoop::fetch(env, p);
+    case actionMsg::ID:
+      return actionMsg::fetch(env, p);
+    case actionDns::ID:
+      return actionDns::fetch(env, p);
+    case adnlAddress::ID:
+      return adnlAddress::fetch(env, p);
     case bip39Hints::ID:
       return bip39Hints::fetch(env, p);
     case config::ID:
@@ -41,8 +69,28 @@ object_ptr<Object> Object::fetch(JNIEnv *env, jobject &p) {
       return exportedKey::fetch(env, p);
     case exportedPemKey::ID:
       return exportedPemKey::fetch(env, p);
+    case exportedUnencryptedKey::ID:
+      return exportedUnencryptedKey::fetch(env, p);
     case fees::ID:
       return fees::fetch(env, p);
+    case fullAccountState::ID:
+      return fullAccountState::fetch(env, p);
+    case raw_initialAccountState::ID:
+      return raw_initialAccountState::fetch(env, p);
+    case testGiver_initialAccountState::ID:
+      return testGiver_initialAccountState::fetch(env, p);
+    case testWallet_initialAccountState::ID:
+      return testWallet_initialAccountState::fetch(env, p);
+    case wallet_initialAccountState::ID:
+      return wallet_initialAccountState::fetch(env, p);
+    case wallet_v3_initialAccountState::ID:
+      return wallet_v3_initialAccountState::fetch(env, p);
+    case wallet_highload_v1_initialAccountState::ID:
+      return wallet_highload_v1_initialAccountState::fetch(env, p);
+    case wallet_highload_v2_initialAccountState::ID:
+      return wallet_highload_v2_initialAccountState::fetch(env, p);
+    case dns_initialAccountState::ID:
+      return dns_initialAccountState::fetch(env, p);
     case inputKeyRegular::ID:
       return inputKeyRegular::fetch(env, p);
     case inputKeyFake::ID:
@@ -67,8 +115,6 @@ object_ptr<Object> Object::fetch(JNIEnv *env, jobject &p) {
       return ok::fetch(env, p);
     case options::ID:
       return options::fetch(env, p);
-    case sendGramsResult::ID:
-      return sendGramsResult::fetch(env, p);
     case syncStateDone::ID:
       return syncStateDone::fetch(env, p);
     case syncStateInProgress::ID:
@@ -79,32 +125,60 @@ object_ptr<Object> Object::fetch(JNIEnv *env, jobject &p) {
       return updateSendLiteServerQuery::fetch(env, p);
     case updateSyncState::ID:
       return updateSyncState::fetch(env, p);
-    case generic_accountStateRaw::ID:
-      return generic_accountStateRaw::fetch(env, p);
-    case generic_accountStateTestWallet::ID:
-      return generic_accountStateTestWallet::fetch(env, p);
-    case generic_accountStateWallet::ID:
-      return generic_accountStateWallet::fetch(env, p);
-    case generic_accountStateWalletV3::ID:
-      return generic_accountStateWalletV3::fetch(env, p);
-    case generic_accountStateTestGiver::ID:
-      return generic_accountStateTestGiver::fetch(env, p);
-    case generic_accountStateUninited::ID:
-      return generic_accountStateUninited::fetch(env, p);
+    case dns_actionDeleteAll::ID:
+      return dns_actionDeleteAll::fetch(env, p);
+    case dns_actionDelete::ID:
+      return dns_actionDelete::fetch(env, p);
+    case dns_actionSet::ID:
+      return dns_actionSet::fetch(env, p);
+    case dns_entry::ID:
+      return dns_entry::fetch(env, p);
+    case dns_entryDataUnknown::ID:
+      return dns_entryDataUnknown::fetch(env, p);
+    case dns_entryDataText::ID:
+      return dns_entryDataText::fetch(env, p);
+    case dns_entryDataNextResolver::ID:
+      return dns_entryDataNextResolver::fetch(env, p);
+    case dns_entryDataSmcAddress::ID:
+      return dns_entryDataSmcAddress::fetch(env, p);
+    case dns_entryDataAdnlAddress::ID:
+      return dns_entryDataAdnlAddress::fetch(env, p);
+    case dns_resolved::ID:
+      return dns_resolved::fetch(env, p);
+    case ton_blockId::ID:
+      return ton_blockId::fetch(env, p);
     case internal_transactionId::ID:
       return internal_transactionId::fetch(env, p);
     case liteServer_info::ID:
       return liteServer_info::fetch(env, p);
+    case msg_dataRaw::ID:
+      return msg_dataRaw::fetch(env, p);
+    case msg_dataText::ID:
+      return msg_dataText::fetch(env, p);
+    case msg_dataDecryptedText::ID:
+      return msg_dataDecryptedText::fetch(env, p);
+    case msg_dataEncryptedText::ID:
+      return msg_dataEncryptedText::fetch(env, p);
+    case msg_dataDecrypted::ID:
+      return msg_dataDecrypted::fetch(env, p);
+    case msg_dataDecryptedArray::ID:
+      return msg_dataDecryptedArray::fetch(env, p);
+    case msg_dataEncrypted::ID:
+      return msg_dataEncrypted::fetch(env, p);
+    case msg_dataEncryptedArray::ID:
+      return msg_dataEncryptedArray::fetch(env, p);
+    case msg_message::ID:
+      return msg_message::fetch(env, p);
     case options_configInfo::ID:
       return options_configInfo::fetch(env, p);
+    case options_info::ID:
+      return options_info::fetch(env, p);
     case query_fees::ID:
       return query_fees::fetch(env, p);
     case query_info::ID:
       return query_info::fetch(env, p);
-    case raw_accountState::ID:
-      return raw_accountState::fetch(env, p);
-    case raw_initialAccountState::ID:
-      return raw_initialAccountState::fetch(env, p);
+    case raw_fullAccountState::ID:
+      return raw_fullAccountState::fetch(env, p);
     case raw_message::ID:
       return raw_message::fetch(env, p);
     case raw_transaction::ID:
@@ -119,14 +193,12 @@ object_ptr<Object> Object::fetch(JNIEnv *env, jobject &p) {
       return smc_methodIdName::fetch(env, p);
     case smc_runResult::ID:
       return smc_runResult::fetch(env, p);
-    case testGiver_accountState::ID:
-      return testGiver_accountState::fetch(env, p);
-    case testWallet_accountState::ID:
-      return testWallet_accountState::fetch(env, p);
-    case testWallet_initialAccountState::ID:
-      return testWallet_initialAccountState::fetch(env, p);
+    case ton_blockIdExt::ID:
+      return ton_blockIdExt::fetch(env, p);
     case tvm_cell::ID:
       return tvm_cell::fetch(env, p);
+    case tvm_list::ID:
+      return tvm_list::fetch(env, p);
     case tvm_numberDecimal::ID:
       return tvm_numberDecimal::fetch(env, p);
     case tvm_slice::ID:
@@ -137,18 +209,14 @@ object_ptr<Object> Object::fetch(JNIEnv *env, jobject &p) {
       return tvm_stackEntryCell::fetch(env, p);
     case tvm_stackEntryNumber::ID:
       return tvm_stackEntryNumber::fetch(env, p);
+    case tvm_stackEntryTuple::ID:
+      return tvm_stackEntryTuple::fetch(env, p);
+    case tvm_stackEntryList::ID:
+      return tvm_stackEntryList::fetch(env, p);
     case tvm_stackEntryUnsupported::ID:
       return tvm_stackEntryUnsupported::fetch(env, p);
-    case uninited_accountState::ID:
-      return uninited_accountState::fetch(env, p);
-    case wallet_accountState::ID:
-      return wallet_accountState::fetch(env, p);
-    case wallet_initialAccountState::ID:
-      return wallet_initialAccountState::fetch(env, p);
-    case wallet_v3_accountState::ID:
-      return wallet_v3_accountState::fetch(env, p);
-    case wallet_v3_initialAccountState::ID:
-      return wallet_v3_initialAccountState::fetch(env, p);
+    case tvm_tuple::ID:
+      return tvm_tuple::fetch(env, p);
     default:
       LOG(WARNING) << "Unknown constructor found: " << id;
       return nullptr;
@@ -158,6 +226,10 @@ object_ptr<Object> Object::fetch(JNIEnv *env, jobject &p) {
 void Object::init_jni_vars(JNIEnv *env, const char *package_name) {
   Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$Object").c_str());
   accountAddress::init_jni_vars(env, package_name);
+  accountRevisionList::init_jni_vars(env, package_name);
+  AccountState::init_jni_vars(env, package_name);
+  Action::init_jni_vars(env, package_name);
+  adnlAddress::init_jni_vars(env, package_name);
   bip39Hints::init_jni_vars(env, package_name);
   config::init_jni_vars(env, package_name);
   data::init_jni_vars(env, package_name);
@@ -165,7 +237,10 @@ void Object::init_jni_vars(JNIEnv *env, const char *package_name) {
   exportedEncryptedKey::init_jni_vars(env, package_name);
   exportedKey::init_jni_vars(env, package_name);
   exportedPemKey::init_jni_vars(env, package_name);
+  exportedUnencryptedKey::init_jni_vars(env, package_name);
   fees::init_jni_vars(env, package_name);
+  fullAccountState::init_jni_vars(env, package_name);
+  InitialAccountState::init_jni_vars(env, package_name);
   InputKey::init_jni_vars(env, package_name);
   key::init_jni_vars(env, package_name);
   KeyStoreType::init_jni_vars(env, package_name);
@@ -174,36 +249,40 @@ void Object::init_jni_vars(JNIEnv *env, const char *package_name) {
   logVerbosityLevel::init_jni_vars(env, package_name);
   ok::init_jni_vars(env, package_name);
   options::init_jni_vars(env, package_name);
-  sendGramsResult::init_jni_vars(env, package_name);
   SyncState::init_jni_vars(env, package_name);
   unpackedAccountAddress::init_jni_vars(env, package_name);
   Update::init_jni_vars(env, package_name);
-  generic_AccountState::init_jni_vars(env, package_name);
+  dns_Action::init_jni_vars(env, package_name);
+  dns_entry::init_jni_vars(env, package_name);
+  dns_EntryData::init_jni_vars(env, package_name);
+  dns_resolved::init_jni_vars(env, package_name);
+  ton_blockId::init_jni_vars(env, package_name);
   internal_transactionId::init_jni_vars(env, package_name);
   liteServer_info::init_jni_vars(env, package_name);
+  msg_Data::init_jni_vars(env, package_name);
+  msg_dataDecrypted::init_jni_vars(env, package_name);
+  msg_dataDecryptedArray::init_jni_vars(env, package_name);
+  msg_dataEncrypted::init_jni_vars(env, package_name);
+  msg_dataEncryptedArray::init_jni_vars(env, package_name);
+  msg_message::init_jni_vars(env, package_name);
   options_configInfo::init_jni_vars(env, package_name);
+  options_info::init_jni_vars(env, package_name);
   query_fees::init_jni_vars(env, package_name);
   query_info::init_jni_vars(env, package_name);
-  raw_accountState::init_jni_vars(env, package_name);
-  raw_initialAccountState::init_jni_vars(env, package_name);
+  raw_fullAccountState::init_jni_vars(env, package_name);
   raw_message::init_jni_vars(env, package_name);
   raw_transaction::init_jni_vars(env, package_name);
   raw_transactions::init_jni_vars(env, package_name);
   smc_info::init_jni_vars(env, package_name);
   smc_MethodId::init_jni_vars(env, package_name);
   smc_runResult::init_jni_vars(env, package_name);
-  testGiver_accountState::init_jni_vars(env, package_name);
-  testWallet_accountState::init_jni_vars(env, package_name);
-  testWallet_initialAccountState::init_jni_vars(env, package_name);
+  ton_blockIdExt::init_jni_vars(env, package_name);
   tvm_cell::init_jni_vars(env, package_name);
+  tvm_list::init_jni_vars(env, package_name);
   tvm_numberDecimal::init_jni_vars(env, package_name);
   tvm_slice::init_jni_vars(env, package_name);
   tvm_StackEntry::init_jni_vars(env, package_name);
-  uninited_accountState::init_jni_vars(env, package_name);
-  wallet_accountState::init_jni_vars(env, package_name);
-  wallet_initialAccountState::init_jni_vars(env, package_name);
-  wallet_v3_accountState::init_jni_vars(env, package_name);
-  wallet_v3_initialAccountState::init_jni_vars(env, package_name);
+  tvm_tuple::init_jni_vars(env, package_name);
 }
 
 jclass Function::Class;
@@ -220,12 +299,16 @@ object_ptr<Function> Function::fetch(JNIEnv *env, jobject &p) {
       return close::fetch(env, p);
     case createNewKey::ID:
       return createNewKey::fetch(env, p);
+    case createQuery::ID:
+      return createQuery::fetch(env, p);
     case decrypt::ID:
       return decrypt::fetch(env, p);
     case deleteAllKeys::ID:
       return deleteAllKeys::fetch(env, p);
     case deleteKey::ID:
       return deleteKey::fetch(env, p);
+    case dns_resolve::ID:
+      return dns_resolve::fetch(env, p);
     case encrypt::ID:
       return encrypt::fetch(env, p);
     case exportEncryptedKey::ID:
@@ -234,12 +317,12 @@ object_ptr<Function> Function::fetch(JNIEnv *env, jobject &p) {
       return exportKey::fetch(env, p);
     case exportPemKey::ID:
       return exportPemKey::fetch(env, p);
-    case generic_createSendGramsQuery::ID:
-      return generic_createSendGramsQuery::fetch(env, p);
-    case generic_getAccountState::ID:
-      return generic_getAccountState::fetch(env, p);
-    case generic_sendGrams::ID:
-      return generic_sendGrams::fetch(env, p);
+    case exportUnencryptedKey::ID:
+      return exportUnencryptedKey::fetch(env, p);
+    case getAccountAddress::ID:
+      return getAccountAddress::fetch(env, p);
+    case getAccountState::ID:
+      return getAccountState::fetch(env, p);
     case getBip39Hints::ID:
       return getBip39Hints::fetch(env, p);
     case getLogStream::ID:
@@ -250,18 +333,26 @@ object_ptr<Function> Function::fetch(JNIEnv *env, jobject &p) {
       return getLogTags::fetch(env, p);
     case getLogVerbosityLevel::ID:
       return getLogVerbosityLevel::fetch(env, p);
+    case guessAccountRevision::ID:
+      return guessAccountRevision::fetch(env, p);
     case importEncryptedKey::ID:
       return importEncryptedKey::fetch(env, p);
     case importKey::ID:
       return importKey::fetch(env, p);
     case importPemKey::ID:
       return importPemKey::fetch(env, p);
+    case importUnencryptedKey::ID:
+      return importUnencryptedKey::fetch(env, p);
     case init::ID:
       return init::fetch(env, p);
     case kdf::ID:
       return kdf::fetch(env, p);
     case liteServer_getInfo::ID:
       return liteServer_getInfo::fetch(env, p);
+    case msg_decrypt::ID:
+      return msg_decrypt::fetch(env, p);
+    case msg_decryptWithProof::ID:
+      return msg_decryptWithProof::fetch(env, p);
     case onLiteServerQueryError::ID:
       return onLiteServerQueryError::fetch(env, p);
     case onLiteServerQueryResult::ID:
@@ -284,8 +375,6 @@ object_ptr<Function> Function::fetch(JNIEnv *env, jobject &p) {
       return raw_createAndSendMessage::fetch(env, p);
     case raw_createQuery::ID:
       return raw_createQuery::fetch(env, p);
-    case raw_getAccountAddress::ID:
-      return raw_getAccountAddress::fetch(env, p);
     case raw_getAccountState::ID:
       return raw_getAccountState::fetch(env, p);
     case raw_getTransactions::ID:
@@ -312,32 +401,10 @@ object_ptr<Function> Function::fetch(JNIEnv *env, jobject &p) {
       return smc_runGetMethod::fetch(env, p);
     case sync::ID:
       return sync::fetch(env, p);
-    case testGiver_getAccountAddress::ID:
-      return testGiver_getAccountAddress::fetch(env, p);
-    case testGiver_getAccountState::ID:
-      return testGiver_getAccountState::fetch(env, p);
-    case testGiver_sendGrams::ID:
-      return testGiver_sendGrams::fetch(env, p);
-    case testWallet_getAccountAddress::ID:
-      return testWallet_getAccountAddress::fetch(env, p);
-    case testWallet_getAccountState::ID:
-      return testWallet_getAccountState::fetch(env, p);
-    case testWallet_init::ID:
-      return testWallet_init::fetch(env, p);
-    case testWallet_sendGrams::ID:
-      return testWallet_sendGrams::fetch(env, p);
     case unpackAccountAddress::ID:
       return unpackAccountAddress::fetch(env, p);
-    case wallet_getAccountAddress::ID:
-      return wallet_getAccountAddress::fetch(env, p);
-    case wallet_getAccountState::ID:
-      return wallet_getAccountState::fetch(env, p);
-    case wallet_init::ID:
-      return wallet_init::fetch(env, p);
-    case wallet_sendGrams::ID:
-      return wallet_sendGrams::fetch(env, p);
-    case wallet_v3_getAccountAddress::ID:
-      return wallet_v3_getAccountAddress::fetch(env, p);
+    case withBlock::ID:
+      return withBlock::fetch(env, p);
     default:
       LOG(WARNING) << "Unknown constructor found: " << id;
       return nullptr;
@@ -350,27 +417,33 @@ void Function::init_jni_vars(JNIEnv *env, const char *package_name) {
   changeLocalPassword::init_jni_vars(env, package_name);
   close::init_jni_vars(env, package_name);
   createNewKey::init_jni_vars(env, package_name);
+  createQuery::init_jni_vars(env, package_name);
   decrypt::init_jni_vars(env, package_name);
   deleteAllKeys::init_jni_vars(env, package_name);
   deleteKey::init_jni_vars(env, package_name);
+  dns_resolve::init_jni_vars(env, package_name);
   encrypt::init_jni_vars(env, package_name);
   exportEncryptedKey::init_jni_vars(env, package_name);
   exportKey::init_jni_vars(env, package_name);
   exportPemKey::init_jni_vars(env, package_name);
-  generic_createSendGramsQuery::init_jni_vars(env, package_name);
-  generic_getAccountState::init_jni_vars(env, package_name);
-  generic_sendGrams::init_jni_vars(env, package_name);
+  exportUnencryptedKey::init_jni_vars(env, package_name);
+  getAccountAddress::init_jni_vars(env, package_name);
+  getAccountState::init_jni_vars(env, package_name);
   getBip39Hints::init_jni_vars(env, package_name);
   getLogStream::init_jni_vars(env, package_name);
   getLogTagVerbosityLevel::init_jni_vars(env, package_name);
   getLogTags::init_jni_vars(env, package_name);
   getLogVerbosityLevel::init_jni_vars(env, package_name);
+  guessAccountRevision::init_jni_vars(env, package_name);
   importEncryptedKey::init_jni_vars(env, package_name);
   importKey::init_jni_vars(env, package_name);
   importPemKey::init_jni_vars(env, package_name);
+  importUnencryptedKey::init_jni_vars(env, package_name);
   init::init_jni_vars(env, package_name);
   kdf::init_jni_vars(env, package_name);
   liteServer_getInfo::init_jni_vars(env, package_name);
+  msg_decrypt::init_jni_vars(env, package_name);
+  msg_decryptWithProof::init_jni_vars(env, package_name);
   onLiteServerQueryError::init_jni_vars(env, package_name);
   onLiteServerQueryResult::init_jni_vars(env, package_name);
   options_setConfig::init_jni_vars(env, package_name);
@@ -382,7 +455,6 @@ void Function::init_jni_vars(JNIEnv *env, const char *package_name) {
   query_send::init_jni_vars(env, package_name);
   raw_createAndSendMessage::init_jni_vars(env, package_name);
   raw_createQuery::init_jni_vars(env, package_name);
-  raw_getAccountAddress::init_jni_vars(env, package_name);
   raw_getAccountState::init_jni_vars(env, package_name);
   raw_getTransactions::init_jni_vars(env, package_name);
   raw_sendMessage::init_jni_vars(env, package_name);
@@ -396,19 +468,8 @@ void Function::init_jni_vars(JNIEnv *env, const char *package_name) {
   smc_load::init_jni_vars(env, package_name);
   smc_runGetMethod::init_jni_vars(env, package_name);
   sync::init_jni_vars(env, package_name);
-  testGiver_getAccountAddress::init_jni_vars(env, package_name);
-  testGiver_getAccountState::init_jni_vars(env, package_name);
-  testGiver_sendGrams::init_jni_vars(env, package_name);
-  testWallet_getAccountAddress::init_jni_vars(env, package_name);
-  testWallet_getAccountState::init_jni_vars(env, package_name);
-  testWallet_init::init_jni_vars(env, package_name);
-  testWallet_sendGrams::init_jni_vars(env, package_name);
   unpackAccountAddress::init_jni_vars(env, package_name);
-  wallet_getAccountAddress::init_jni_vars(env, package_name);
-  wallet_getAccountState::init_jni_vars(env, package_name);
-  wallet_init::init_jni_vars(env, package_name);
-  wallet_sendGrams::init_jni_vars(env, package_name);
-  wallet_v3_getAccountAddress::init_jni_vars(env, package_name);
+  withBlock::init_jni_vars(env, package_name);
 }
 
 jclass accountAddress::Class;
@@ -448,6 +509,645 @@ void accountAddress::store(td::TlStorerToString &s, const char *field_name) cons
 void accountAddress::init_jni_vars(JNIEnv *env, const char *package_name) {
   Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$AccountAddress").c_str());
   account_address_fieldID = td::jni::get_field_id(env, Class, "accountAddress", "Ljava/lang/String;");
+}
+
+jclass accountRevisionList::Class;
+jfieldID accountRevisionList::revisions_fieldID;
+
+accountRevisionList::accountRevisionList()
+  : revisions_()
+{}
+
+accountRevisionList::accountRevisionList(std::vector<std::int32_t> &&revisions_)
+  : revisions_(std::move(revisions_))
+{}
+
+const std::int32_t accountRevisionList::ID;
+
+object_ptr<accountRevisionList> accountRevisionList::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<accountRevisionList> res = make_object<accountRevisionList>();
+  res->revisions_ = td::jni::fetch_vector(env, (jintArray)td::jni::fetch_object(env, p, res->revisions_fieldID));;
+  return res;
+}
+
+void accountRevisionList::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { auto arr_tmp_ = td::jni::store_vector(env, revisions_); if (arr_tmp_) { env->SetObjectField(s, revisions_fieldID, arr_tmp_); env->DeleteLocalRef(arr_tmp_); } }
+}
+
+void accountRevisionList::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "AccountRevisionList");
+    { const std::vector<std::int32_t> &v = revisions_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "Array[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("revisions", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { s.store_field("", v[i]); } s.store_class_end(); }
+    s.store_class_end();
+  }
+}
+
+void accountRevisionList::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$AccountRevisionList").c_str());
+  revisions_fieldID = td::jni::get_field_id(env, Class, "revisions", "[I");
+}
+
+jclass AccountState::Class;
+
+object_ptr<AccountState> AccountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) { return nullptr; }
+  auto id = env->CallIntMethod(p, td::jni::GetConstructorID);
+  switch (id) {
+    case raw_accountState::ID:
+      return raw_accountState::fetch(env, p);
+    case testWallet_accountState::ID:
+      return testWallet_accountState::fetch(env, p);
+    case wallet_accountState::ID:
+      return wallet_accountState::fetch(env, p);
+    case wallet_v3_accountState::ID:
+      return wallet_v3_accountState::fetch(env, p);
+    case wallet_highload_v1_accountState::ID:
+      return wallet_highload_v1_accountState::fetch(env, p);
+    case wallet_highload_v2_accountState::ID:
+      return wallet_highload_v2_accountState::fetch(env, p);
+    case testGiver_accountState::ID:
+      return testGiver_accountState::fetch(env, p);
+    case dns_accountState::ID:
+      return dns_accountState::fetch(env, p);
+    case uninited_accountState::ID:
+      return uninited_accountState::fetch(env, p);
+    default:
+      LOG(WARNING) << "Unknown constructor found: " << id;
+      return nullptr;
+  }
+}
+
+void AccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$AccountState").c_str());
+  raw_accountState::init_jni_vars(env, package_name);
+  testWallet_accountState::init_jni_vars(env, package_name);
+  wallet_accountState::init_jni_vars(env, package_name);
+  wallet_v3_accountState::init_jni_vars(env, package_name);
+  wallet_highload_v1_accountState::init_jni_vars(env, package_name);
+  wallet_highload_v2_accountState::init_jni_vars(env, package_name);
+  testGiver_accountState::init_jni_vars(env, package_name);
+  dns_accountState::init_jni_vars(env, package_name);
+  uninited_accountState::init_jni_vars(env, package_name);
+}
+
+jclass raw_accountState::Class;
+jfieldID raw_accountState::code_fieldID;
+jfieldID raw_accountState::data_fieldID;
+jfieldID raw_accountState::frozen_hash_fieldID;
+
+raw_accountState::raw_accountState()
+  : code_()
+  , data_()
+  , frozen_hash_()
+{}
+
+raw_accountState::raw_accountState(std::string const &code_, std::string const &data_, std::string const &frozen_hash_)
+  : code_(std::move(code_))
+  , data_(std::move(data_))
+  , frozen_hash_(std::move(frozen_hash_))
+{}
+
+const std::int32_t raw_accountState::ID;
+
+object_ptr<AccountState> raw_accountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<raw_accountState> res = make_object<raw_accountState>();
+  res->code_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->code_fieldID));
+  res->data_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->data_fieldID));
+  res->frozen_hash_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->frozen_hash_fieldID));
+  return std::move(res);
+}
+
+void raw_accountState::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { jbyteArray nextBytes = td::jni::to_bytes(env, code_); if (nextBytes) { env->SetObjectField(s, code_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
+  { jbyteArray nextBytes = td::jni::to_bytes(env, data_); if (nextBytes) { env->SetObjectField(s, data_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
+  { jbyteArray nextBytes = td::jni::to_bytes(env, frozen_hash_); if (nextBytes) { env->SetObjectField(s, frozen_hash_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
+}
+
+void raw_accountState::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "RawAccountState");
+    s.store_bytes_field("code", code_);
+    s.store_bytes_field("data", data_);
+    s.store_bytes_field("frozenHash", frozen_hash_);
+    s.store_class_end();
+  }
+}
+
+void raw_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$RawAccountState").c_str());
+  code_fieldID = td::jni::get_field_id(env, Class, "code", "[B");
+  data_fieldID = td::jni::get_field_id(env, Class, "data", "[B");
+  frozen_hash_fieldID = td::jni::get_field_id(env, Class, "frozenHash", "[B");
+}
+
+jclass testWallet_accountState::Class;
+jfieldID testWallet_accountState::seqno_fieldID;
+
+testWallet_accountState::testWallet_accountState()
+  : seqno_()
+{}
+
+testWallet_accountState::testWallet_accountState(std::int32_t seqno_)
+  : seqno_(seqno_)
+{}
+
+const std::int32_t testWallet_accountState::ID;
+
+object_ptr<AccountState> testWallet_accountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<testWallet_accountState> res = make_object<testWallet_accountState>();
+  res->seqno_ = env->GetIntField(p, res->seqno_fieldID);
+  return std::move(res);
+}
+
+void testWallet_accountState::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  env->SetIntField(s, seqno_fieldID, seqno_);
+}
+
+void testWallet_accountState::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "TestWalletAccountState");
+    s.store_field("seqno", seqno_);
+    s.store_class_end();
+  }
+}
+
+void testWallet_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TestWalletAccountState").c_str());
+  seqno_fieldID = td::jni::get_field_id(env, Class, "seqno", "I");
+}
+
+jclass wallet_accountState::Class;
+jfieldID wallet_accountState::seqno_fieldID;
+
+wallet_accountState::wallet_accountState()
+  : seqno_()
+{}
+
+wallet_accountState::wallet_accountState(std::int32_t seqno_)
+  : seqno_(seqno_)
+{}
+
+const std::int32_t wallet_accountState::ID;
+
+object_ptr<AccountState> wallet_accountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<wallet_accountState> res = make_object<wallet_accountState>();
+  res->seqno_ = env->GetIntField(p, res->seqno_fieldID);
+  return std::move(res);
+}
+
+void wallet_accountState::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  env->SetIntField(s, seqno_fieldID, seqno_);
+}
+
+void wallet_accountState::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "WalletAccountState");
+    s.store_field("seqno", seqno_);
+    s.store_class_end();
+  }
+}
+
+void wallet_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletAccountState").c_str());
+  seqno_fieldID = td::jni::get_field_id(env, Class, "seqno", "I");
+}
+
+jclass wallet_v3_accountState::Class;
+jfieldID wallet_v3_accountState::wallet_id_fieldID;
+jfieldID wallet_v3_accountState::seqno_fieldID;
+
+wallet_v3_accountState::wallet_v3_accountState()
+  : wallet_id_()
+  , seqno_()
+{}
+
+wallet_v3_accountState::wallet_v3_accountState(std::int64_t wallet_id_, std::int32_t seqno_)
+  : wallet_id_(wallet_id_)
+  , seqno_(seqno_)
+{}
+
+const std::int32_t wallet_v3_accountState::ID;
+
+object_ptr<AccountState> wallet_v3_accountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<wallet_v3_accountState> res = make_object<wallet_v3_accountState>();
+  res->wallet_id_ = env->GetLongField(p, res->wallet_id_fieldID);
+  res->seqno_ = env->GetIntField(p, res->seqno_fieldID);
+  return std::move(res);
+}
+
+void wallet_v3_accountState::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  env->SetLongField(s, wallet_id_fieldID, wallet_id_);
+  env->SetIntField(s, seqno_fieldID, seqno_);
+}
+
+void wallet_v3_accountState::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "WalletV3AccountState");
+    s.store_field("walletId", wallet_id_);
+    s.store_field("seqno", seqno_);
+    s.store_class_end();
+  }
+}
+
+void wallet_v3_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletV3AccountState").c_str());
+  wallet_id_fieldID = td::jni::get_field_id(env, Class, "walletId", "J");
+  seqno_fieldID = td::jni::get_field_id(env, Class, "seqno", "I");
+}
+
+jclass wallet_highload_v1_accountState::Class;
+jfieldID wallet_highload_v1_accountState::wallet_id_fieldID;
+jfieldID wallet_highload_v1_accountState::seqno_fieldID;
+
+wallet_highload_v1_accountState::wallet_highload_v1_accountState()
+  : wallet_id_()
+  , seqno_()
+{}
+
+wallet_highload_v1_accountState::wallet_highload_v1_accountState(std::int64_t wallet_id_, std::int32_t seqno_)
+  : wallet_id_(wallet_id_)
+  , seqno_(seqno_)
+{}
+
+const std::int32_t wallet_highload_v1_accountState::ID;
+
+object_ptr<AccountState> wallet_highload_v1_accountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<wallet_highload_v1_accountState> res = make_object<wallet_highload_v1_accountState>();
+  res->wallet_id_ = env->GetLongField(p, res->wallet_id_fieldID);
+  res->seqno_ = env->GetIntField(p, res->seqno_fieldID);
+  return std::move(res);
+}
+
+void wallet_highload_v1_accountState::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  env->SetLongField(s, wallet_id_fieldID, wallet_id_);
+  env->SetIntField(s, seqno_fieldID, seqno_);
+}
+
+void wallet_highload_v1_accountState::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "WalletHighloadV1AccountState");
+    s.store_field("walletId", wallet_id_);
+    s.store_field("seqno", seqno_);
+    s.store_class_end();
+  }
+}
+
+void wallet_highload_v1_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletHighloadV1AccountState").c_str());
+  wallet_id_fieldID = td::jni::get_field_id(env, Class, "walletId", "J");
+  seqno_fieldID = td::jni::get_field_id(env, Class, "seqno", "I");
+}
+
+jclass wallet_highload_v2_accountState::Class;
+jfieldID wallet_highload_v2_accountState::wallet_id_fieldID;
+
+wallet_highload_v2_accountState::wallet_highload_v2_accountState()
+  : wallet_id_()
+{}
+
+wallet_highload_v2_accountState::wallet_highload_v2_accountState(std::int64_t wallet_id_)
+  : wallet_id_(wallet_id_)
+{}
+
+const std::int32_t wallet_highload_v2_accountState::ID;
+
+object_ptr<AccountState> wallet_highload_v2_accountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<wallet_highload_v2_accountState> res = make_object<wallet_highload_v2_accountState>();
+  res->wallet_id_ = env->GetLongField(p, res->wallet_id_fieldID);
+  return std::move(res);
+}
+
+void wallet_highload_v2_accountState::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  env->SetLongField(s, wallet_id_fieldID, wallet_id_);
+}
+
+void wallet_highload_v2_accountState::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "WalletHighloadV2AccountState");
+    s.store_field("walletId", wallet_id_);
+    s.store_class_end();
+  }
+}
+
+void wallet_highload_v2_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletHighloadV2AccountState").c_str());
+  wallet_id_fieldID = td::jni::get_field_id(env, Class, "walletId", "J");
+}
+
+jclass testGiver_accountState::Class;
+jfieldID testGiver_accountState::seqno_fieldID;
+
+testGiver_accountState::testGiver_accountState()
+  : seqno_()
+{}
+
+testGiver_accountState::testGiver_accountState(std::int32_t seqno_)
+  : seqno_(seqno_)
+{}
+
+const std::int32_t testGiver_accountState::ID;
+
+object_ptr<AccountState> testGiver_accountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<testGiver_accountState> res = make_object<testGiver_accountState>();
+  res->seqno_ = env->GetIntField(p, res->seqno_fieldID);
+  return std::move(res);
+}
+
+void testGiver_accountState::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  env->SetIntField(s, seqno_fieldID, seqno_);
+}
+
+void testGiver_accountState::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "TestGiverAccountState");
+    s.store_field("seqno", seqno_);
+    s.store_class_end();
+  }
+}
+
+void testGiver_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TestGiverAccountState").c_str());
+  seqno_fieldID = td::jni::get_field_id(env, Class, "seqno", "I");
+}
+
+jclass dns_accountState::Class;
+jfieldID dns_accountState::wallet_id_fieldID;
+
+dns_accountState::dns_accountState()
+  : wallet_id_()
+{}
+
+dns_accountState::dns_accountState(std::int64_t wallet_id_)
+  : wallet_id_(wallet_id_)
+{}
+
+const std::int32_t dns_accountState::ID;
+
+object_ptr<AccountState> dns_accountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<dns_accountState> res = make_object<dns_accountState>();
+  res->wallet_id_ = env->GetLongField(p, res->wallet_id_fieldID);
+  return std::move(res);
+}
+
+void dns_accountState::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  env->SetLongField(s, wallet_id_fieldID, wallet_id_);
+}
+
+void dns_accountState::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "DnsAccountState");
+    s.store_field("walletId", wallet_id_);
+    s.store_class_end();
+  }
+}
+
+void dns_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$DnsAccountState").c_str());
+  wallet_id_fieldID = td::jni::get_field_id(env, Class, "walletId", "J");
+}
+
+jclass uninited_accountState::Class;
+jfieldID uninited_accountState::frozen_hash_fieldID;
+
+uninited_accountState::uninited_accountState()
+  : frozen_hash_()
+{}
+
+uninited_accountState::uninited_accountState(std::string const &frozen_hash_)
+  : frozen_hash_(std::move(frozen_hash_))
+{}
+
+const std::int32_t uninited_accountState::ID;
+
+object_ptr<AccountState> uninited_accountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<uninited_accountState> res = make_object<uninited_accountState>();
+  res->frozen_hash_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->frozen_hash_fieldID));
+  return std::move(res);
+}
+
+void uninited_accountState::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { jbyteArray nextBytes = td::jni::to_bytes(env, frozen_hash_); if (nextBytes) { env->SetObjectField(s, frozen_hash_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
+}
+
+void uninited_accountState::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "UninitedAccountState");
+    s.store_bytes_field("frozenHash", frozen_hash_);
+    s.store_class_end();
+  }
+}
+
+void uninited_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$UninitedAccountState").c_str());
+  frozen_hash_fieldID = td::jni::get_field_id(env, Class, "frozenHash", "[B");
+}
+
+jclass Action::Class;
+
+object_ptr<Action> Action::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) { return nullptr; }
+  auto id = env->CallIntMethod(p, td::jni::GetConstructorID);
+  switch (id) {
+    case actionNoop::ID:
+      return actionNoop::fetch(env, p);
+    case actionMsg::ID:
+      return actionMsg::fetch(env, p);
+    case actionDns::ID:
+      return actionDns::fetch(env, p);
+    default:
+      LOG(WARNING) << "Unknown constructor found: " << id;
+      return nullptr;
+  }
+}
+
+void Action::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$Action").c_str());
+  actionNoop::init_jni_vars(env, package_name);
+  actionMsg::init_jni_vars(env, package_name);
+  actionDns::init_jni_vars(env, package_name);
+}
+
+jclass actionNoop::Class;
+
+actionNoop::actionNoop() {
+}
+
+const std::int32_t actionNoop::ID;
+
+object_ptr<Action> actionNoop::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<actionNoop> res = make_object<actionNoop>();
+  return std::move(res);
+}
+
+void actionNoop::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+}
+
+void actionNoop::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "ActionNoop");
+    s.store_class_end();
+  }
+}
+
+void actionNoop::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$ActionNoop").c_str());
+}
+
+jclass actionMsg::Class;
+jfieldID actionMsg::messages_fieldID;
+jfieldID actionMsg::allow_send_to_uninited_fieldID;
+
+actionMsg::actionMsg()
+  : messages_()
+  , allow_send_to_uninited_()
+{}
+
+actionMsg::actionMsg(std::vector<object_ptr<msg_message>> &&messages_, bool allow_send_to_uninited_)
+  : messages_(std::move(messages_))
+  , allow_send_to_uninited_(allow_send_to_uninited_)
+{}
+
+const std::int32_t actionMsg::ID;
+
+object_ptr<Action> actionMsg::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<actionMsg> res = make_object<actionMsg>();
+  res->messages_ = td::jni::FetchVector<msg_message>::fetch(env, (jobjectArray)td::jni::fetch_object(env, p, res->messages_fieldID));;
+  res->allow_send_to_uninited_ = (env->GetBooleanField(p, res->allow_send_to_uninited_fieldID) != 0);
+  return std::move(res);
+}
+
+void actionMsg::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { auto arr_tmp_ = td::jni::store_vector(env, messages_); if (arr_tmp_) { env->SetObjectField(s, messages_fieldID, arr_tmp_); env->DeleteLocalRef(arr_tmp_); } }
+  env->SetBooleanField(s, allow_send_to_uninited_fieldID, allow_send_to_uninited_);
+}
+
+void actionMsg::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "ActionMsg");
+    { const std::vector<object_ptr<msg_message>> &v = messages_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "Array[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("messages", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { if (v[i] == nullptr) { s.store_field("", "null"); } else { v[i]->store(s, ""); } } s.store_class_end(); }
+    s.store_field("allowSendToUninited", allow_send_to_uninited_);
+    s.store_class_end();
+  }
+}
+
+void actionMsg::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$ActionMsg").c_str());
+  messages_fieldID = td::jni::get_field_id(env, Class, "messages", (PSLICE() << "[L" << package_name << "/TonApi$MsgMessage;").c_str());
+  allow_send_to_uninited_fieldID = td::jni::get_field_id(env, Class, "allowSendToUninited", "Z");
+}
+
+jclass actionDns::Class;
+jfieldID actionDns::actions_fieldID;
+
+actionDns::actionDns()
+  : actions_()
+{}
+
+actionDns::actionDns(std::vector<object_ptr<dns_Action>> &&actions_)
+  : actions_(std::move(actions_))
+{}
+
+const std::int32_t actionDns::ID;
+
+object_ptr<Action> actionDns::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<actionDns> res = make_object<actionDns>();
+  res->actions_ = td::jni::FetchVector<dns_Action>::fetch(env, (jobjectArray)td::jni::fetch_object(env, p, res->actions_fieldID));;
+  return std::move(res);
+}
+
+void actionDns::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { auto arr_tmp_ = td::jni::store_vector(env, actions_); if (arr_tmp_) { env->SetObjectField(s, actions_fieldID, arr_tmp_); env->DeleteLocalRef(arr_tmp_); } }
+}
+
+void actionDns::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "ActionDns");
+    { const std::vector<object_ptr<dns_Action>> &v = actions_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "Array[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("actions", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { if (v[i] == nullptr) { s.store_field("", "null"); } else { v[i]->store(s, ""); } } s.store_class_end(); }
+    s.store_class_end();
+  }
+}
+
+void actionDns::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$ActionDns").c_str());
+  actions_fieldID = td::jni::get_field_id(env, Class, "actions", (PSLICE() << "[L" << package_name << "/TonApi$DnsAction;").c_str());
+}
+
+jclass adnlAddress::Class;
+jfieldID adnlAddress::adnl_address_fieldID;
+
+adnlAddress::adnlAddress()
+  : adnl_address_()
+{}
+
+adnlAddress::adnlAddress(std::string const &adnl_address_)
+  : adnl_address_(std::move(adnl_address_))
+{}
+
+const std::int32_t adnlAddress::ID;
+
+object_ptr<adnlAddress> adnlAddress::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<adnlAddress> res = make_object<adnlAddress>();
+  res->adnl_address_ = td::jni::fetch_string(env, p, res->adnl_address_fieldID);
+  return res;
+}
+
+void adnlAddress::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { jstring nextString = td::jni::to_jstring(env, adnl_address_); if (nextString) { env->SetObjectField(s, adnl_address_fieldID, nextString); env->DeleteLocalRef(nextString); } }
+}
+
+void adnlAddress::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "AdnlAddress");
+    s.store_field("adnlAddress", adnl_address_);
+    s.store_class_end();
+  }
+}
+
+void adnlAddress::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$AdnlAddress").c_str());
+  adnl_address_fieldID = td::jni::get_field_id(env, Class, "adnlAddress", "Ljava/lang/String;");
 }
 
 jclass bip39Hints::Class;
@@ -751,6 +1451,45 @@ void exportedPemKey::init_jni_vars(JNIEnv *env, const char *package_name) {
   pem_fieldID = td::jni::get_field_id(env, Class, "pem", "Ljava/lang/String;");
 }
 
+jclass exportedUnencryptedKey::Class;
+jfieldID exportedUnencryptedKey::data_fieldID;
+
+exportedUnencryptedKey::exportedUnencryptedKey()
+  : data_()
+{}
+
+exportedUnencryptedKey::exportedUnencryptedKey(td::SecureString &&data_)
+  : data_(std::move(data_))
+{}
+
+const std::int32_t exportedUnencryptedKey::ID;
+
+object_ptr<exportedUnencryptedKey> exportedUnencryptedKey::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<exportedUnencryptedKey> res = make_object<exportedUnencryptedKey>();
+  res->data_ = td::jni::from_bytes_secure(env, (jbyteArray)td::jni::fetch_object(env, p, res->data_fieldID));
+  return res;
+}
+
+void exportedUnencryptedKey::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { jbyteArray nextBytes = td::jni::to_bytes_secure(env, data_); if (nextBytes) { env->SetObjectField(s, data_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
+}
+
+void exportedUnencryptedKey::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "ExportedUnencryptedKey");
+    s.store_bytes_field("data", data_);
+    s.store_class_end();
+  }
+}
+
+void exportedUnencryptedKey::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$ExportedUnencryptedKey").c_str());
+  data_fieldID = td::jni::get_field_id(env, Class, "data", "[B");
+}
+
 jclass fees::Class;
 jfieldID fees::in_fwd_fee_fieldID;
 jfieldID fees::storage_fee_fieldID;
@@ -809,6 +1548,450 @@ void fees::init_jni_vars(JNIEnv *env, const char *package_name) {
   storage_fee_fieldID = td::jni::get_field_id(env, Class, "storageFee", "J");
   gas_fee_fieldID = td::jni::get_field_id(env, Class, "gasFee", "J");
   fwd_fee_fieldID = td::jni::get_field_id(env, Class, "fwdFee", "J");
+}
+
+jclass fullAccountState::Class;
+jfieldID fullAccountState::balance_fieldID;
+jfieldID fullAccountState::last_transaction_id_fieldID;
+jfieldID fullAccountState::block_id_fieldID;
+jfieldID fullAccountState::sync_utime_fieldID;
+jfieldID fullAccountState::account_state_fieldID;
+
+fullAccountState::fullAccountState()
+  : balance_()
+  , last_transaction_id_()
+  , block_id_()
+  , sync_utime_()
+  , account_state_()
+{}
+
+fullAccountState::fullAccountState(std::int64_t balance_, object_ptr<internal_transactionId> &&last_transaction_id_, object_ptr<ton_blockIdExt> &&block_id_, std::int64_t sync_utime_, object_ptr<AccountState> &&account_state_)
+  : balance_(balance_)
+  , last_transaction_id_(std::move(last_transaction_id_))
+  , block_id_(std::move(block_id_))
+  , sync_utime_(sync_utime_)
+  , account_state_(std::move(account_state_))
+{}
+
+const std::int32_t fullAccountState::ID;
+
+object_ptr<fullAccountState> fullAccountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<fullAccountState> res = make_object<fullAccountState>();
+  res->balance_ = env->GetLongField(p, res->balance_fieldID);
+  res->last_transaction_id_ = td::jni::fetch_tl_object<internal_transactionId>(env, td::jni::fetch_object(env, p, res->last_transaction_id_fieldID));;
+  res->block_id_ = td::jni::fetch_tl_object<ton_blockIdExt>(env, td::jni::fetch_object(env, p, res->block_id_fieldID));;
+  res->sync_utime_ = env->GetLongField(p, res->sync_utime_fieldID);
+  res->account_state_ = td::jni::fetch_tl_object<AccountState>(env, td::jni::fetch_object(env, p, res->account_state_fieldID));;
+  return res;
+}
+
+void fullAccountState::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  env->SetLongField(s, balance_fieldID, balance_);
+  if (last_transaction_id_ != nullptr) { jobject next; last_transaction_id_->store(env, next); if (next) { env->SetObjectField(s, last_transaction_id_fieldID, next); env->DeleteLocalRef(next); } }
+  if (block_id_ != nullptr) { jobject next; block_id_->store(env, next); if (next) { env->SetObjectField(s, block_id_fieldID, next); env->DeleteLocalRef(next); } }
+  env->SetLongField(s, sync_utime_fieldID, sync_utime_);
+  if (account_state_ != nullptr) { jobject next; account_state_->store(env, next); if (next) { env->SetObjectField(s, account_state_fieldID, next); env->DeleteLocalRef(next); } }
+}
+
+void fullAccountState::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "FullAccountState");
+    s.store_field("balance", balance_);
+    if (last_transaction_id_ == nullptr) { s.store_field("lastTransactionId", "null"); } else { last_transaction_id_->store(s, "lastTransactionId"); }
+    if (block_id_ == nullptr) { s.store_field("blockId", "null"); } else { block_id_->store(s, "blockId"); }
+    s.store_field("syncUtime", sync_utime_);
+    if (account_state_ == nullptr) { s.store_field("accountState", "null"); } else { account_state_->store(s, "accountState"); }
+    s.store_class_end();
+  }
+}
+
+void fullAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$FullAccountState").c_str());
+  balance_fieldID = td::jni::get_field_id(env, Class, "balance", "J");
+  last_transaction_id_fieldID = td::jni::get_field_id(env, Class, "lastTransactionId", (PSLICE() << "L" << package_name << "/TonApi$InternalTransactionId;").c_str());
+  block_id_fieldID = td::jni::get_field_id(env, Class, "blockId", (PSLICE() << "L" << package_name << "/TonApi$TonBlockIdExt;").c_str());
+  sync_utime_fieldID = td::jni::get_field_id(env, Class, "syncUtime", "J");
+  account_state_fieldID = td::jni::get_field_id(env, Class, "accountState", (PSLICE() << "L" << package_name << "/TonApi$AccountState;").c_str());
+}
+
+jclass InitialAccountState::Class;
+
+object_ptr<InitialAccountState> InitialAccountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) { return nullptr; }
+  auto id = env->CallIntMethod(p, td::jni::GetConstructorID);
+  switch (id) {
+    case raw_initialAccountState::ID:
+      return raw_initialAccountState::fetch(env, p);
+    case testGiver_initialAccountState::ID:
+      return testGiver_initialAccountState::fetch(env, p);
+    case testWallet_initialAccountState::ID:
+      return testWallet_initialAccountState::fetch(env, p);
+    case wallet_initialAccountState::ID:
+      return wallet_initialAccountState::fetch(env, p);
+    case wallet_v3_initialAccountState::ID:
+      return wallet_v3_initialAccountState::fetch(env, p);
+    case wallet_highload_v1_initialAccountState::ID:
+      return wallet_highload_v1_initialAccountState::fetch(env, p);
+    case wallet_highload_v2_initialAccountState::ID:
+      return wallet_highload_v2_initialAccountState::fetch(env, p);
+    case dns_initialAccountState::ID:
+      return dns_initialAccountState::fetch(env, p);
+    default:
+      LOG(WARNING) << "Unknown constructor found: " << id;
+      return nullptr;
+  }
+}
+
+void InitialAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$InitialAccountState").c_str());
+  raw_initialAccountState::init_jni_vars(env, package_name);
+  testGiver_initialAccountState::init_jni_vars(env, package_name);
+  testWallet_initialAccountState::init_jni_vars(env, package_name);
+  wallet_initialAccountState::init_jni_vars(env, package_name);
+  wallet_v3_initialAccountState::init_jni_vars(env, package_name);
+  wallet_highload_v1_initialAccountState::init_jni_vars(env, package_name);
+  wallet_highload_v2_initialAccountState::init_jni_vars(env, package_name);
+  dns_initialAccountState::init_jni_vars(env, package_name);
+}
+
+jclass raw_initialAccountState::Class;
+jfieldID raw_initialAccountState::code_fieldID;
+jfieldID raw_initialAccountState::data_fieldID;
+
+raw_initialAccountState::raw_initialAccountState()
+  : code_()
+  , data_()
+{}
+
+raw_initialAccountState::raw_initialAccountState(std::string const &code_, std::string const &data_)
+  : code_(std::move(code_))
+  , data_(std::move(data_))
+{}
+
+const std::int32_t raw_initialAccountState::ID;
+
+object_ptr<InitialAccountState> raw_initialAccountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<raw_initialAccountState> res = make_object<raw_initialAccountState>();
+  res->code_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->code_fieldID));
+  res->data_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->data_fieldID));
+  return std::move(res);
+}
+
+void raw_initialAccountState::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { jbyteArray nextBytes = td::jni::to_bytes(env, code_); if (nextBytes) { env->SetObjectField(s, code_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
+  { jbyteArray nextBytes = td::jni::to_bytes(env, data_); if (nextBytes) { env->SetObjectField(s, data_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
+}
+
+void raw_initialAccountState::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "RawInitialAccountState");
+    s.store_bytes_field("code", code_);
+    s.store_bytes_field("data", data_);
+    s.store_class_end();
+  }
+}
+
+void raw_initialAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$RawInitialAccountState").c_str());
+  code_fieldID = td::jni::get_field_id(env, Class, "code", "[B");
+  data_fieldID = td::jni::get_field_id(env, Class, "data", "[B");
+}
+
+jclass testGiver_initialAccountState::Class;
+
+testGiver_initialAccountState::testGiver_initialAccountState() {
+}
+
+const std::int32_t testGiver_initialAccountState::ID;
+
+object_ptr<InitialAccountState> testGiver_initialAccountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<testGiver_initialAccountState> res = make_object<testGiver_initialAccountState>();
+  return std::move(res);
+}
+
+void testGiver_initialAccountState::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+}
+
+void testGiver_initialAccountState::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "TestGiverInitialAccountState");
+    s.store_class_end();
+  }
+}
+
+void testGiver_initialAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TestGiverInitialAccountState").c_str());
+}
+
+jclass testWallet_initialAccountState::Class;
+jfieldID testWallet_initialAccountState::public_key_fieldID;
+
+testWallet_initialAccountState::testWallet_initialAccountState()
+  : public_key_()
+{}
+
+testWallet_initialAccountState::testWallet_initialAccountState(std::string const &public_key_)
+  : public_key_(std::move(public_key_))
+{}
+
+const std::int32_t testWallet_initialAccountState::ID;
+
+object_ptr<InitialAccountState> testWallet_initialAccountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<testWallet_initialAccountState> res = make_object<testWallet_initialAccountState>();
+  res->public_key_ = td::jni::fetch_string(env, p, res->public_key_fieldID);
+  return std::move(res);
+}
+
+void testWallet_initialAccountState::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { jstring nextString = td::jni::to_jstring(env, public_key_); if (nextString) { env->SetObjectField(s, public_key_fieldID, nextString); env->DeleteLocalRef(nextString); } }
+}
+
+void testWallet_initialAccountState::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "TestWalletInitialAccountState");
+    s.store_field("publicKey", public_key_);
+    s.store_class_end();
+  }
+}
+
+void testWallet_initialAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TestWalletInitialAccountState").c_str());
+  public_key_fieldID = td::jni::get_field_id(env, Class, "publicKey", "Ljava/lang/String;");
+}
+
+jclass wallet_initialAccountState::Class;
+jfieldID wallet_initialAccountState::public_key_fieldID;
+
+wallet_initialAccountState::wallet_initialAccountState()
+  : public_key_()
+{}
+
+wallet_initialAccountState::wallet_initialAccountState(std::string const &public_key_)
+  : public_key_(std::move(public_key_))
+{}
+
+const std::int32_t wallet_initialAccountState::ID;
+
+object_ptr<InitialAccountState> wallet_initialAccountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<wallet_initialAccountState> res = make_object<wallet_initialAccountState>();
+  res->public_key_ = td::jni::fetch_string(env, p, res->public_key_fieldID);
+  return std::move(res);
+}
+
+void wallet_initialAccountState::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { jstring nextString = td::jni::to_jstring(env, public_key_); if (nextString) { env->SetObjectField(s, public_key_fieldID, nextString); env->DeleteLocalRef(nextString); } }
+}
+
+void wallet_initialAccountState::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "WalletInitialAccountState");
+    s.store_field("publicKey", public_key_);
+    s.store_class_end();
+  }
+}
+
+void wallet_initialAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletInitialAccountState").c_str());
+  public_key_fieldID = td::jni::get_field_id(env, Class, "publicKey", "Ljava/lang/String;");
+}
+
+jclass wallet_v3_initialAccountState::Class;
+jfieldID wallet_v3_initialAccountState::public_key_fieldID;
+jfieldID wallet_v3_initialAccountState::wallet_id_fieldID;
+
+wallet_v3_initialAccountState::wallet_v3_initialAccountState()
+  : public_key_()
+  , wallet_id_()
+{}
+
+wallet_v3_initialAccountState::wallet_v3_initialAccountState(std::string const &public_key_, std::int64_t wallet_id_)
+  : public_key_(std::move(public_key_))
+  , wallet_id_(wallet_id_)
+{}
+
+const std::int32_t wallet_v3_initialAccountState::ID;
+
+object_ptr<InitialAccountState> wallet_v3_initialAccountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<wallet_v3_initialAccountState> res = make_object<wallet_v3_initialAccountState>();
+  res->public_key_ = td::jni::fetch_string(env, p, res->public_key_fieldID);
+  res->wallet_id_ = env->GetLongField(p, res->wallet_id_fieldID);
+  return std::move(res);
+}
+
+void wallet_v3_initialAccountState::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { jstring nextString = td::jni::to_jstring(env, public_key_); if (nextString) { env->SetObjectField(s, public_key_fieldID, nextString); env->DeleteLocalRef(nextString); } }
+  env->SetLongField(s, wallet_id_fieldID, wallet_id_);
+}
+
+void wallet_v3_initialAccountState::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "WalletV3InitialAccountState");
+    s.store_field("publicKey", public_key_);
+    s.store_field("walletId", wallet_id_);
+    s.store_class_end();
+  }
+}
+
+void wallet_v3_initialAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletV3InitialAccountState").c_str());
+  public_key_fieldID = td::jni::get_field_id(env, Class, "publicKey", "Ljava/lang/String;");
+  wallet_id_fieldID = td::jni::get_field_id(env, Class, "walletId", "J");
+}
+
+jclass wallet_highload_v1_initialAccountState::Class;
+jfieldID wallet_highload_v1_initialAccountState::public_key_fieldID;
+jfieldID wallet_highload_v1_initialAccountState::wallet_id_fieldID;
+
+wallet_highload_v1_initialAccountState::wallet_highload_v1_initialAccountState()
+  : public_key_()
+  , wallet_id_()
+{}
+
+wallet_highload_v1_initialAccountState::wallet_highload_v1_initialAccountState(std::string const &public_key_, std::int64_t wallet_id_)
+  : public_key_(std::move(public_key_))
+  , wallet_id_(wallet_id_)
+{}
+
+const std::int32_t wallet_highload_v1_initialAccountState::ID;
+
+object_ptr<InitialAccountState> wallet_highload_v1_initialAccountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<wallet_highload_v1_initialAccountState> res = make_object<wallet_highload_v1_initialAccountState>();
+  res->public_key_ = td::jni::fetch_string(env, p, res->public_key_fieldID);
+  res->wallet_id_ = env->GetLongField(p, res->wallet_id_fieldID);
+  return std::move(res);
+}
+
+void wallet_highload_v1_initialAccountState::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { jstring nextString = td::jni::to_jstring(env, public_key_); if (nextString) { env->SetObjectField(s, public_key_fieldID, nextString); env->DeleteLocalRef(nextString); } }
+  env->SetLongField(s, wallet_id_fieldID, wallet_id_);
+}
+
+void wallet_highload_v1_initialAccountState::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "WalletHighloadV1InitialAccountState");
+    s.store_field("publicKey", public_key_);
+    s.store_field("walletId", wallet_id_);
+    s.store_class_end();
+  }
+}
+
+void wallet_highload_v1_initialAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletHighloadV1InitialAccountState").c_str());
+  public_key_fieldID = td::jni::get_field_id(env, Class, "publicKey", "Ljava/lang/String;");
+  wallet_id_fieldID = td::jni::get_field_id(env, Class, "walletId", "J");
+}
+
+jclass wallet_highload_v2_initialAccountState::Class;
+jfieldID wallet_highload_v2_initialAccountState::public_key_fieldID;
+jfieldID wallet_highload_v2_initialAccountState::wallet_id_fieldID;
+
+wallet_highload_v2_initialAccountState::wallet_highload_v2_initialAccountState()
+  : public_key_()
+  , wallet_id_()
+{}
+
+wallet_highload_v2_initialAccountState::wallet_highload_v2_initialAccountState(std::string const &public_key_, std::int64_t wallet_id_)
+  : public_key_(std::move(public_key_))
+  , wallet_id_(wallet_id_)
+{}
+
+const std::int32_t wallet_highload_v2_initialAccountState::ID;
+
+object_ptr<InitialAccountState> wallet_highload_v2_initialAccountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<wallet_highload_v2_initialAccountState> res = make_object<wallet_highload_v2_initialAccountState>();
+  res->public_key_ = td::jni::fetch_string(env, p, res->public_key_fieldID);
+  res->wallet_id_ = env->GetLongField(p, res->wallet_id_fieldID);
+  return std::move(res);
+}
+
+void wallet_highload_v2_initialAccountState::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { jstring nextString = td::jni::to_jstring(env, public_key_); if (nextString) { env->SetObjectField(s, public_key_fieldID, nextString); env->DeleteLocalRef(nextString); } }
+  env->SetLongField(s, wallet_id_fieldID, wallet_id_);
+}
+
+void wallet_highload_v2_initialAccountState::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "WalletHighloadV2InitialAccountState");
+    s.store_field("publicKey", public_key_);
+    s.store_field("walletId", wallet_id_);
+    s.store_class_end();
+  }
+}
+
+void wallet_highload_v2_initialAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletHighloadV2InitialAccountState").c_str());
+  public_key_fieldID = td::jni::get_field_id(env, Class, "publicKey", "Ljava/lang/String;");
+  wallet_id_fieldID = td::jni::get_field_id(env, Class, "walletId", "J");
+}
+
+jclass dns_initialAccountState::Class;
+jfieldID dns_initialAccountState::public_key_fieldID;
+jfieldID dns_initialAccountState::wallet_id_fieldID;
+
+dns_initialAccountState::dns_initialAccountState()
+  : public_key_()
+  , wallet_id_()
+{}
+
+dns_initialAccountState::dns_initialAccountState(std::string const &public_key_, std::int64_t wallet_id_)
+  : public_key_(std::move(public_key_))
+  , wallet_id_(wallet_id_)
+{}
+
+const std::int32_t dns_initialAccountState::ID;
+
+object_ptr<InitialAccountState> dns_initialAccountState::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<dns_initialAccountState> res = make_object<dns_initialAccountState>();
+  res->public_key_ = td::jni::fetch_string(env, p, res->public_key_fieldID);
+  res->wallet_id_ = env->GetLongField(p, res->wallet_id_fieldID);
+  return std::move(res);
+}
+
+void dns_initialAccountState::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { jstring nextString = td::jni::to_jstring(env, public_key_); if (nextString) { env->SetObjectField(s, public_key_fieldID, nextString); env->DeleteLocalRef(nextString); } }
+  env->SetLongField(s, wallet_id_fieldID, wallet_id_);
+}
+
+void dns_initialAccountState::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "DnsInitialAccountState");
+    s.store_field("publicKey", public_key_);
+    s.store_field("walletId", wallet_id_);
+    s.store_class_end();
+  }
+}
+
+void dns_initialAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$DnsInitialAccountState").c_str());
+  public_key_fieldID = td::jni::get_field_id(env, Class, "publicKey", "Ljava/lang/String;");
+  wallet_id_fieldID = td::jni::get_field_id(env, Class, "walletId", "J");
 }
 
 jclass InputKey::Class;
@@ -1326,52 +2509,6 @@ void options::init_jni_vars(JNIEnv *env, const char *package_name) {
   keystore_type_fieldID = td::jni::get_field_id(env, Class, "keystoreType", (PSLICE() << "L" << package_name << "/TonApi$KeyStoreType;").c_str());
 }
 
-jclass sendGramsResult::Class;
-jfieldID sendGramsResult::sent_until_fieldID;
-jfieldID sendGramsResult::body_hash_fieldID;
-
-sendGramsResult::sendGramsResult()
-  : sent_until_()
-  , body_hash_()
-{}
-
-sendGramsResult::sendGramsResult(std::int64_t sent_until_, std::string const &body_hash_)
-  : sent_until_(sent_until_)
-  , body_hash_(std::move(body_hash_))
-{}
-
-const std::int32_t sendGramsResult::ID;
-
-object_ptr<sendGramsResult> sendGramsResult::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<sendGramsResult> res = make_object<sendGramsResult>();
-  res->sent_until_ = env->GetLongField(p, res->sent_until_fieldID);
-  res->body_hash_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->body_hash_fieldID));
-  return res;
-}
-
-void sendGramsResult::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  env->SetLongField(s, sent_until_fieldID, sent_until_);
-  { jbyteArray nextBytes = td::jni::to_bytes(env, body_hash_); if (nextBytes) { env->SetObjectField(s, body_hash_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
-}
-
-void sendGramsResult::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "SendGramsResult");
-    s.store_field("sentUntil", sent_until_);
-    s.store_bytes_field("bodyHash", body_hash_);
-    s.store_class_end();
-  }
-}
-
-void sendGramsResult::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$SendGramsResult").c_str());
-  sent_until_fieldID = td::jni::get_field_id(env, Class, "sentUntil", "J");
-  body_hash_fieldID = td::jni::get_field_id(env, Class, "bodyHash", "[B");
-}
-
 jclass SyncState::Class;
 
 object_ptr<SyncState> SyncState::fetch(JNIEnv *env, jobject &p) {
@@ -1643,272 +2780,514 @@ void updateSyncState::init_jni_vars(JNIEnv *env, const char *package_name) {
   sync_state_fieldID = td::jni::get_field_id(env, Class, "syncState", (PSLICE() << "L" << package_name << "/TonApi$SyncState;").c_str());
 }
 
-jclass generic_AccountState::Class;
+jclass dns_Action::Class;
 
-object_ptr<generic_AccountState> generic_AccountState::fetch(JNIEnv *env, jobject &p) {
+object_ptr<dns_Action> dns_Action::fetch(JNIEnv *env, jobject &p) {
   if (p == nullptr) { return nullptr; }
   auto id = env->CallIntMethod(p, td::jni::GetConstructorID);
   switch (id) {
-    case generic_accountStateRaw::ID:
-      return generic_accountStateRaw::fetch(env, p);
-    case generic_accountStateTestWallet::ID:
-      return generic_accountStateTestWallet::fetch(env, p);
-    case generic_accountStateWallet::ID:
-      return generic_accountStateWallet::fetch(env, p);
-    case generic_accountStateWalletV3::ID:
-      return generic_accountStateWalletV3::fetch(env, p);
-    case generic_accountStateTestGiver::ID:
-      return generic_accountStateTestGiver::fetch(env, p);
-    case generic_accountStateUninited::ID:
-      return generic_accountStateUninited::fetch(env, p);
+    case dns_actionDeleteAll::ID:
+      return dns_actionDeleteAll::fetch(env, p);
+    case dns_actionDelete::ID:
+      return dns_actionDelete::fetch(env, p);
+    case dns_actionSet::ID:
+      return dns_actionSet::fetch(env, p);
     default:
       LOG(WARNING) << "Unknown constructor found: " << id;
       return nullptr;
   }
 }
 
-void generic_AccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$GenericAccountState").c_str());
-  generic_accountStateRaw::init_jni_vars(env, package_name);
-  generic_accountStateTestWallet::init_jni_vars(env, package_name);
-  generic_accountStateWallet::init_jni_vars(env, package_name);
-  generic_accountStateWalletV3::init_jni_vars(env, package_name);
-  generic_accountStateTestGiver::init_jni_vars(env, package_name);
-  generic_accountStateUninited::init_jni_vars(env, package_name);
+void dns_Action::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$DnsAction").c_str());
+  dns_actionDeleteAll::init_jni_vars(env, package_name);
+  dns_actionDelete::init_jni_vars(env, package_name);
+  dns_actionSet::init_jni_vars(env, package_name);
 }
 
-jclass generic_accountStateRaw::Class;
-jfieldID generic_accountStateRaw::account_state_fieldID;
+jclass dns_actionDeleteAll::Class;
 
-generic_accountStateRaw::generic_accountStateRaw()
-  : account_state_()
-{}
+dns_actionDeleteAll::dns_actionDeleteAll() {
+}
 
-generic_accountStateRaw::generic_accountStateRaw(object_ptr<raw_accountState> &&account_state_)
-  : account_state_(std::move(account_state_))
-{}
+const std::int32_t dns_actionDeleteAll::ID;
 
-const std::int32_t generic_accountStateRaw::ID;
-
-object_ptr<generic_AccountState> generic_accountStateRaw::fetch(JNIEnv *env, jobject &p) {
+object_ptr<dns_Action> dns_actionDeleteAll::fetch(JNIEnv *env, jobject &p) {
   if (p == nullptr) return nullptr;
-  object_ptr<generic_accountStateRaw> res = make_object<generic_accountStateRaw>();
-  res->account_state_ = td::jni::fetch_tl_object<raw_accountState>(env, td::jni::fetch_object(env, p, res->account_state_fieldID));;
+  object_ptr<dns_actionDeleteAll> res = make_object<dns_actionDeleteAll>();
   return std::move(res);
 }
 
-void generic_accountStateRaw::store(JNIEnv *env, jobject &s) const {
+void dns_actionDeleteAll::store(JNIEnv *env, jobject &s) const {
   s = env->AllocObject(Class);
   if (!s) { return; }
-  if (account_state_ != nullptr) { jobject next; account_state_->store(env, next); if (next) { env->SetObjectField(s, account_state_fieldID, next); env->DeleteLocalRef(next); } }
 }
 
-void generic_accountStateRaw::store(td::TlStorerToString &s, const char *field_name) const {
+void dns_actionDeleteAll::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "GenericAccountStateRaw");
-    if (account_state_ == nullptr) { s.store_field("accountState", "null"); } else { account_state_->store(s, "accountState"); }
+    s.store_class_begin(field_name, "DnsActionDeleteAll");
     s.store_class_end();
   }
 }
 
-void generic_accountStateRaw::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$GenericAccountStateRaw").c_str());
-  account_state_fieldID = td::jni::get_field_id(env, Class, "accountState", (PSLICE() << "L" << package_name << "/TonApi$RawAccountState;").c_str());
+void dns_actionDeleteAll::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$DnsActionDeleteAll").c_str());
 }
 
-jclass generic_accountStateTestWallet::Class;
-jfieldID generic_accountStateTestWallet::account_state_fieldID;
+jclass dns_actionDelete::Class;
+jfieldID dns_actionDelete::name_fieldID;
+jfieldID dns_actionDelete::category_fieldID;
 
-generic_accountStateTestWallet::generic_accountStateTestWallet()
-  : account_state_()
+dns_actionDelete::dns_actionDelete()
+  : name_()
+  , category_()
 {}
 
-generic_accountStateTestWallet::generic_accountStateTestWallet(object_ptr<testWallet_accountState> &&account_state_)
-  : account_state_(std::move(account_state_))
+dns_actionDelete::dns_actionDelete(std::string const &name_, std::int32_t category_)
+  : name_(std::move(name_))
+  , category_(category_)
 {}
 
-const std::int32_t generic_accountStateTestWallet::ID;
+const std::int32_t dns_actionDelete::ID;
 
-object_ptr<generic_AccountState> generic_accountStateTestWallet::fetch(JNIEnv *env, jobject &p) {
+object_ptr<dns_Action> dns_actionDelete::fetch(JNIEnv *env, jobject &p) {
   if (p == nullptr) return nullptr;
-  object_ptr<generic_accountStateTestWallet> res = make_object<generic_accountStateTestWallet>();
-  res->account_state_ = td::jni::fetch_tl_object<testWallet_accountState>(env, td::jni::fetch_object(env, p, res->account_state_fieldID));;
+  object_ptr<dns_actionDelete> res = make_object<dns_actionDelete>();
+  res->name_ = td::jni::fetch_string(env, p, res->name_fieldID);
+  res->category_ = env->GetIntField(p, res->category_fieldID);
   return std::move(res);
 }
 
-void generic_accountStateTestWallet::store(JNIEnv *env, jobject &s) const {
+void dns_actionDelete::store(JNIEnv *env, jobject &s) const {
   s = env->AllocObject(Class);
   if (!s) { return; }
-  if (account_state_ != nullptr) { jobject next; account_state_->store(env, next); if (next) { env->SetObjectField(s, account_state_fieldID, next); env->DeleteLocalRef(next); } }
+  { jstring nextString = td::jni::to_jstring(env, name_); if (nextString) { env->SetObjectField(s, name_fieldID, nextString); env->DeleteLocalRef(nextString); } }
+  env->SetIntField(s, category_fieldID, category_);
 }
 
-void generic_accountStateTestWallet::store(td::TlStorerToString &s, const char *field_name) const {
+void dns_actionDelete::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "GenericAccountStateTestWallet");
-    if (account_state_ == nullptr) { s.store_field("accountState", "null"); } else { account_state_->store(s, "accountState"); }
+    s.store_class_begin(field_name, "DnsActionDelete");
+    s.store_field("name", name_);
+    s.store_field("category", category_);
     s.store_class_end();
   }
 }
 
-void generic_accountStateTestWallet::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$GenericAccountStateTestWallet").c_str());
-  account_state_fieldID = td::jni::get_field_id(env, Class, "accountState", (PSLICE() << "L" << package_name << "/TonApi$TestWalletAccountState;").c_str());
+void dns_actionDelete::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$DnsActionDelete").c_str());
+  name_fieldID = td::jni::get_field_id(env, Class, "name", "Ljava/lang/String;");
+  category_fieldID = td::jni::get_field_id(env, Class, "category", "I");
 }
 
-jclass generic_accountStateWallet::Class;
-jfieldID generic_accountStateWallet::account_state_fieldID;
+jclass dns_actionSet::Class;
+jfieldID dns_actionSet::entry_fieldID;
 
-generic_accountStateWallet::generic_accountStateWallet()
-  : account_state_()
+dns_actionSet::dns_actionSet()
+  : entry_()
 {}
 
-generic_accountStateWallet::generic_accountStateWallet(object_ptr<wallet_accountState> &&account_state_)
-  : account_state_(std::move(account_state_))
+dns_actionSet::dns_actionSet(object_ptr<dns_entry> &&entry_)
+  : entry_(std::move(entry_))
 {}
 
-const std::int32_t generic_accountStateWallet::ID;
+const std::int32_t dns_actionSet::ID;
 
-object_ptr<generic_AccountState> generic_accountStateWallet::fetch(JNIEnv *env, jobject &p) {
+object_ptr<dns_Action> dns_actionSet::fetch(JNIEnv *env, jobject &p) {
   if (p == nullptr) return nullptr;
-  object_ptr<generic_accountStateWallet> res = make_object<generic_accountStateWallet>();
-  res->account_state_ = td::jni::fetch_tl_object<wallet_accountState>(env, td::jni::fetch_object(env, p, res->account_state_fieldID));;
+  object_ptr<dns_actionSet> res = make_object<dns_actionSet>();
+  res->entry_ = td::jni::fetch_tl_object<dns_entry>(env, td::jni::fetch_object(env, p, res->entry_fieldID));;
   return std::move(res);
 }
 
-void generic_accountStateWallet::store(JNIEnv *env, jobject &s) const {
+void dns_actionSet::store(JNIEnv *env, jobject &s) const {
   s = env->AllocObject(Class);
   if (!s) { return; }
-  if (account_state_ != nullptr) { jobject next; account_state_->store(env, next); if (next) { env->SetObjectField(s, account_state_fieldID, next); env->DeleteLocalRef(next); } }
+  if (entry_ != nullptr) { jobject next; entry_->store(env, next); if (next) { env->SetObjectField(s, entry_fieldID, next); env->DeleteLocalRef(next); } }
 }
 
-void generic_accountStateWallet::store(td::TlStorerToString &s, const char *field_name) const {
+void dns_actionSet::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "GenericAccountStateWallet");
-    if (account_state_ == nullptr) { s.store_field("accountState", "null"); } else { account_state_->store(s, "accountState"); }
+    s.store_class_begin(field_name, "DnsActionSet");
+    if (entry_ == nullptr) { s.store_field("entry", "null"); } else { entry_->store(s, "entry"); }
     s.store_class_end();
   }
 }
 
-void generic_accountStateWallet::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$GenericAccountStateWallet").c_str());
-  account_state_fieldID = td::jni::get_field_id(env, Class, "accountState", (PSLICE() << "L" << package_name << "/TonApi$WalletAccountState;").c_str());
+void dns_actionSet::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$DnsActionSet").c_str());
+  entry_fieldID = td::jni::get_field_id(env, Class, "entry", (PSLICE() << "L" << package_name << "/TonApi$DnsEntry;").c_str());
 }
 
-jclass generic_accountStateWalletV3::Class;
-jfieldID generic_accountStateWalletV3::account_state_fieldID;
+jclass dns_entry::Class;
+jfieldID dns_entry::name_fieldID;
+jfieldID dns_entry::category_fieldID;
+jfieldID dns_entry::entry_fieldID;
 
-generic_accountStateWalletV3::generic_accountStateWalletV3()
-  : account_state_()
+dns_entry::dns_entry()
+  : name_()
+  , category_()
+  , entry_()
 {}
 
-generic_accountStateWalletV3::generic_accountStateWalletV3(object_ptr<wallet_v3_accountState> &&account_state_)
-  : account_state_(std::move(account_state_))
+dns_entry::dns_entry(std::string const &name_, std::int32_t category_, object_ptr<dns_EntryData> &&entry_)
+  : name_(std::move(name_))
+  , category_(category_)
+  , entry_(std::move(entry_))
 {}
 
-const std::int32_t generic_accountStateWalletV3::ID;
+const std::int32_t dns_entry::ID;
 
-object_ptr<generic_AccountState> generic_accountStateWalletV3::fetch(JNIEnv *env, jobject &p) {
+object_ptr<dns_entry> dns_entry::fetch(JNIEnv *env, jobject &p) {
   if (p == nullptr) return nullptr;
-  object_ptr<generic_accountStateWalletV3> res = make_object<generic_accountStateWalletV3>();
-  res->account_state_ = td::jni::fetch_tl_object<wallet_v3_accountState>(env, td::jni::fetch_object(env, p, res->account_state_fieldID));;
-  return std::move(res);
+  object_ptr<dns_entry> res = make_object<dns_entry>();
+  res->name_ = td::jni::fetch_string(env, p, res->name_fieldID);
+  res->category_ = env->GetIntField(p, res->category_fieldID);
+  res->entry_ = td::jni::fetch_tl_object<dns_EntryData>(env, td::jni::fetch_object(env, p, res->entry_fieldID));;
+  return res;
 }
 
-void generic_accountStateWalletV3::store(JNIEnv *env, jobject &s) const {
+void dns_entry::store(JNIEnv *env, jobject &s) const {
   s = env->AllocObject(Class);
   if (!s) { return; }
-  if (account_state_ != nullptr) { jobject next; account_state_->store(env, next); if (next) { env->SetObjectField(s, account_state_fieldID, next); env->DeleteLocalRef(next); } }
+  { jstring nextString = td::jni::to_jstring(env, name_); if (nextString) { env->SetObjectField(s, name_fieldID, nextString); env->DeleteLocalRef(nextString); } }
+  env->SetIntField(s, category_fieldID, category_);
+  if (entry_ != nullptr) { jobject next; entry_->store(env, next); if (next) { env->SetObjectField(s, entry_fieldID, next); env->DeleteLocalRef(next); } }
 }
 
-void generic_accountStateWalletV3::store(td::TlStorerToString &s, const char *field_name) const {
+void dns_entry::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "GenericAccountStateWalletV3");
-    if (account_state_ == nullptr) { s.store_field("accountState", "null"); } else { account_state_->store(s, "accountState"); }
+    s.store_class_begin(field_name, "DnsEntry");
+    s.store_field("name", name_);
+    s.store_field("category", category_);
+    if (entry_ == nullptr) { s.store_field("entry", "null"); } else { entry_->store(s, "entry"); }
     s.store_class_end();
   }
 }
 
-void generic_accountStateWalletV3::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$GenericAccountStateWalletV3").c_str());
-  account_state_fieldID = td::jni::get_field_id(env, Class, "accountState", (PSLICE() << "L" << package_name << "/TonApi$WalletV3AccountState;").c_str());
+void dns_entry::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$DnsEntry").c_str());
+  name_fieldID = td::jni::get_field_id(env, Class, "name", "Ljava/lang/String;");
+  category_fieldID = td::jni::get_field_id(env, Class, "category", "I");
+  entry_fieldID = td::jni::get_field_id(env, Class, "entry", (PSLICE() << "L" << package_name << "/TonApi$DnsEntryData;").c_str());
 }
 
-jclass generic_accountStateTestGiver::Class;
-jfieldID generic_accountStateTestGiver::account_state_fieldID;
+jclass dns_EntryData::Class;
 
-generic_accountStateTestGiver::generic_accountStateTestGiver()
-  : account_state_()
+object_ptr<dns_EntryData> dns_EntryData::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) { return nullptr; }
+  auto id = env->CallIntMethod(p, td::jni::GetConstructorID);
+  switch (id) {
+    case dns_entryDataUnknown::ID:
+      return dns_entryDataUnknown::fetch(env, p);
+    case dns_entryDataText::ID:
+      return dns_entryDataText::fetch(env, p);
+    case dns_entryDataNextResolver::ID:
+      return dns_entryDataNextResolver::fetch(env, p);
+    case dns_entryDataSmcAddress::ID:
+      return dns_entryDataSmcAddress::fetch(env, p);
+    case dns_entryDataAdnlAddress::ID:
+      return dns_entryDataAdnlAddress::fetch(env, p);
+    default:
+      LOG(WARNING) << "Unknown constructor found: " << id;
+      return nullptr;
+  }
+}
+
+void dns_EntryData::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$DnsEntryData").c_str());
+  dns_entryDataUnknown::init_jni_vars(env, package_name);
+  dns_entryDataText::init_jni_vars(env, package_name);
+  dns_entryDataNextResolver::init_jni_vars(env, package_name);
+  dns_entryDataSmcAddress::init_jni_vars(env, package_name);
+  dns_entryDataAdnlAddress::init_jni_vars(env, package_name);
+}
+
+jclass dns_entryDataUnknown::Class;
+jfieldID dns_entryDataUnknown::bytes_fieldID;
+
+dns_entryDataUnknown::dns_entryDataUnknown()
+  : bytes_()
 {}
 
-generic_accountStateTestGiver::generic_accountStateTestGiver(object_ptr<testGiver_accountState> &&account_state_)
-  : account_state_(std::move(account_state_))
+dns_entryDataUnknown::dns_entryDataUnknown(std::string const &bytes_)
+  : bytes_(std::move(bytes_))
 {}
 
-const std::int32_t generic_accountStateTestGiver::ID;
+const std::int32_t dns_entryDataUnknown::ID;
 
-object_ptr<generic_AccountState> generic_accountStateTestGiver::fetch(JNIEnv *env, jobject &p) {
+object_ptr<dns_EntryData> dns_entryDataUnknown::fetch(JNIEnv *env, jobject &p) {
   if (p == nullptr) return nullptr;
-  object_ptr<generic_accountStateTestGiver> res = make_object<generic_accountStateTestGiver>();
-  res->account_state_ = td::jni::fetch_tl_object<testGiver_accountState>(env, td::jni::fetch_object(env, p, res->account_state_fieldID));;
+  object_ptr<dns_entryDataUnknown> res = make_object<dns_entryDataUnknown>();
+  res->bytes_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->bytes_fieldID));
   return std::move(res);
 }
 
-void generic_accountStateTestGiver::store(JNIEnv *env, jobject &s) const {
+void dns_entryDataUnknown::store(JNIEnv *env, jobject &s) const {
   s = env->AllocObject(Class);
   if (!s) { return; }
-  if (account_state_ != nullptr) { jobject next; account_state_->store(env, next); if (next) { env->SetObjectField(s, account_state_fieldID, next); env->DeleteLocalRef(next); } }
+  { jbyteArray nextBytes = td::jni::to_bytes(env, bytes_); if (nextBytes) { env->SetObjectField(s, bytes_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
 }
 
-void generic_accountStateTestGiver::store(td::TlStorerToString &s, const char *field_name) const {
+void dns_entryDataUnknown::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "GenericAccountStateTestGiver");
-    if (account_state_ == nullptr) { s.store_field("accountState", "null"); } else { account_state_->store(s, "accountState"); }
+    s.store_class_begin(field_name, "DnsEntryDataUnknown");
+    s.store_bytes_field("bytes", bytes_);
     s.store_class_end();
   }
 }
 
-void generic_accountStateTestGiver::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$GenericAccountStateTestGiver").c_str());
-  account_state_fieldID = td::jni::get_field_id(env, Class, "accountState", (PSLICE() << "L" << package_name << "/TonApi$TestGiverAccountState;").c_str());
+void dns_entryDataUnknown::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$DnsEntryDataUnknown").c_str());
+  bytes_fieldID = td::jni::get_field_id(env, Class, "bytes", "[B");
 }
 
-jclass generic_accountStateUninited::Class;
-jfieldID generic_accountStateUninited::account_state_fieldID;
+jclass dns_entryDataText::Class;
+jfieldID dns_entryDataText::text_fieldID;
 
-generic_accountStateUninited::generic_accountStateUninited()
-  : account_state_()
+dns_entryDataText::dns_entryDataText()
+  : text_()
 {}
 
-generic_accountStateUninited::generic_accountStateUninited(object_ptr<uninited_accountState> &&account_state_)
-  : account_state_(std::move(account_state_))
+dns_entryDataText::dns_entryDataText(std::string const &text_)
+  : text_(std::move(text_))
 {}
 
-const std::int32_t generic_accountStateUninited::ID;
+const std::int32_t dns_entryDataText::ID;
 
-object_ptr<generic_AccountState> generic_accountStateUninited::fetch(JNIEnv *env, jobject &p) {
+object_ptr<dns_EntryData> dns_entryDataText::fetch(JNIEnv *env, jobject &p) {
   if (p == nullptr) return nullptr;
-  object_ptr<generic_accountStateUninited> res = make_object<generic_accountStateUninited>();
-  res->account_state_ = td::jni::fetch_tl_object<uninited_accountState>(env, td::jni::fetch_object(env, p, res->account_state_fieldID));;
+  object_ptr<dns_entryDataText> res = make_object<dns_entryDataText>();
+  res->text_ = td::jni::fetch_string(env, p, res->text_fieldID);
   return std::move(res);
 }
 
-void generic_accountStateUninited::store(JNIEnv *env, jobject &s) const {
+void dns_entryDataText::store(JNIEnv *env, jobject &s) const {
   s = env->AllocObject(Class);
   if (!s) { return; }
-  if (account_state_ != nullptr) { jobject next; account_state_->store(env, next); if (next) { env->SetObjectField(s, account_state_fieldID, next); env->DeleteLocalRef(next); } }
+  { jstring nextString = td::jni::to_jstring(env, text_); if (nextString) { env->SetObjectField(s, text_fieldID, nextString); env->DeleteLocalRef(nextString); } }
 }
 
-void generic_accountStateUninited::store(td::TlStorerToString &s, const char *field_name) const {
+void dns_entryDataText::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "GenericAccountStateUninited");
-    if (account_state_ == nullptr) { s.store_field("accountState", "null"); } else { account_state_->store(s, "accountState"); }
+    s.store_class_begin(field_name, "DnsEntryDataText");
+    s.store_field("text", text_);
     s.store_class_end();
   }
 }
 
-void generic_accountStateUninited::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$GenericAccountStateUninited").c_str());
-  account_state_fieldID = td::jni::get_field_id(env, Class, "accountState", (PSLICE() << "L" << package_name << "/TonApi$UninitedAccountState;").c_str());
+void dns_entryDataText::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$DnsEntryDataText").c_str());
+  text_fieldID = td::jni::get_field_id(env, Class, "text", "Ljava/lang/String;");
+}
+
+jclass dns_entryDataNextResolver::Class;
+jfieldID dns_entryDataNextResolver::resolver_fieldID;
+
+dns_entryDataNextResolver::dns_entryDataNextResolver()
+  : resolver_()
+{}
+
+dns_entryDataNextResolver::dns_entryDataNextResolver(object_ptr<accountAddress> &&resolver_)
+  : resolver_(std::move(resolver_))
+{}
+
+const std::int32_t dns_entryDataNextResolver::ID;
+
+object_ptr<dns_EntryData> dns_entryDataNextResolver::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<dns_entryDataNextResolver> res = make_object<dns_entryDataNextResolver>();
+  res->resolver_ = td::jni::fetch_tl_object<accountAddress>(env, td::jni::fetch_object(env, p, res->resolver_fieldID));;
+  return std::move(res);
+}
+
+void dns_entryDataNextResolver::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  if (resolver_ != nullptr) { jobject next; resolver_->store(env, next); if (next) { env->SetObjectField(s, resolver_fieldID, next); env->DeleteLocalRef(next); } }
+}
+
+void dns_entryDataNextResolver::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "DnsEntryDataNextResolver");
+    if (resolver_ == nullptr) { s.store_field("resolver", "null"); } else { resolver_->store(s, "resolver"); }
+    s.store_class_end();
+  }
+}
+
+void dns_entryDataNextResolver::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$DnsEntryDataNextResolver").c_str());
+  resolver_fieldID = td::jni::get_field_id(env, Class, "resolver", (PSLICE() << "L" << package_name << "/TonApi$AccountAddress;").c_str());
+}
+
+jclass dns_entryDataSmcAddress::Class;
+jfieldID dns_entryDataSmcAddress::smc_address_fieldID;
+
+dns_entryDataSmcAddress::dns_entryDataSmcAddress()
+  : smc_address_()
+{}
+
+dns_entryDataSmcAddress::dns_entryDataSmcAddress(object_ptr<accountAddress> &&smc_address_)
+  : smc_address_(std::move(smc_address_))
+{}
+
+const std::int32_t dns_entryDataSmcAddress::ID;
+
+object_ptr<dns_EntryData> dns_entryDataSmcAddress::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<dns_entryDataSmcAddress> res = make_object<dns_entryDataSmcAddress>();
+  res->smc_address_ = td::jni::fetch_tl_object<accountAddress>(env, td::jni::fetch_object(env, p, res->smc_address_fieldID));;
+  return std::move(res);
+}
+
+void dns_entryDataSmcAddress::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  if (smc_address_ != nullptr) { jobject next; smc_address_->store(env, next); if (next) { env->SetObjectField(s, smc_address_fieldID, next); env->DeleteLocalRef(next); } }
+}
+
+void dns_entryDataSmcAddress::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "DnsEntryDataSmcAddress");
+    if (smc_address_ == nullptr) { s.store_field("smcAddress", "null"); } else { smc_address_->store(s, "smcAddress"); }
+    s.store_class_end();
+  }
+}
+
+void dns_entryDataSmcAddress::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$DnsEntryDataSmcAddress").c_str());
+  smc_address_fieldID = td::jni::get_field_id(env, Class, "smcAddress", (PSLICE() << "L" << package_name << "/TonApi$AccountAddress;").c_str());
+}
+
+jclass dns_entryDataAdnlAddress::Class;
+jfieldID dns_entryDataAdnlAddress::adnl_address_fieldID;
+
+dns_entryDataAdnlAddress::dns_entryDataAdnlAddress()
+  : adnl_address_()
+{}
+
+dns_entryDataAdnlAddress::dns_entryDataAdnlAddress(object_ptr<adnlAddress> &&adnl_address_)
+  : adnl_address_(std::move(adnl_address_))
+{}
+
+const std::int32_t dns_entryDataAdnlAddress::ID;
+
+object_ptr<dns_EntryData> dns_entryDataAdnlAddress::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<dns_entryDataAdnlAddress> res = make_object<dns_entryDataAdnlAddress>();
+  res->adnl_address_ = td::jni::fetch_tl_object<adnlAddress>(env, td::jni::fetch_object(env, p, res->adnl_address_fieldID));;
+  return std::move(res);
+}
+
+void dns_entryDataAdnlAddress::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  if (adnl_address_ != nullptr) { jobject next; adnl_address_->store(env, next); if (next) { env->SetObjectField(s, adnl_address_fieldID, next); env->DeleteLocalRef(next); } }
+}
+
+void dns_entryDataAdnlAddress::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "DnsEntryDataAdnlAddress");
+    if (adnl_address_ == nullptr) { s.store_field("adnlAddress", "null"); } else { adnl_address_->store(s, "adnlAddress"); }
+    s.store_class_end();
+  }
+}
+
+void dns_entryDataAdnlAddress::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$DnsEntryDataAdnlAddress").c_str());
+  adnl_address_fieldID = td::jni::get_field_id(env, Class, "adnlAddress", (PSLICE() << "L" << package_name << "/TonApi$AdnlAddress;").c_str());
+}
+
+jclass dns_resolved::Class;
+jfieldID dns_resolved::entries_fieldID;
+
+dns_resolved::dns_resolved()
+  : entries_()
+{}
+
+dns_resolved::dns_resolved(std::vector<object_ptr<dns_entry>> &&entries_)
+  : entries_(std::move(entries_))
+{}
+
+const std::int32_t dns_resolved::ID;
+
+object_ptr<dns_resolved> dns_resolved::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<dns_resolved> res = make_object<dns_resolved>();
+  res->entries_ = td::jni::FetchVector<dns_entry>::fetch(env, (jobjectArray)td::jni::fetch_object(env, p, res->entries_fieldID));;
+  return res;
+}
+
+void dns_resolved::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { auto arr_tmp_ = td::jni::store_vector(env, entries_); if (arr_tmp_) { env->SetObjectField(s, entries_fieldID, arr_tmp_); env->DeleteLocalRef(arr_tmp_); } }
+}
+
+void dns_resolved::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "DnsResolved");
+    { const std::vector<object_ptr<dns_entry>> &v = entries_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "Array[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("entries", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { if (v[i] == nullptr) { s.store_field("", "null"); } else { v[i]->store(s, ""); } } s.store_class_end(); }
+    s.store_class_end();
+  }
+}
+
+void dns_resolved::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$DnsResolved").c_str());
+  entries_fieldID = td::jni::get_field_id(env, Class, "entries", (PSLICE() << "[L" << package_name << "/TonApi$DnsEntry;").c_str());
+}
+
+jclass ton_blockId::Class;
+jfieldID ton_blockId::workchain_fieldID;
+jfieldID ton_blockId::shard_fieldID;
+jfieldID ton_blockId::seqno_fieldID;
+
+ton_blockId::ton_blockId()
+  : workchain_()
+  , shard_()
+  , seqno_()
+{}
+
+ton_blockId::ton_blockId(std::int32_t workchain_, std::int64_t shard_, std::int32_t seqno_)
+  : workchain_(workchain_)
+  , shard_(shard_)
+  , seqno_(seqno_)
+{}
+
+const std::int32_t ton_blockId::ID;
+
+object_ptr<ton_blockId> ton_blockId::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<ton_blockId> res = make_object<ton_blockId>();
+  res->workchain_ = env->GetIntField(p, res->workchain_fieldID);
+  res->shard_ = env->GetLongField(p, res->shard_fieldID);
+  res->seqno_ = env->GetIntField(p, res->seqno_fieldID);
+  return res;
+}
+
+void ton_blockId::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  env->SetIntField(s, workchain_fieldID, workchain_);
+  env->SetLongField(s, shard_fieldID, shard_);
+  env->SetIntField(s, seqno_fieldID, seqno_);
+}
+
+void ton_blockId::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "TonBlockId");
+    s.store_field("workchain", workchain_);
+    s.store_field("shard", shard_);
+    s.store_field("seqno", seqno_);
+    s.store_class_end();
+  }
+}
+
+void ton_blockId::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TonBlockId").c_str());
+  workchain_fieldID = td::jni::get_field_id(env, Class, "workchain", "I");
+  shard_fieldID = td::jni::get_field_id(env, Class, "shard", "J");
+  seqno_fieldID = td::jni::get_field_id(env, Class, "seqno", "I");
 }
 
 jclass internal_transactionId::Class;
@@ -2010,6 +3389,420 @@ void liteServer_info::init_jni_vars(JNIEnv *env, const char *package_name) {
   capabilities_fieldID = td::jni::get_field_id(env, Class, "capabilities", "J");
 }
 
+jclass msg_Data::Class;
+
+object_ptr<msg_Data> msg_Data::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) { return nullptr; }
+  auto id = env->CallIntMethod(p, td::jni::GetConstructorID);
+  switch (id) {
+    case msg_dataRaw::ID:
+      return msg_dataRaw::fetch(env, p);
+    case msg_dataText::ID:
+      return msg_dataText::fetch(env, p);
+    case msg_dataDecryptedText::ID:
+      return msg_dataDecryptedText::fetch(env, p);
+    case msg_dataEncryptedText::ID:
+      return msg_dataEncryptedText::fetch(env, p);
+    default:
+      LOG(WARNING) << "Unknown constructor found: " << id;
+      return nullptr;
+  }
+}
+
+void msg_Data::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$MsgData").c_str());
+  msg_dataRaw::init_jni_vars(env, package_name);
+  msg_dataText::init_jni_vars(env, package_name);
+  msg_dataDecryptedText::init_jni_vars(env, package_name);
+  msg_dataEncryptedText::init_jni_vars(env, package_name);
+}
+
+jclass msg_dataRaw::Class;
+jfieldID msg_dataRaw::body_fieldID;
+
+msg_dataRaw::msg_dataRaw()
+  : body_()
+{}
+
+msg_dataRaw::msg_dataRaw(std::string const &body_)
+  : body_(std::move(body_))
+{}
+
+const std::int32_t msg_dataRaw::ID;
+
+object_ptr<msg_Data> msg_dataRaw::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<msg_dataRaw> res = make_object<msg_dataRaw>();
+  res->body_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->body_fieldID));
+  return std::move(res);
+}
+
+void msg_dataRaw::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { jbyteArray nextBytes = td::jni::to_bytes(env, body_); if (nextBytes) { env->SetObjectField(s, body_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
+}
+
+void msg_dataRaw::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "MsgDataRaw");
+    s.store_bytes_field("body", body_);
+    s.store_class_end();
+  }
+}
+
+void msg_dataRaw::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$MsgDataRaw").c_str());
+  body_fieldID = td::jni::get_field_id(env, Class, "body", "[B");
+}
+
+jclass msg_dataText::Class;
+jfieldID msg_dataText::text_fieldID;
+
+msg_dataText::msg_dataText()
+  : text_()
+{}
+
+msg_dataText::msg_dataText(std::string const &text_)
+  : text_(std::move(text_))
+{}
+
+const std::int32_t msg_dataText::ID;
+
+object_ptr<msg_Data> msg_dataText::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<msg_dataText> res = make_object<msg_dataText>();
+  res->text_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->text_fieldID));
+  return std::move(res);
+}
+
+void msg_dataText::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { jbyteArray nextBytes = td::jni::to_bytes(env, text_); if (nextBytes) { env->SetObjectField(s, text_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
+}
+
+void msg_dataText::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "MsgDataText");
+    s.store_bytes_field("text", text_);
+    s.store_class_end();
+  }
+}
+
+void msg_dataText::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$MsgDataText").c_str());
+  text_fieldID = td::jni::get_field_id(env, Class, "text", "[B");
+}
+
+jclass msg_dataDecryptedText::Class;
+jfieldID msg_dataDecryptedText::text_fieldID;
+
+msg_dataDecryptedText::msg_dataDecryptedText()
+  : text_()
+{}
+
+msg_dataDecryptedText::msg_dataDecryptedText(std::string const &text_)
+  : text_(std::move(text_))
+{}
+
+const std::int32_t msg_dataDecryptedText::ID;
+
+object_ptr<msg_Data> msg_dataDecryptedText::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<msg_dataDecryptedText> res = make_object<msg_dataDecryptedText>();
+  res->text_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->text_fieldID));
+  return std::move(res);
+}
+
+void msg_dataDecryptedText::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { jbyteArray nextBytes = td::jni::to_bytes(env, text_); if (nextBytes) { env->SetObjectField(s, text_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
+}
+
+void msg_dataDecryptedText::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "MsgDataDecryptedText");
+    s.store_bytes_field("text", text_);
+    s.store_class_end();
+  }
+}
+
+void msg_dataDecryptedText::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$MsgDataDecryptedText").c_str());
+  text_fieldID = td::jni::get_field_id(env, Class, "text", "[B");
+}
+
+jclass msg_dataEncryptedText::Class;
+jfieldID msg_dataEncryptedText::text_fieldID;
+
+msg_dataEncryptedText::msg_dataEncryptedText()
+  : text_()
+{}
+
+msg_dataEncryptedText::msg_dataEncryptedText(std::string const &text_)
+  : text_(std::move(text_))
+{}
+
+const std::int32_t msg_dataEncryptedText::ID;
+
+object_ptr<msg_Data> msg_dataEncryptedText::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<msg_dataEncryptedText> res = make_object<msg_dataEncryptedText>();
+  res->text_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->text_fieldID));
+  return std::move(res);
+}
+
+void msg_dataEncryptedText::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { jbyteArray nextBytes = td::jni::to_bytes(env, text_); if (nextBytes) { env->SetObjectField(s, text_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
+}
+
+void msg_dataEncryptedText::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "MsgDataEncryptedText");
+    s.store_bytes_field("text", text_);
+    s.store_class_end();
+  }
+}
+
+void msg_dataEncryptedText::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$MsgDataEncryptedText").c_str());
+  text_fieldID = td::jni::get_field_id(env, Class, "text", "[B");
+}
+
+jclass msg_dataDecrypted::Class;
+jfieldID msg_dataDecrypted::proof_fieldID;
+jfieldID msg_dataDecrypted::data_fieldID;
+
+msg_dataDecrypted::msg_dataDecrypted()
+  : proof_()
+  , data_()
+{}
+
+msg_dataDecrypted::msg_dataDecrypted(std::string const &proof_, object_ptr<msg_Data> &&data_)
+  : proof_(std::move(proof_))
+  , data_(std::move(data_))
+{}
+
+const std::int32_t msg_dataDecrypted::ID;
+
+object_ptr<msg_dataDecrypted> msg_dataDecrypted::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<msg_dataDecrypted> res = make_object<msg_dataDecrypted>();
+  res->proof_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->proof_fieldID));
+  res->data_ = td::jni::fetch_tl_object<msg_Data>(env, td::jni::fetch_object(env, p, res->data_fieldID));;
+  return res;
+}
+
+void msg_dataDecrypted::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { jbyteArray nextBytes = td::jni::to_bytes(env, proof_); if (nextBytes) { env->SetObjectField(s, proof_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
+  if (data_ != nullptr) { jobject next; data_->store(env, next); if (next) { env->SetObjectField(s, data_fieldID, next); env->DeleteLocalRef(next); } }
+}
+
+void msg_dataDecrypted::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "MsgDataDecrypted");
+    s.store_bytes_field("proof", proof_);
+    if (data_ == nullptr) { s.store_field("data", "null"); } else { data_->store(s, "data"); }
+    s.store_class_end();
+  }
+}
+
+void msg_dataDecrypted::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$MsgDataDecrypted").c_str());
+  proof_fieldID = td::jni::get_field_id(env, Class, "proof", "[B");
+  data_fieldID = td::jni::get_field_id(env, Class, "data", (PSLICE() << "L" << package_name << "/TonApi$MsgData;").c_str());
+}
+
+jclass msg_dataDecryptedArray::Class;
+jfieldID msg_dataDecryptedArray::elements_fieldID;
+
+msg_dataDecryptedArray::msg_dataDecryptedArray()
+  : elements_()
+{}
+
+msg_dataDecryptedArray::msg_dataDecryptedArray(std::vector<object_ptr<msg_dataDecrypted>> &&elements_)
+  : elements_(std::move(elements_))
+{}
+
+const std::int32_t msg_dataDecryptedArray::ID;
+
+object_ptr<msg_dataDecryptedArray> msg_dataDecryptedArray::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<msg_dataDecryptedArray> res = make_object<msg_dataDecryptedArray>();
+  res->elements_ = td::jni::FetchVector<msg_dataDecrypted>::fetch(env, (jobjectArray)td::jni::fetch_object(env, p, res->elements_fieldID));;
+  return res;
+}
+
+void msg_dataDecryptedArray::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { auto arr_tmp_ = td::jni::store_vector(env, elements_); if (arr_tmp_) { env->SetObjectField(s, elements_fieldID, arr_tmp_); env->DeleteLocalRef(arr_tmp_); } }
+}
+
+void msg_dataDecryptedArray::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "MsgDataDecryptedArray");
+    { const std::vector<object_ptr<msg_dataDecrypted>> &v = elements_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "Array[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("elements", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { if (v[i] == nullptr) { s.store_field("", "null"); } else { v[i]->store(s, ""); } } s.store_class_end(); }
+    s.store_class_end();
+  }
+}
+
+void msg_dataDecryptedArray::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$MsgDataDecryptedArray").c_str());
+  elements_fieldID = td::jni::get_field_id(env, Class, "elements", (PSLICE() << "[L" << package_name << "/TonApi$MsgDataDecrypted;").c_str());
+}
+
+jclass msg_dataEncrypted::Class;
+jfieldID msg_dataEncrypted::source_fieldID;
+jfieldID msg_dataEncrypted::data_fieldID;
+
+msg_dataEncrypted::msg_dataEncrypted()
+  : source_()
+  , data_()
+{}
+
+msg_dataEncrypted::msg_dataEncrypted(object_ptr<accountAddress> &&source_, object_ptr<msg_Data> &&data_)
+  : source_(std::move(source_))
+  , data_(std::move(data_))
+{}
+
+const std::int32_t msg_dataEncrypted::ID;
+
+object_ptr<msg_dataEncrypted> msg_dataEncrypted::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<msg_dataEncrypted> res = make_object<msg_dataEncrypted>();
+  res->source_ = td::jni::fetch_tl_object<accountAddress>(env, td::jni::fetch_object(env, p, res->source_fieldID));;
+  res->data_ = td::jni::fetch_tl_object<msg_Data>(env, td::jni::fetch_object(env, p, res->data_fieldID));;
+  return res;
+}
+
+void msg_dataEncrypted::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  if (source_ != nullptr) { jobject next; source_->store(env, next); if (next) { env->SetObjectField(s, source_fieldID, next); env->DeleteLocalRef(next); } }
+  if (data_ != nullptr) { jobject next; data_->store(env, next); if (next) { env->SetObjectField(s, data_fieldID, next); env->DeleteLocalRef(next); } }
+}
+
+void msg_dataEncrypted::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "MsgDataEncrypted");
+    if (source_ == nullptr) { s.store_field("source", "null"); } else { source_->store(s, "source"); }
+    if (data_ == nullptr) { s.store_field("data", "null"); } else { data_->store(s, "data"); }
+    s.store_class_end();
+  }
+}
+
+void msg_dataEncrypted::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$MsgDataEncrypted").c_str());
+  source_fieldID = td::jni::get_field_id(env, Class, "source", (PSLICE() << "L" << package_name << "/TonApi$AccountAddress;").c_str());
+  data_fieldID = td::jni::get_field_id(env, Class, "data", (PSLICE() << "L" << package_name << "/TonApi$MsgData;").c_str());
+}
+
+jclass msg_dataEncryptedArray::Class;
+jfieldID msg_dataEncryptedArray::elements_fieldID;
+
+msg_dataEncryptedArray::msg_dataEncryptedArray()
+  : elements_()
+{}
+
+msg_dataEncryptedArray::msg_dataEncryptedArray(std::vector<object_ptr<msg_dataEncrypted>> &&elements_)
+  : elements_(std::move(elements_))
+{}
+
+const std::int32_t msg_dataEncryptedArray::ID;
+
+object_ptr<msg_dataEncryptedArray> msg_dataEncryptedArray::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<msg_dataEncryptedArray> res = make_object<msg_dataEncryptedArray>();
+  res->elements_ = td::jni::FetchVector<msg_dataEncrypted>::fetch(env, (jobjectArray)td::jni::fetch_object(env, p, res->elements_fieldID));;
+  return res;
+}
+
+void msg_dataEncryptedArray::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { auto arr_tmp_ = td::jni::store_vector(env, elements_); if (arr_tmp_) { env->SetObjectField(s, elements_fieldID, arr_tmp_); env->DeleteLocalRef(arr_tmp_); } }
+}
+
+void msg_dataEncryptedArray::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "MsgDataEncryptedArray");
+    { const std::vector<object_ptr<msg_dataEncrypted>> &v = elements_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "Array[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("elements", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { if (v[i] == nullptr) { s.store_field("", "null"); } else { v[i]->store(s, ""); } } s.store_class_end(); }
+    s.store_class_end();
+  }
+}
+
+void msg_dataEncryptedArray::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$MsgDataEncryptedArray").c_str());
+  elements_fieldID = td::jni::get_field_id(env, Class, "elements", (PSLICE() << "[L" << package_name << "/TonApi$MsgDataEncrypted;").c_str());
+}
+
+jclass msg_message::Class;
+jfieldID msg_message::destination_fieldID;
+jfieldID msg_message::public_key_fieldID;
+jfieldID msg_message::amount_fieldID;
+jfieldID msg_message::data_fieldID;
+
+msg_message::msg_message()
+  : destination_()
+  , public_key_()
+  , amount_()
+  , data_()
+{}
+
+msg_message::msg_message(object_ptr<accountAddress> &&destination_, std::string const &public_key_, std::int64_t amount_, object_ptr<msg_Data> &&data_)
+  : destination_(std::move(destination_))
+  , public_key_(std::move(public_key_))
+  , amount_(amount_)
+  , data_(std::move(data_))
+{}
+
+const std::int32_t msg_message::ID;
+
+object_ptr<msg_message> msg_message::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<msg_message> res = make_object<msg_message>();
+  res->destination_ = td::jni::fetch_tl_object<accountAddress>(env, td::jni::fetch_object(env, p, res->destination_fieldID));;
+  res->public_key_ = td::jni::fetch_string(env, p, res->public_key_fieldID);
+  res->amount_ = env->GetLongField(p, res->amount_fieldID);
+  res->data_ = td::jni::fetch_tl_object<msg_Data>(env, td::jni::fetch_object(env, p, res->data_fieldID));;
+  return res;
+}
+
+void msg_message::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  if (destination_ != nullptr) { jobject next; destination_->store(env, next); if (next) { env->SetObjectField(s, destination_fieldID, next); env->DeleteLocalRef(next); } }
+  { jstring nextString = td::jni::to_jstring(env, public_key_); if (nextString) { env->SetObjectField(s, public_key_fieldID, nextString); env->DeleteLocalRef(nextString); } }
+  env->SetLongField(s, amount_fieldID, amount_);
+  if (data_ != nullptr) { jobject next; data_->store(env, next); if (next) { env->SetObjectField(s, data_fieldID, next); env->DeleteLocalRef(next); } }
+}
+
+void msg_message::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "MsgMessage");
+    if (destination_ == nullptr) { s.store_field("destination", "null"); } else { destination_->store(s, "destination"); }
+    s.store_field("publicKey", public_key_);
+    s.store_field("amount", amount_);
+    if (data_ == nullptr) { s.store_field("data", "null"); } else { data_->store(s, "data"); }
+    s.store_class_end();
+  }
+}
+
+void msg_message::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$MsgMessage").c_str());
+  destination_fieldID = td::jni::get_field_id(env, Class, "destination", (PSLICE() << "L" << package_name << "/TonApi$AccountAddress;").c_str());
+  public_key_fieldID = td::jni::get_field_id(env, Class, "publicKey", "Ljava/lang/String;");
+  amount_fieldID = td::jni::get_field_id(env, Class, "amount", "J");
+  data_fieldID = td::jni::get_field_id(env, Class, "data", (PSLICE() << "L" << package_name << "/TonApi$MsgData;").c_str());
+}
+
 jclass options_configInfo::Class;
 jfieldID options_configInfo::default_wallet_id_fieldID;
 
@@ -2049,6 +3842,45 @@ void options_configInfo::init_jni_vars(JNIEnv *env, const char *package_name) {
   default_wallet_id_fieldID = td::jni::get_field_id(env, Class, "defaultWalletId", "J");
 }
 
+jclass options_info::Class;
+jfieldID options_info::config_info_fieldID;
+
+options_info::options_info()
+  : config_info_()
+{}
+
+options_info::options_info(object_ptr<options_configInfo> &&config_info_)
+  : config_info_(std::move(config_info_))
+{}
+
+const std::int32_t options_info::ID;
+
+object_ptr<options_info> options_info::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<options_info> res = make_object<options_info>();
+  res->config_info_ = td::jni::fetch_tl_object<options_configInfo>(env, td::jni::fetch_object(env, p, res->config_info_fieldID));;
+  return res;
+}
+
+void options_info::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  if (config_info_ != nullptr) { jobject next; config_info_->store(env, next); if (next) { env->SetObjectField(s, config_info_fieldID, next); env->DeleteLocalRef(next); } }
+}
+
+void options_info::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "OptionsInfo");
+    if (config_info_ == nullptr) { s.store_field("configInfo", "null"); } else { config_info_->store(s, "configInfo"); }
+    s.store_class_end();
+  }
+}
+
+void options_info::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$OptionsInfo").c_str());
+  config_info_fieldID = td::jni::get_field_id(env, Class, "configInfo", (PSLICE() << "L" << package_name << "/TonApi$OptionsConfigInfo;").c_str());
+}
+
 jclass query_fees::Class;
 jfieldID query_fees::source_fees_fieldID;
 jfieldID query_fees::destination_fees_fieldID;
@@ -2058,7 +3890,7 @@ query_fees::query_fees()
   , destination_fees_()
 {}
 
-query_fees::query_fees(object_ptr<fees> &&source_fees_, object_ptr<fees> &&destination_fees_)
+query_fees::query_fees(object_ptr<fees> &&source_fees_, std::vector<object_ptr<fees>> &&destination_fees_)
   : source_fees_(std::move(source_fees_))
   , destination_fees_(std::move(destination_fees_))
 {}
@@ -2069,7 +3901,7 @@ object_ptr<query_fees> query_fees::fetch(JNIEnv *env, jobject &p) {
   if (p == nullptr) return nullptr;
   object_ptr<query_fees> res = make_object<query_fees>();
   res->source_fees_ = td::jni::fetch_tl_object<fees>(env, td::jni::fetch_object(env, p, res->source_fees_fieldID));;
-  res->destination_fees_ = td::jni::fetch_tl_object<fees>(env, td::jni::fetch_object(env, p, res->destination_fees_fieldID));;
+  res->destination_fees_ = td::jni::FetchVector<fees>::fetch(env, (jobjectArray)td::jni::fetch_object(env, p, res->destination_fees_fieldID));;
   return res;
 }
 
@@ -2077,14 +3909,14 @@ void query_fees::store(JNIEnv *env, jobject &s) const {
   s = env->AllocObject(Class);
   if (!s) { return; }
   if (source_fees_ != nullptr) { jobject next; source_fees_->store(env, next); if (next) { env->SetObjectField(s, source_fees_fieldID, next); env->DeleteLocalRef(next); } }
-  if (destination_fees_ != nullptr) { jobject next; destination_fees_->store(env, next); if (next) { env->SetObjectField(s, destination_fees_fieldID, next); env->DeleteLocalRef(next); } }
+  { auto arr_tmp_ = td::jni::store_vector(env, destination_fees_); if (arr_tmp_) { env->SetObjectField(s, destination_fees_fieldID, arr_tmp_); env->DeleteLocalRef(arr_tmp_); } }
 }
 
 void query_fees::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
     s.store_class_begin(field_name, "QueryFees");
     if (source_fees_ == nullptr) { s.store_field("sourceFees", "null"); } else { source_fees_->store(s, "sourceFees"); }
-    if (destination_fees_ == nullptr) { s.store_field("destinationFees", "null"); } else { destination_fees_->store(s, "destinationFees"); }
+    { const std::vector<object_ptr<fees>> &v = destination_fees_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "Array[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("destinationFees", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { if (v[i] == nullptr) { s.store_field("", "null"); } else { v[i]->store(s, ""); } } s.store_class_end(); }
     s.store_class_end();
   }
 }
@@ -2092,7 +3924,7 @@ void query_fees::store(td::TlStorerToString &s, const char *field_name) const {
 void query_fees::init_jni_vars(JNIEnv *env, const char *package_name) {
   Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$QueryFees").c_str());
   source_fees_fieldID = td::jni::get_field_id(env, Class, "sourceFees", (PSLICE() << "L" << package_name << "/TonApi$Fees;").c_str());
-  destination_fees_fieldID = td::jni::get_field_id(env, Class, "destinationFees", (PSLICE() << "L" << package_name << "/TonApi$Fees;").c_str());
+  destination_fees_fieldID = td::jni::get_field_id(env, Class, "destinationFees", (PSLICE() << "[L" << package_name << "/TonApi$Fees;").c_str());
 }
 
 jclass query_info::Class;
@@ -2148,124 +3980,85 @@ void query_info::init_jni_vars(JNIEnv *env, const char *package_name) {
   body_hash_fieldID = td::jni::get_field_id(env, Class, "bodyHash", "[B");
 }
 
-jclass raw_accountState::Class;
-jfieldID raw_accountState::balance_fieldID;
-jfieldID raw_accountState::code_fieldID;
-jfieldID raw_accountState::data_fieldID;
-jfieldID raw_accountState::last_transaction_id_fieldID;
-jfieldID raw_accountState::frozen_hash_fieldID;
-jfieldID raw_accountState::sync_utime_fieldID;
+jclass raw_fullAccountState::Class;
+jfieldID raw_fullAccountState::balance_fieldID;
+jfieldID raw_fullAccountState::code_fieldID;
+jfieldID raw_fullAccountState::data_fieldID;
+jfieldID raw_fullAccountState::last_transaction_id_fieldID;
+jfieldID raw_fullAccountState::block_id_fieldID;
+jfieldID raw_fullAccountState::frozen_hash_fieldID;
+jfieldID raw_fullAccountState::sync_utime_fieldID;
 
-raw_accountState::raw_accountState()
+raw_fullAccountState::raw_fullAccountState()
   : balance_()
   , code_()
   , data_()
   , last_transaction_id_()
+  , block_id_()
   , frozen_hash_()
   , sync_utime_()
 {}
 
-raw_accountState::raw_accountState(std::int64_t balance_, std::string const &code_, std::string const &data_, object_ptr<internal_transactionId> &&last_transaction_id_, std::string const &frozen_hash_, std::int64_t sync_utime_)
+raw_fullAccountState::raw_fullAccountState(std::int64_t balance_, std::string const &code_, std::string const &data_, object_ptr<internal_transactionId> &&last_transaction_id_, object_ptr<ton_blockIdExt> &&block_id_, std::string const &frozen_hash_, std::int64_t sync_utime_)
   : balance_(balance_)
   , code_(std::move(code_))
   , data_(std::move(data_))
   , last_transaction_id_(std::move(last_transaction_id_))
+  , block_id_(std::move(block_id_))
   , frozen_hash_(std::move(frozen_hash_))
   , sync_utime_(sync_utime_)
 {}
 
-const std::int32_t raw_accountState::ID;
+const std::int32_t raw_fullAccountState::ID;
 
-object_ptr<raw_accountState> raw_accountState::fetch(JNIEnv *env, jobject &p) {
+object_ptr<raw_fullAccountState> raw_fullAccountState::fetch(JNIEnv *env, jobject &p) {
   if (p == nullptr) return nullptr;
-  object_ptr<raw_accountState> res = make_object<raw_accountState>();
+  object_ptr<raw_fullAccountState> res = make_object<raw_fullAccountState>();
   res->balance_ = env->GetLongField(p, res->balance_fieldID);
   res->code_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->code_fieldID));
   res->data_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->data_fieldID));
   res->last_transaction_id_ = td::jni::fetch_tl_object<internal_transactionId>(env, td::jni::fetch_object(env, p, res->last_transaction_id_fieldID));;
+  res->block_id_ = td::jni::fetch_tl_object<ton_blockIdExt>(env, td::jni::fetch_object(env, p, res->block_id_fieldID));;
   res->frozen_hash_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->frozen_hash_fieldID));
   res->sync_utime_ = env->GetLongField(p, res->sync_utime_fieldID);
   return res;
 }
 
-void raw_accountState::store(JNIEnv *env, jobject &s) const {
+void raw_fullAccountState::store(JNIEnv *env, jobject &s) const {
   s = env->AllocObject(Class);
   if (!s) { return; }
   env->SetLongField(s, balance_fieldID, balance_);
   { jbyteArray nextBytes = td::jni::to_bytes(env, code_); if (nextBytes) { env->SetObjectField(s, code_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
   { jbyteArray nextBytes = td::jni::to_bytes(env, data_); if (nextBytes) { env->SetObjectField(s, data_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
   if (last_transaction_id_ != nullptr) { jobject next; last_transaction_id_->store(env, next); if (next) { env->SetObjectField(s, last_transaction_id_fieldID, next); env->DeleteLocalRef(next); } }
+  if (block_id_ != nullptr) { jobject next; block_id_->store(env, next); if (next) { env->SetObjectField(s, block_id_fieldID, next); env->DeleteLocalRef(next); } }
   { jbyteArray nextBytes = td::jni::to_bytes(env, frozen_hash_); if (nextBytes) { env->SetObjectField(s, frozen_hash_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
   env->SetLongField(s, sync_utime_fieldID, sync_utime_);
 }
 
-void raw_accountState::store(td::TlStorerToString &s, const char *field_name) const {
+void raw_fullAccountState::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "RawAccountState");
+    s.store_class_begin(field_name, "RawFullAccountState");
     s.store_field("balance", balance_);
     s.store_bytes_field("code", code_);
     s.store_bytes_field("data", data_);
     if (last_transaction_id_ == nullptr) { s.store_field("lastTransactionId", "null"); } else { last_transaction_id_->store(s, "lastTransactionId"); }
+    if (block_id_ == nullptr) { s.store_field("blockId", "null"); } else { block_id_->store(s, "blockId"); }
     s.store_bytes_field("frozenHash", frozen_hash_);
     s.store_field("syncUtime", sync_utime_);
     s.store_class_end();
   }
 }
 
-void raw_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$RawAccountState").c_str());
+void raw_fullAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$RawFullAccountState").c_str());
   balance_fieldID = td::jni::get_field_id(env, Class, "balance", "J");
   code_fieldID = td::jni::get_field_id(env, Class, "code", "[B");
   data_fieldID = td::jni::get_field_id(env, Class, "data", "[B");
   last_transaction_id_fieldID = td::jni::get_field_id(env, Class, "lastTransactionId", (PSLICE() << "L" << package_name << "/TonApi$InternalTransactionId;").c_str());
+  block_id_fieldID = td::jni::get_field_id(env, Class, "blockId", (PSLICE() << "L" << package_name << "/TonApi$TonBlockIdExt;").c_str());
   frozen_hash_fieldID = td::jni::get_field_id(env, Class, "frozenHash", "[B");
   sync_utime_fieldID = td::jni::get_field_id(env, Class, "syncUtime", "J");
-}
-
-jclass raw_initialAccountState::Class;
-jfieldID raw_initialAccountState::code_fieldID;
-jfieldID raw_initialAccountState::data_fieldID;
-
-raw_initialAccountState::raw_initialAccountState()
-  : code_()
-  , data_()
-{}
-
-raw_initialAccountState::raw_initialAccountState(std::string const &code_, std::string const &data_)
-  : code_(std::move(code_))
-  , data_(std::move(data_))
-{}
-
-const std::int32_t raw_initialAccountState::ID;
-
-object_ptr<raw_initialAccountState> raw_initialAccountState::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<raw_initialAccountState> res = make_object<raw_initialAccountState>();
-  res->code_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->code_fieldID));
-  res->data_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->data_fieldID));
-  return res;
-}
-
-void raw_initialAccountState::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  { jbyteArray nextBytes = td::jni::to_bytes(env, code_); if (nextBytes) { env->SetObjectField(s, code_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
-  { jbyteArray nextBytes = td::jni::to_bytes(env, data_); if (nextBytes) { env->SetObjectField(s, data_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
-}
-
-void raw_initialAccountState::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "RawInitialAccountState");
-    s.store_bytes_field("code", code_);
-    s.store_bytes_field("data", data_);
-    s.store_class_end();
-  }
-}
-
-void raw_initialAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$RawInitialAccountState").c_str());
-  code_fieldID = td::jni::get_field_id(env, Class, "code", "[B");
-  data_fieldID = td::jni::get_field_id(env, Class, "data", "[B");
 }
 
 jclass raw_message::Class;
@@ -2276,7 +4069,7 @@ jfieldID raw_message::fwd_fee_fieldID;
 jfieldID raw_message::ihr_fee_fieldID;
 jfieldID raw_message::created_lt_fieldID;
 jfieldID raw_message::body_hash_fieldID;
-jfieldID raw_message::message_fieldID;
+jfieldID raw_message::msg_data_fieldID;
 
 raw_message::raw_message()
   : source_()
@@ -2286,10 +4079,10 @@ raw_message::raw_message()
   , ihr_fee_()
   , created_lt_()
   , body_hash_()
-  , message_()
+  , msg_data_()
 {}
 
-raw_message::raw_message(std::string const &source_, std::string const &destination_, std::int64_t value_, std::int64_t fwd_fee_, std::int64_t ihr_fee_, std::int64_t created_lt_, std::string const &body_hash_, std::string const &message_)
+raw_message::raw_message(object_ptr<accountAddress> &&source_, object_ptr<accountAddress> &&destination_, std::int64_t value_, std::int64_t fwd_fee_, std::int64_t ihr_fee_, std::int64_t created_lt_, std::string const &body_hash_, object_ptr<msg_Data> &&msg_data_)
   : source_(std::move(source_))
   , destination_(std::move(destination_))
   , value_(value_)
@@ -2297,7 +4090,7 @@ raw_message::raw_message(std::string const &source_, std::string const &destinat
   , ihr_fee_(ihr_fee_)
   , created_lt_(created_lt_)
   , body_hash_(std::move(body_hash_))
-  , message_(std::move(message_))
+  , msg_data_(std::move(msg_data_))
 {}
 
 const std::int32_t raw_message::ID;
@@ -2305,55 +4098,55 @@ const std::int32_t raw_message::ID;
 object_ptr<raw_message> raw_message::fetch(JNIEnv *env, jobject &p) {
   if (p == nullptr) return nullptr;
   object_ptr<raw_message> res = make_object<raw_message>();
-  res->source_ = td::jni::fetch_string(env, p, res->source_fieldID);
-  res->destination_ = td::jni::fetch_string(env, p, res->destination_fieldID);
+  res->source_ = td::jni::fetch_tl_object<accountAddress>(env, td::jni::fetch_object(env, p, res->source_fieldID));;
+  res->destination_ = td::jni::fetch_tl_object<accountAddress>(env, td::jni::fetch_object(env, p, res->destination_fieldID));;
   res->value_ = env->GetLongField(p, res->value_fieldID);
   res->fwd_fee_ = env->GetLongField(p, res->fwd_fee_fieldID);
   res->ihr_fee_ = env->GetLongField(p, res->ihr_fee_fieldID);
   res->created_lt_ = env->GetLongField(p, res->created_lt_fieldID);
   res->body_hash_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->body_hash_fieldID));
-  res->message_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->message_fieldID));
+  res->msg_data_ = td::jni::fetch_tl_object<msg_Data>(env, td::jni::fetch_object(env, p, res->msg_data_fieldID));;
   return res;
 }
 
 void raw_message::store(JNIEnv *env, jobject &s) const {
   s = env->AllocObject(Class);
   if (!s) { return; }
-  { jstring nextString = td::jni::to_jstring(env, source_); if (nextString) { env->SetObjectField(s, source_fieldID, nextString); env->DeleteLocalRef(nextString); } }
-  { jstring nextString = td::jni::to_jstring(env, destination_); if (nextString) { env->SetObjectField(s, destination_fieldID, nextString); env->DeleteLocalRef(nextString); } }
+  if (source_ != nullptr) { jobject next; source_->store(env, next); if (next) { env->SetObjectField(s, source_fieldID, next); env->DeleteLocalRef(next); } }
+  if (destination_ != nullptr) { jobject next; destination_->store(env, next); if (next) { env->SetObjectField(s, destination_fieldID, next); env->DeleteLocalRef(next); } }
   env->SetLongField(s, value_fieldID, value_);
   env->SetLongField(s, fwd_fee_fieldID, fwd_fee_);
   env->SetLongField(s, ihr_fee_fieldID, ihr_fee_);
   env->SetLongField(s, created_lt_fieldID, created_lt_);
   { jbyteArray nextBytes = td::jni::to_bytes(env, body_hash_); if (nextBytes) { env->SetObjectField(s, body_hash_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
-  { jbyteArray nextBytes = td::jni::to_bytes(env, message_); if (nextBytes) { env->SetObjectField(s, message_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
+  if (msg_data_ != nullptr) { jobject next; msg_data_->store(env, next); if (next) { env->SetObjectField(s, msg_data_fieldID, next); env->DeleteLocalRef(next); } }
 }
 
 void raw_message::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
     s.store_class_begin(field_name, "RawMessage");
-    s.store_field("source", source_);
-    s.store_field("destination", destination_);
+    if (source_ == nullptr) { s.store_field("source", "null"); } else { source_->store(s, "source"); }
+    if (destination_ == nullptr) { s.store_field("destination", "null"); } else { destination_->store(s, "destination"); }
     s.store_field("value", value_);
     s.store_field("fwdFee", fwd_fee_);
     s.store_field("ihrFee", ihr_fee_);
     s.store_field("createdLt", created_lt_);
     s.store_bytes_field("bodyHash", body_hash_);
-    s.store_bytes_field("message", message_);
+    if (msg_data_ == nullptr) { s.store_field("msgData", "null"); } else { msg_data_->store(s, "msgData"); }
     s.store_class_end();
   }
 }
 
 void raw_message::init_jni_vars(JNIEnv *env, const char *package_name) {
   Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$RawMessage").c_str());
-  source_fieldID = td::jni::get_field_id(env, Class, "source", "Ljava/lang/String;");
-  destination_fieldID = td::jni::get_field_id(env, Class, "destination", "Ljava/lang/String;");
+  source_fieldID = td::jni::get_field_id(env, Class, "source", (PSLICE() << "L" << package_name << "/TonApi$AccountAddress;").c_str());
+  destination_fieldID = td::jni::get_field_id(env, Class, "destination", (PSLICE() << "L" << package_name << "/TonApi$AccountAddress;").c_str());
   value_fieldID = td::jni::get_field_id(env, Class, "value", "J");
   fwd_fee_fieldID = td::jni::get_field_id(env, Class, "fwdFee", "J");
   ihr_fee_fieldID = td::jni::get_field_id(env, Class, "ihrFee", "J");
   created_lt_fieldID = td::jni::get_field_id(env, Class, "createdLt", "J");
   body_hash_fieldID = td::jni::get_field_id(env, Class, "bodyHash", "[B");
-  message_fieldID = td::jni::get_field_id(env, Class, "message", "[B");
+  msg_data_fieldID = td::jni::get_field_id(env, Class, "msgData", (PSLICE() << "L" << package_name << "/TonApi$MsgData;").c_str());
 }
 
 jclass raw_transaction::Class;
@@ -2682,163 +4475,71 @@ void smc_runResult::init_jni_vars(JNIEnv *env, const char *package_name) {
   exit_code_fieldID = td::jni::get_field_id(env, Class, "exitCode", "I");
 }
 
-jclass testGiver_accountState::Class;
-jfieldID testGiver_accountState::balance_fieldID;
-jfieldID testGiver_accountState::seqno_fieldID;
-jfieldID testGiver_accountState::last_transaction_id_fieldID;
-jfieldID testGiver_accountState::sync_utime_fieldID;
+jclass ton_blockIdExt::Class;
+jfieldID ton_blockIdExt::workchain_fieldID;
+jfieldID ton_blockIdExt::shard_fieldID;
+jfieldID ton_blockIdExt::seqno_fieldID;
+jfieldID ton_blockIdExt::root_hash_fieldID;
+jfieldID ton_blockIdExt::file_hash_fieldID;
 
-testGiver_accountState::testGiver_accountState()
-  : balance_()
+ton_blockIdExt::ton_blockIdExt()
+  : workchain_()
+  , shard_()
   , seqno_()
-  , last_transaction_id_()
-  , sync_utime_()
+  , root_hash_()
+  , file_hash_()
 {}
 
-testGiver_accountState::testGiver_accountState(std::int64_t balance_, std::int32_t seqno_, object_ptr<internal_transactionId> &&last_transaction_id_, std::int64_t sync_utime_)
-  : balance_(balance_)
+ton_blockIdExt::ton_blockIdExt(std::int32_t workchain_, std::int64_t shard_, std::int32_t seqno_, std::string const &root_hash_, std::string const &file_hash_)
+  : workchain_(workchain_)
+  , shard_(shard_)
   , seqno_(seqno_)
-  , last_transaction_id_(std::move(last_transaction_id_))
-  , sync_utime_(sync_utime_)
+  , root_hash_(std::move(root_hash_))
+  , file_hash_(std::move(file_hash_))
 {}
 
-const std::int32_t testGiver_accountState::ID;
+const std::int32_t ton_blockIdExt::ID;
 
-object_ptr<testGiver_accountState> testGiver_accountState::fetch(JNIEnv *env, jobject &p) {
+object_ptr<ton_blockIdExt> ton_blockIdExt::fetch(JNIEnv *env, jobject &p) {
   if (p == nullptr) return nullptr;
-  object_ptr<testGiver_accountState> res = make_object<testGiver_accountState>();
-  res->balance_ = env->GetLongField(p, res->balance_fieldID);
+  object_ptr<ton_blockIdExt> res = make_object<ton_blockIdExt>();
+  res->workchain_ = env->GetIntField(p, res->workchain_fieldID);
+  res->shard_ = env->GetLongField(p, res->shard_fieldID);
   res->seqno_ = env->GetIntField(p, res->seqno_fieldID);
-  res->last_transaction_id_ = td::jni::fetch_tl_object<internal_transactionId>(env, td::jni::fetch_object(env, p, res->last_transaction_id_fieldID));;
-  res->sync_utime_ = env->GetLongField(p, res->sync_utime_fieldID);
+  res->root_hash_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->root_hash_fieldID));
+  res->file_hash_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->file_hash_fieldID));
   return res;
 }
 
-void testGiver_accountState::store(JNIEnv *env, jobject &s) const {
+void ton_blockIdExt::store(JNIEnv *env, jobject &s) const {
   s = env->AllocObject(Class);
   if (!s) { return; }
-  env->SetLongField(s, balance_fieldID, balance_);
+  env->SetIntField(s, workchain_fieldID, workchain_);
+  env->SetLongField(s, shard_fieldID, shard_);
   env->SetIntField(s, seqno_fieldID, seqno_);
-  if (last_transaction_id_ != nullptr) { jobject next; last_transaction_id_->store(env, next); if (next) { env->SetObjectField(s, last_transaction_id_fieldID, next); env->DeleteLocalRef(next); } }
-  env->SetLongField(s, sync_utime_fieldID, sync_utime_);
+  { jbyteArray nextBytes = td::jni::to_bytes(env, root_hash_); if (nextBytes) { env->SetObjectField(s, root_hash_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
+  { jbyteArray nextBytes = td::jni::to_bytes(env, file_hash_); if (nextBytes) { env->SetObjectField(s, file_hash_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
 }
 
-void testGiver_accountState::store(td::TlStorerToString &s, const char *field_name) const {
+void ton_blockIdExt::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "TestGiverAccountState");
-    s.store_field("balance", balance_);
+    s.store_class_begin(field_name, "TonBlockIdExt");
+    s.store_field("workchain", workchain_);
+    s.store_field("shard", shard_);
     s.store_field("seqno", seqno_);
-    if (last_transaction_id_ == nullptr) { s.store_field("lastTransactionId", "null"); } else { last_transaction_id_->store(s, "lastTransactionId"); }
-    s.store_field("syncUtime", sync_utime_);
+    s.store_bytes_field("rootHash", root_hash_);
+    s.store_bytes_field("fileHash", file_hash_);
     s.store_class_end();
   }
 }
 
-void testGiver_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TestGiverAccountState").c_str());
-  balance_fieldID = td::jni::get_field_id(env, Class, "balance", "J");
+void ton_blockIdExt::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TonBlockIdExt").c_str());
+  workchain_fieldID = td::jni::get_field_id(env, Class, "workchain", "I");
+  shard_fieldID = td::jni::get_field_id(env, Class, "shard", "J");
   seqno_fieldID = td::jni::get_field_id(env, Class, "seqno", "I");
-  last_transaction_id_fieldID = td::jni::get_field_id(env, Class, "lastTransactionId", (PSLICE() << "L" << package_name << "/TonApi$InternalTransactionId;").c_str());
-  sync_utime_fieldID = td::jni::get_field_id(env, Class, "syncUtime", "J");
-}
-
-jclass testWallet_accountState::Class;
-jfieldID testWallet_accountState::balance_fieldID;
-jfieldID testWallet_accountState::seqno_fieldID;
-jfieldID testWallet_accountState::last_transaction_id_fieldID;
-jfieldID testWallet_accountState::sync_utime_fieldID;
-
-testWallet_accountState::testWallet_accountState()
-  : balance_()
-  , seqno_()
-  , last_transaction_id_()
-  , sync_utime_()
-{}
-
-testWallet_accountState::testWallet_accountState(std::int64_t balance_, std::int32_t seqno_, object_ptr<internal_transactionId> &&last_transaction_id_, std::int64_t sync_utime_)
-  : balance_(balance_)
-  , seqno_(seqno_)
-  , last_transaction_id_(std::move(last_transaction_id_))
-  , sync_utime_(sync_utime_)
-{}
-
-const std::int32_t testWallet_accountState::ID;
-
-object_ptr<testWallet_accountState> testWallet_accountState::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<testWallet_accountState> res = make_object<testWallet_accountState>();
-  res->balance_ = env->GetLongField(p, res->balance_fieldID);
-  res->seqno_ = env->GetIntField(p, res->seqno_fieldID);
-  res->last_transaction_id_ = td::jni::fetch_tl_object<internal_transactionId>(env, td::jni::fetch_object(env, p, res->last_transaction_id_fieldID));;
-  res->sync_utime_ = env->GetLongField(p, res->sync_utime_fieldID);
-  return res;
-}
-
-void testWallet_accountState::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  env->SetLongField(s, balance_fieldID, balance_);
-  env->SetIntField(s, seqno_fieldID, seqno_);
-  if (last_transaction_id_ != nullptr) { jobject next; last_transaction_id_->store(env, next); if (next) { env->SetObjectField(s, last_transaction_id_fieldID, next); env->DeleteLocalRef(next); } }
-  env->SetLongField(s, sync_utime_fieldID, sync_utime_);
-}
-
-void testWallet_accountState::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "TestWalletAccountState");
-    s.store_field("balance", balance_);
-    s.store_field("seqno", seqno_);
-    if (last_transaction_id_ == nullptr) { s.store_field("lastTransactionId", "null"); } else { last_transaction_id_->store(s, "lastTransactionId"); }
-    s.store_field("syncUtime", sync_utime_);
-    s.store_class_end();
-  }
-}
-
-void testWallet_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TestWalletAccountState").c_str());
-  balance_fieldID = td::jni::get_field_id(env, Class, "balance", "J");
-  seqno_fieldID = td::jni::get_field_id(env, Class, "seqno", "I");
-  last_transaction_id_fieldID = td::jni::get_field_id(env, Class, "lastTransactionId", (PSLICE() << "L" << package_name << "/TonApi$InternalTransactionId;").c_str());
-  sync_utime_fieldID = td::jni::get_field_id(env, Class, "syncUtime", "J");
-}
-
-jclass testWallet_initialAccountState::Class;
-jfieldID testWallet_initialAccountState::public_key_fieldID;
-
-testWallet_initialAccountState::testWallet_initialAccountState()
-  : public_key_()
-{}
-
-testWallet_initialAccountState::testWallet_initialAccountState(std::string const &public_key_)
-  : public_key_(std::move(public_key_))
-{}
-
-const std::int32_t testWallet_initialAccountState::ID;
-
-object_ptr<testWallet_initialAccountState> testWallet_initialAccountState::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<testWallet_initialAccountState> res = make_object<testWallet_initialAccountState>();
-  res->public_key_ = td::jni::fetch_string(env, p, res->public_key_fieldID);
-  return res;
-}
-
-void testWallet_initialAccountState::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  { jstring nextString = td::jni::to_jstring(env, public_key_); if (nextString) { env->SetObjectField(s, public_key_fieldID, nextString); env->DeleteLocalRef(nextString); } }
-}
-
-void testWallet_initialAccountState::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "TestWalletInitialAccountState");
-    s.store_field("publicKey", public_key_);
-    s.store_class_end();
-  }
-}
-
-void testWallet_initialAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TestWalletInitialAccountState").c_str());
-  public_key_fieldID = td::jni::get_field_id(env, Class, "publicKey", "Ljava/lang/String;");
+  root_hash_fieldID = td::jni::get_field_id(env, Class, "rootHash", "[B");
+  file_hash_fieldID = td::jni::get_field_id(env, Class, "fileHash", "[B");
 }
 
 jclass tvm_cell::Class;
@@ -2857,27 +4558,66 @@ const std::int32_t tvm_cell::ID;
 object_ptr<tvm_cell> tvm_cell::fetch(JNIEnv *env, jobject &p) {
   if (p == nullptr) return nullptr;
   object_ptr<tvm_cell> res = make_object<tvm_cell>();
-  res->bytes_ = td::jni::fetch_string(env, p, res->bytes_fieldID);
+  res->bytes_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->bytes_fieldID));
   return res;
 }
 
 void tvm_cell::store(JNIEnv *env, jobject &s) const {
   s = env->AllocObject(Class);
   if (!s) { return; }
-  { jstring nextString = td::jni::to_jstring(env, bytes_); if (nextString) { env->SetObjectField(s, bytes_fieldID, nextString); env->DeleteLocalRef(nextString); } }
+  { jbyteArray nextBytes = td::jni::to_bytes(env, bytes_); if (nextBytes) { env->SetObjectField(s, bytes_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
 }
 
 void tvm_cell::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
     s.store_class_begin(field_name, "TvmCell");
-    s.store_field("bytes", bytes_);
+    s.store_bytes_field("bytes", bytes_);
     s.store_class_end();
   }
 }
 
 void tvm_cell::init_jni_vars(JNIEnv *env, const char *package_name) {
   Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TvmCell").c_str());
-  bytes_fieldID = td::jni::get_field_id(env, Class, "bytes", "Ljava/lang/String;");
+  bytes_fieldID = td::jni::get_field_id(env, Class, "bytes", "[B");
+}
+
+jclass tvm_list::Class;
+jfieldID tvm_list::elements_fieldID;
+
+tvm_list::tvm_list()
+  : elements_()
+{}
+
+tvm_list::tvm_list(std::vector<object_ptr<tvm_StackEntry>> &&elements_)
+  : elements_(std::move(elements_))
+{}
+
+const std::int32_t tvm_list::ID;
+
+object_ptr<tvm_list> tvm_list::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<tvm_list> res = make_object<tvm_list>();
+  res->elements_ = td::jni::FetchVector<tvm_StackEntry>::fetch(env, (jobjectArray)td::jni::fetch_object(env, p, res->elements_fieldID));;
+  return res;
+}
+
+void tvm_list::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { auto arr_tmp_ = td::jni::store_vector(env, elements_); if (arr_tmp_) { env->SetObjectField(s, elements_fieldID, arr_tmp_); env->DeleteLocalRef(arr_tmp_); } }
+}
+
+void tvm_list::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "TvmList");
+    { const std::vector<object_ptr<tvm_StackEntry>> &v = elements_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "Array[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("elements", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { if (v[i] == nullptr) { s.store_field("", "null"); } else { v[i]->store(s, ""); } } s.store_class_end(); }
+    s.store_class_end();
+  }
+}
+
+void tvm_list::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TvmList").c_str());
+  elements_fieldID = td::jni::get_field_id(env, Class, "elements", (PSLICE() << "[L" << package_name << "/TonApi$TvmStackEntry;").c_str());
 }
 
 jclass tvm_numberDecimal::Class;
@@ -2935,27 +4675,27 @@ const std::int32_t tvm_slice::ID;
 object_ptr<tvm_slice> tvm_slice::fetch(JNIEnv *env, jobject &p) {
   if (p == nullptr) return nullptr;
   object_ptr<tvm_slice> res = make_object<tvm_slice>();
-  res->bytes_ = td::jni::fetch_string(env, p, res->bytes_fieldID);
+  res->bytes_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->bytes_fieldID));
   return res;
 }
 
 void tvm_slice::store(JNIEnv *env, jobject &s) const {
   s = env->AllocObject(Class);
   if (!s) { return; }
-  { jstring nextString = td::jni::to_jstring(env, bytes_); if (nextString) { env->SetObjectField(s, bytes_fieldID, nextString); env->DeleteLocalRef(nextString); } }
+  { jbyteArray nextBytes = td::jni::to_bytes(env, bytes_); if (nextBytes) { env->SetObjectField(s, bytes_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
 }
 
 void tvm_slice::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
     s.store_class_begin(field_name, "TvmSlice");
-    s.store_field("bytes", bytes_);
+    s.store_bytes_field("bytes", bytes_);
     s.store_class_end();
   }
 }
 
 void tvm_slice::init_jni_vars(JNIEnv *env, const char *package_name) {
   Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TvmSlice").c_str());
-  bytes_fieldID = td::jni::get_field_id(env, Class, "bytes", "Ljava/lang/String;");
+  bytes_fieldID = td::jni::get_field_id(env, Class, "bytes", "[B");
 }
 
 jclass tvm_StackEntry::Class;
@@ -2970,6 +4710,10 @@ object_ptr<tvm_StackEntry> tvm_StackEntry::fetch(JNIEnv *env, jobject &p) {
       return tvm_stackEntryCell::fetch(env, p);
     case tvm_stackEntryNumber::ID:
       return tvm_stackEntryNumber::fetch(env, p);
+    case tvm_stackEntryTuple::ID:
+      return tvm_stackEntryTuple::fetch(env, p);
+    case tvm_stackEntryList::ID:
+      return tvm_stackEntryList::fetch(env, p);
     case tvm_stackEntryUnsupported::ID:
       return tvm_stackEntryUnsupported::fetch(env, p);
     default:
@@ -2983,6 +4727,8 @@ void tvm_StackEntry::init_jni_vars(JNIEnv *env, const char *package_name) {
   tvm_stackEntrySlice::init_jni_vars(env, package_name);
   tvm_stackEntryCell::init_jni_vars(env, package_name);
   tvm_stackEntryNumber::init_jni_vars(env, package_name);
+  tvm_stackEntryTuple::init_jni_vars(env, package_name);
+  tvm_stackEntryList::init_jni_vars(env, package_name);
   tvm_stackEntryUnsupported::init_jni_vars(env, package_name);
 }
 
@@ -3103,6 +4849,84 @@ void tvm_stackEntryNumber::init_jni_vars(JNIEnv *env, const char *package_name) 
   number_fieldID = td::jni::get_field_id(env, Class, "number", (PSLICE() << "L" << package_name << "/TonApi$TvmNumberDecimal;").c_str());
 }
 
+jclass tvm_stackEntryTuple::Class;
+jfieldID tvm_stackEntryTuple::tuple_fieldID;
+
+tvm_stackEntryTuple::tvm_stackEntryTuple()
+  : tuple_()
+{}
+
+tvm_stackEntryTuple::tvm_stackEntryTuple(object_ptr<tvm_tuple> &&tuple_)
+  : tuple_(std::move(tuple_))
+{}
+
+const std::int32_t tvm_stackEntryTuple::ID;
+
+object_ptr<tvm_StackEntry> tvm_stackEntryTuple::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<tvm_stackEntryTuple> res = make_object<tvm_stackEntryTuple>();
+  res->tuple_ = td::jni::fetch_tl_object<tvm_tuple>(env, td::jni::fetch_object(env, p, res->tuple_fieldID));;
+  return std::move(res);
+}
+
+void tvm_stackEntryTuple::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  if (tuple_ != nullptr) { jobject next; tuple_->store(env, next); if (next) { env->SetObjectField(s, tuple_fieldID, next); env->DeleteLocalRef(next); } }
+}
+
+void tvm_stackEntryTuple::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "TvmStackEntryTuple");
+    if (tuple_ == nullptr) { s.store_field("tuple", "null"); } else { tuple_->store(s, "tuple"); }
+    s.store_class_end();
+  }
+}
+
+void tvm_stackEntryTuple::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TvmStackEntryTuple").c_str());
+  tuple_fieldID = td::jni::get_field_id(env, Class, "tuple", (PSLICE() << "L" << package_name << "/TonApi$TvmTuple;").c_str());
+}
+
+jclass tvm_stackEntryList::Class;
+jfieldID tvm_stackEntryList::list_fieldID;
+
+tvm_stackEntryList::tvm_stackEntryList()
+  : list_()
+{}
+
+tvm_stackEntryList::tvm_stackEntryList(object_ptr<tvm_list> &&list_)
+  : list_(std::move(list_))
+{}
+
+const std::int32_t tvm_stackEntryList::ID;
+
+object_ptr<tvm_StackEntry> tvm_stackEntryList::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<tvm_stackEntryList> res = make_object<tvm_stackEntryList>();
+  res->list_ = td::jni::fetch_tl_object<tvm_list>(env, td::jni::fetch_object(env, p, res->list_fieldID));;
+  return std::move(res);
+}
+
+void tvm_stackEntryList::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  if (list_ != nullptr) { jobject next; list_->store(env, next); if (next) { env->SetObjectField(s, list_fieldID, next); env->DeleteLocalRef(next); } }
+}
+
+void tvm_stackEntryList::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "TvmStackEntryList");
+    if (list_ == nullptr) { s.store_field("list", "null"); } else { list_->store(s, "list"); }
+    s.store_class_end();
+  }
+}
+
+void tvm_stackEntryList::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TvmStackEntryList").c_str());
+  list_fieldID = td::jni::get_field_id(env, Class, "list", (PSLICE() << "L" << package_name << "/TonApi$TvmList;").c_str());
+}
+
 jclass tvm_stackEntryUnsupported::Class;
 
 tvm_stackEntryUnsupported::tvm_stackEntryUnsupported() {
@@ -3132,276 +4956,43 @@ void tvm_stackEntryUnsupported::init_jni_vars(JNIEnv *env, const char *package_n
   Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TvmStackEntryUnsupported").c_str());
 }
 
-jclass uninited_accountState::Class;
-jfieldID uninited_accountState::balance_fieldID;
-jfieldID uninited_accountState::last_transaction_id_fieldID;
-jfieldID uninited_accountState::frozen_hash_fieldID;
-jfieldID uninited_accountState::sync_utime_fieldID;
+jclass tvm_tuple::Class;
+jfieldID tvm_tuple::elements_fieldID;
 
-uninited_accountState::uninited_accountState()
-  : balance_()
-  , last_transaction_id_()
-  , frozen_hash_()
-  , sync_utime_()
+tvm_tuple::tvm_tuple()
+  : elements_()
 {}
 
-uninited_accountState::uninited_accountState(std::int64_t balance_, object_ptr<internal_transactionId> &&last_transaction_id_, std::string const &frozen_hash_, std::int64_t sync_utime_)
-  : balance_(balance_)
-  , last_transaction_id_(std::move(last_transaction_id_))
-  , frozen_hash_(std::move(frozen_hash_))
-  , sync_utime_(sync_utime_)
+tvm_tuple::tvm_tuple(std::vector<object_ptr<tvm_StackEntry>> &&elements_)
+  : elements_(std::move(elements_))
 {}
 
-const std::int32_t uninited_accountState::ID;
+const std::int32_t tvm_tuple::ID;
 
-object_ptr<uninited_accountState> uninited_accountState::fetch(JNIEnv *env, jobject &p) {
+object_ptr<tvm_tuple> tvm_tuple::fetch(JNIEnv *env, jobject &p) {
   if (p == nullptr) return nullptr;
-  object_ptr<uninited_accountState> res = make_object<uninited_accountState>();
-  res->balance_ = env->GetLongField(p, res->balance_fieldID);
-  res->last_transaction_id_ = td::jni::fetch_tl_object<internal_transactionId>(env, td::jni::fetch_object(env, p, res->last_transaction_id_fieldID));;
-  res->frozen_hash_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->frozen_hash_fieldID));
-  res->sync_utime_ = env->GetLongField(p, res->sync_utime_fieldID);
+  object_ptr<tvm_tuple> res = make_object<tvm_tuple>();
+  res->elements_ = td::jni::FetchVector<tvm_StackEntry>::fetch(env, (jobjectArray)td::jni::fetch_object(env, p, res->elements_fieldID));;
   return res;
 }
 
-void uninited_accountState::store(JNIEnv *env, jobject &s) const {
+void tvm_tuple::store(JNIEnv *env, jobject &s) const {
   s = env->AllocObject(Class);
   if (!s) { return; }
-  env->SetLongField(s, balance_fieldID, balance_);
-  if (last_transaction_id_ != nullptr) { jobject next; last_transaction_id_->store(env, next); if (next) { env->SetObjectField(s, last_transaction_id_fieldID, next); env->DeleteLocalRef(next); } }
-  { jbyteArray nextBytes = td::jni::to_bytes(env, frozen_hash_); if (nextBytes) { env->SetObjectField(s, frozen_hash_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
-  env->SetLongField(s, sync_utime_fieldID, sync_utime_);
+  { auto arr_tmp_ = td::jni::store_vector(env, elements_); if (arr_tmp_) { env->SetObjectField(s, elements_fieldID, arr_tmp_); env->DeleteLocalRef(arr_tmp_); } }
 }
 
-void uninited_accountState::store(td::TlStorerToString &s, const char *field_name) const {
+void tvm_tuple::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "UninitedAccountState");
-    s.store_field("balance", balance_);
-    if (last_transaction_id_ == nullptr) { s.store_field("lastTransactionId", "null"); } else { last_transaction_id_->store(s, "lastTransactionId"); }
-    s.store_bytes_field("frozenHash", frozen_hash_);
-    s.store_field("syncUtime", sync_utime_);
+    s.store_class_begin(field_name, "TvmTuple");
+    { const std::vector<object_ptr<tvm_StackEntry>> &v = elements_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "Array[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("elements", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { if (v[i] == nullptr) { s.store_field("", "null"); } else { v[i]->store(s, ""); } } s.store_class_end(); }
     s.store_class_end();
   }
 }
 
-void uninited_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$UninitedAccountState").c_str());
-  balance_fieldID = td::jni::get_field_id(env, Class, "balance", "J");
-  last_transaction_id_fieldID = td::jni::get_field_id(env, Class, "lastTransactionId", (PSLICE() << "L" << package_name << "/TonApi$InternalTransactionId;").c_str());
-  frozen_hash_fieldID = td::jni::get_field_id(env, Class, "frozenHash", "[B");
-  sync_utime_fieldID = td::jni::get_field_id(env, Class, "syncUtime", "J");
-}
-
-jclass wallet_accountState::Class;
-jfieldID wallet_accountState::balance_fieldID;
-jfieldID wallet_accountState::seqno_fieldID;
-jfieldID wallet_accountState::last_transaction_id_fieldID;
-jfieldID wallet_accountState::sync_utime_fieldID;
-
-wallet_accountState::wallet_accountState()
-  : balance_()
-  , seqno_()
-  , last_transaction_id_()
-  , sync_utime_()
-{}
-
-wallet_accountState::wallet_accountState(std::int64_t balance_, std::int32_t seqno_, object_ptr<internal_transactionId> &&last_transaction_id_, std::int64_t sync_utime_)
-  : balance_(balance_)
-  , seqno_(seqno_)
-  , last_transaction_id_(std::move(last_transaction_id_))
-  , sync_utime_(sync_utime_)
-{}
-
-const std::int32_t wallet_accountState::ID;
-
-object_ptr<wallet_accountState> wallet_accountState::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<wallet_accountState> res = make_object<wallet_accountState>();
-  res->balance_ = env->GetLongField(p, res->balance_fieldID);
-  res->seqno_ = env->GetIntField(p, res->seqno_fieldID);
-  res->last_transaction_id_ = td::jni::fetch_tl_object<internal_transactionId>(env, td::jni::fetch_object(env, p, res->last_transaction_id_fieldID));;
-  res->sync_utime_ = env->GetLongField(p, res->sync_utime_fieldID);
-  return res;
-}
-
-void wallet_accountState::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  env->SetLongField(s, balance_fieldID, balance_);
-  env->SetIntField(s, seqno_fieldID, seqno_);
-  if (last_transaction_id_ != nullptr) { jobject next; last_transaction_id_->store(env, next); if (next) { env->SetObjectField(s, last_transaction_id_fieldID, next); env->DeleteLocalRef(next); } }
-  env->SetLongField(s, sync_utime_fieldID, sync_utime_);
-}
-
-void wallet_accountState::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "WalletAccountState");
-    s.store_field("balance", balance_);
-    s.store_field("seqno", seqno_);
-    if (last_transaction_id_ == nullptr) { s.store_field("lastTransactionId", "null"); } else { last_transaction_id_->store(s, "lastTransactionId"); }
-    s.store_field("syncUtime", sync_utime_);
-    s.store_class_end();
-  }
-}
-
-void wallet_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletAccountState").c_str());
-  balance_fieldID = td::jni::get_field_id(env, Class, "balance", "J");
-  seqno_fieldID = td::jni::get_field_id(env, Class, "seqno", "I");
-  last_transaction_id_fieldID = td::jni::get_field_id(env, Class, "lastTransactionId", (PSLICE() << "L" << package_name << "/TonApi$InternalTransactionId;").c_str());
-  sync_utime_fieldID = td::jni::get_field_id(env, Class, "syncUtime", "J");
-}
-
-jclass wallet_initialAccountState::Class;
-jfieldID wallet_initialAccountState::public_key_fieldID;
-
-wallet_initialAccountState::wallet_initialAccountState()
-  : public_key_()
-{}
-
-wallet_initialAccountState::wallet_initialAccountState(std::string const &public_key_)
-  : public_key_(std::move(public_key_))
-{}
-
-const std::int32_t wallet_initialAccountState::ID;
-
-object_ptr<wallet_initialAccountState> wallet_initialAccountState::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<wallet_initialAccountState> res = make_object<wallet_initialAccountState>();
-  res->public_key_ = td::jni::fetch_string(env, p, res->public_key_fieldID);
-  return res;
-}
-
-void wallet_initialAccountState::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  { jstring nextString = td::jni::to_jstring(env, public_key_); if (nextString) { env->SetObjectField(s, public_key_fieldID, nextString); env->DeleteLocalRef(nextString); } }
-}
-
-void wallet_initialAccountState::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "WalletInitialAccountState");
-    s.store_field("publicKey", public_key_);
-    s.store_class_end();
-  }
-}
-
-void wallet_initialAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletInitialAccountState").c_str());
-  public_key_fieldID = td::jni::get_field_id(env, Class, "publicKey", "Ljava/lang/String;");
-}
-
-jclass wallet_v3_accountState::Class;
-jfieldID wallet_v3_accountState::balance_fieldID;
-jfieldID wallet_v3_accountState::wallet_id_fieldID;
-jfieldID wallet_v3_accountState::seqno_fieldID;
-jfieldID wallet_v3_accountState::last_transaction_id_fieldID;
-jfieldID wallet_v3_accountState::sync_utime_fieldID;
-
-wallet_v3_accountState::wallet_v3_accountState()
-  : balance_()
-  , wallet_id_()
-  , seqno_()
-  , last_transaction_id_()
-  , sync_utime_()
-{}
-
-wallet_v3_accountState::wallet_v3_accountState(std::int64_t balance_, std::int64_t wallet_id_, std::int32_t seqno_, object_ptr<internal_transactionId> &&last_transaction_id_, std::int64_t sync_utime_)
-  : balance_(balance_)
-  , wallet_id_(wallet_id_)
-  , seqno_(seqno_)
-  , last_transaction_id_(std::move(last_transaction_id_))
-  , sync_utime_(sync_utime_)
-{}
-
-const std::int32_t wallet_v3_accountState::ID;
-
-object_ptr<wallet_v3_accountState> wallet_v3_accountState::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<wallet_v3_accountState> res = make_object<wallet_v3_accountState>();
-  res->balance_ = env->GetLongField(p, res->balance_fieldID);
-  res->wallet_id_ = env->GetLongField(p, res->wallet_id_fieldID);
-  res->seqno_ = env->GetIntField(p, res->seqno_fieldID);
-  res->last_transaction_id_ = td::jni::fetch_tl_object<internal_transactionId>(env, td::jni::fetch_object(env, p, res->last_transaction_id_fieldID));;
-  res->sync_utime_ = env->GetLongField(p, res->sync_utime_fieldID);
-  return res;
-}
-
-void wallet_v3_accountState::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  env->SetLongField(s, balance_fieldID, balance_);
-  env->SetLongField(s, wallet_id_fieldID, wallet_id_);
-  env->SetIntField(s, seqno_fieldID, seqno_);
-  if (last_transaction_id_ != nullptr) { jobject next; last_transaction_id_->store(env, next); if (next) { env->SetObjectField(s, last_transaction_id_fieldID, next); env->DeleteLocalRef(next); } }
-  env->SetLongField(s, sync_utime_fieldID, sync_utime_);
-}
-
-void wallet_v3_accountState::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "WalletV3AccountState");
-    s.store_field("balance", balance_);
-    s.store_field("walletId", wallet_id_);
-    s.store_field("seqno", seqno_);
-    if (last_transaction_id_ == nullptr) { s.store_field("lastTransactionId", "null"); } else { last_transaction_id_->store(s, "lastTransactionId"); }
-    s.store_field("syncUtime", sync_utime_);
-    s.store_class_end();
-  }
-}
-
-void wallet_v3_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletV3AccountState").c_str());
-  balance_fieldID = td::jni::get_field_id(env, Class, "balance", "J");
-  wallet_id_fieldID = td::jni::get_field_id(env, Class, "walletId", "J");
-  seqno_fieldID = td::jni::get_field_id(env, Class, "seqno", "I");
-  last_transaction_id_fieldID = td::jni::get_field_id(env, Class, "lastTransactionId", (PSLICE() << "L" << package_name << "/TonApi$InternalTransactionId;").c_str());
-  sync_utime_fieldID = td::jni::get_field_id(env, Class, "syncUtime", "J");
-}
-
-jclass wallet_v3_initialAccountState::Class;
-jfieldID wallet_v3_initialAccountState::public_key_fieldID;
-jfieldID wallet_v3_initialAccountState::wallet_id_fieldID;
-
-wallet_v3_initialAccountState::wallet_v3_initialAccountState()
-  : public_key_()
-  , wallet_id_()
-{}
-
-wallet_v3_initialAccountState::wallet_v3_initialAccountState(std::string const &public_key_, std::int64_t wallet_id_)
-  : public_key_(std::move(public_key_))
-  , wallet_id_(wallet_id_)
-{}
-
-const std::int32_t wallet_v3_initialAccountState::ID;
-
-object_ptr<wallet_v3_initialAccountState> wallet_v3_initialAccountState::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<wallet_v3_initialAccountState> res = make_object<wallet_v3_initialAccountState>();
-  res->public_key_ = td::jni::fetch_string(env, p, res->public_key_fieldID);
-  res->wallet_id_ = env->GetLongField(p, res->wallet_id_fieldID);
-  return res;
-}
-
-void wallet_v3_initialAccountState::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  { jstring nextString = td::jni::to_jstring(env, public_key_); if (nextString) { env->SetObjectField(s, public_key_fieldID, nextString); env->DeleteLocalRef(nextString); } }
-  env->SetLongField(s, wallet_id_fieldID, wallet_id_);
-}
-
-void wallet_v3_initialAccountState::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "WalletV3InitialAccountState");
-    s.store_field("publicKey", public_key_);
-    s.store_field("walletId", wallet_id_);
-    s.store_class_end();
-  }
-}
-
-void wallet_v3_initialAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletV3InitialAccountState").c_str());
-  public_key_fieldID = td::jni::get_field_id(env, Class, "publicKey", "Ljava/lang/String;");
-  wallet_id_fieldID = td::jni::get_field_id(env, Class, "walletId", "J");
+void tvm_tuple::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TvmTuple").c_str());
+  elements_fieldID = td::jni::get_field_id(env, Class, "elements", (PSLICE() << "[L" << package_name << "/TonApi$TvmStackEntry;").c_str());
 }
 
 jclass addLogMessage::Class;
@@ -3598,6 +5189,71 @@ void createNewKey::init_jni_vars(JNIEnv *env, const char *package_name) {
   random_extra_seed_fieldID = td::jni::get_field_id(env, Class, "randomExtraSeed", "[B");
 }
 
+jclass createQuery::Class;
+jfieldID createQuery::private_key_fieldID;
+jfieldID createQuery::address_fieldID;
+jfieldID createQuery::timeout_fieldID;
+jfieldID createQuery::action_fieldID;
+
+createQuery::createQuery()
+  : private_key_()
+  , address_()
+  , timeout_()
+  , action_()
+{}
+
+createQuery::createQuery(object_ptr<InputKey> &&private_key_, object_ptr<accountAddress> &&address_, std::int32_t timeout_, object_ptr<Action> &&action_)
+  : private_key_(std::move(private_key_))
+  , address_(std::move(address_))
+  , timeout_(timeout_)
+  , action_(std::move(action_))
+{}
+
+const std::int32_t createQuery::ID;
+
+object_ptr<createQuery> createQuery::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<createQuery> res = make_object<createQuery>();
+  res->private_key_ = td::jni::fetch_tl_object<InputKey>(env, td::jni::fetch_object(env, p, res->private_key_fieldID));;
+  res->address_ = td::jni::fetch_tl_object<accountAddress>(env, td::jni::fetch_object(env, p, res->address_fieldID));;
+  res->timeout_ = env->GetIntField(p, res->timeout_fieldID);
+  res->action_ = td::jni::fetch_tl_object<Action>(env, td::jni::fetch_object(env, p, res->action_fieldID));;
+  return res;
+}
+
+void createQuery::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  if (private_key_ != nullptr) { jobject next; private_key_->store(env, next); if (next) { env->SetObjectField(s, private_key_fieldID, next); env->DeleteLocalRef(next); } }
+  if (address_ != nullptr) { jobject next; address_->store(env, next); if (next) { env->SetObjectField(s, address_fieldID, next); env->DeleteLocalRef(next); } }
+  env->SetIntField(s, timeout_fieldID, timeout_);
+  if (action_ != nullptr) { jobject next; action_->store(env, next); if (next) { env->SetObjectField(s, action_fieldID, next); env->DeleteLocalRef(next); } }
+}
+
+void createQuery::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "CreateQuery");
+    if (private_key_ == nullptr) { s.store_field("privateKey", "null"); } else { private_key_->store(s, "privateKey"); }
+    if (address_ == nullptr) { s.store_field("address", "null"); } else { address_->store(s, "address"); }
+    s.store_field("timeout", timeout_);
+    if (action_ == nullptr) { s.store_field("action", "null"); } else { action_->store(s, "action"); }
+    s.store_class_end();
+  }
+}
+
+createQuery::ReturnType createQuery::fetch_result(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return ReturnType();
+  return query_info::fetch(env, p);
+}
+
+void createQuery::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$CreateQuery").c_str());
+  private_key_fieldID = td::jni::get_field_id(env, Class, "privateKey", (PSLICE() << "L" << package_name << "/TonApi$InputKey;").c_str());
+  address_fieldID = td::jni::get_field_id(env, Class, "address", (PSLICE() << "L" << package_name << "/TonApi$AccountAddress;").c_str());
+  timeout_fieldID = td::jni::get_field_id(env, Class, "timeout", "I");
+  action_fieldID = td::jni::get_field_id(env, Class, "action", (PSLICE() << "L" << package_name << "/TonApi$Action;").c_str());
+}
+
 jclass decrypt::Class;
 jfieldID decrypt::encrypted_data_fieldID;
 jfieldID decrypt::secret_fieldID;
@@ -3725,6 +5381,71 @@ deleteKey::ReturnType deleteKey::fetch_result(JNIEnv *env, jobject &p) {
 void deleteKey::init_jni_vars(JNIEnv *env, const char *package_name) {
   Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$DeleteKey").c_str());
   key_fieldID = td::jni::get_field_id(env, Class, "key", (PSLICE() << "L" << package_name << "/TonApi$Key;").c_str());
+}
+
+jclass dns_resolve::Class;
+jfieldID dns_resolve::account_address_fieldID;
+jfieldID dns_resolve::name_fieldID;
+jfieldID dns_resolve::category_fieldID;
+jfieldID dns_resolve::ttl_fieldID;
+
+dns_resolve::dns_resolve()
+  : account_address_()
+  , name_()
+  , category_()
+  , ttl_()
+{}
+
+dns_resolve::dns_resolve(object_ptr<accountAddress> &&account_address_, std::string const &name_, std::int32_t category_, std::int32_t ttl_)
+  : account_address_(std::move(account_address_))
+  , name_(std::move(name_))
+  , category_(category_)
+  , ttl_(ttl_)
+{}
+
+const std::int32_t dns_resolve::ID;
+
+object_ptr<dns_resolve> dns_resolve::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<dns_resolve> res = make_object<dns_resolve>();
+  res->account_address_ = td::jni::fetch_tl_object<accountAddress>(env, td::jni::fetch_object(env, p, res->account_address_fieldID));;
+  res->name_ = td::jni::fetch_string(env, p, res->name_fieldID);
+  res->category_ = env->GetIntField(p, res->category_fieldID);
+  res->ttl_ = env->GetIntField(p, res->ttl_fieldID);
+  return res;
+}
+
+void dns_resolve::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  if (account_address_ != nullptr) { jobject next; account_address_->store(env, next); if (next) { env->SetObjectField(s, account_address_fieldID, next); env->DeleteLocalRef(next); } }
+  { jstring nextString = td::jni::to_jstring(env, name_); if (nextString) { env->SetObjectField(s, name_fieldID, nextString); env->DeleteLocalRef(nextString); } }
+  env->SetIntField(s, category_fieldID, category_);
+  env->SetIntField(s, ttl_fieldID, ttl_);
+}
+
+void dns_resolve::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "DnsResolve");
+    if (account_address_ == nullptr) { s.store_field("accountAddress", "null"); } else { account_address_->store(s, "accountAddress"); }
+    s.store_field("name", name_);
+    s.store_field("category", category_);
+    s.store_field("ttl", ttl_);
+    s.store_class_end();
+  }
+}
+
+dns_resolve::ReturnType dns_resolve::fetch_result(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return ReturnType();
+  return dns_resolved::fetch(env, p);
+}
+
+void dns_resolve::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$DnsResolve").c_str());
+  account_address_fieldID = td::jni::get_field_id(env, Class, "accountAddress", (PSLICE() << "L" << package_name << "/TonApi$AccountAddress;").c_str());
+  name_fieldID = td::jni::get_field_id(env, Class, "name", "Ljava/lang/String;");
+  category_fieldID = td::jni::get_field_id(env, Class, "category", "I");
+  ttl_fieldID = td::jni::get_field_id(env, Class, "ttl", "I");
 }
 
 jclass encrypt::Class;
@@ -3924,220 +5645,143 @@ void exportPemKey::init_jni_vars(JNIEnv *env, const char *package_name) {
   key_password_fieldID = td::jni::get_field_id(env, Class, "keyPassword", "[B");
 }
 
-jclass generic_createSendGramsQuery::Class;
-jfieldID generic_createSendGramsQuery::private_key_fieldID;
-jfieldID generic_createSendGramsQuery::source_fieldID;
-jfieldID generic_createSendGramsQuery::destination_fieldID;
-jfieldID generic_createSendGramsQuery::amount_fieldID;
-jfieldID generic_createSendGramsQuery::timeout_fieldID;
-jfieldID generic_createSendGramsQuery::allow_send_to_uninited_fieldID;
-jfieldID generic_createSendGramsQuery::message_fieldID;
+jclass exportUnencryptedKey::Class;
+jfieldID exportUnencryptedKey::input_key_fieldID;
 
-generic_createSendGramsQuery::generic_createSendGramsQuery()
-  : private_key_()
-  , source_()
-  , destination_()
-  , amount_()
-  , timeout_()
-  , allow_send_to_uninited_()
-  , message_()
+exportUnencryptedKey::exportUnencryptedKey()
+  : input_key_()
 {}
 
-generic_createSendGramsQuery::generic_createSendGramsQuery(object_ptr<InputKey> &&private_key_, object_ptr<accountAddress> &&source_, object_ptr<accountAddress> &&destination_, std::int64_t amount_, std::int32_t timeout_, bool allow_send_to_uninited_, std::string const &message_)
-  : private_key_(std::move(private_key_))
-  , source_(std::move(source_))
-  , destination_(std::move(destination_))
-  , amount_(amount_)
-  , timeout_(timeout_)
-  , allow_send_to_uninited_(allow_send_to_uninited_)
-  , message_(std::move(message_))
+exportUnencryptedKey::exportUnencryptedKey(object_ptr<InputKey> &&input_key_)
+  : input_key_(std::move(input_key_))
 {}
 
-const std::int32_t generic_createSendGramsQuery::ID;
+const std::int32_t exportUnencryptedKey::ID;
 
-object_ptr<generic_createSendGramsQuery> generic_createSendGramsQuery::fetch(JNIEnv *env, jobject &p) {
+object_ptr<exportUnencryptedKey> exportUnencryptedKey::fetch(JNIEnv *env, jobject &p) {
   if (p == nullptr) return nullptr;
-  object_ptr<generic_createSendGramsQuery> res = make_object<generic_createSendGramsQuery>();
-  res->private_key_ = td::jni::fetch_tl_object<InputKey>(env, td::jni::fetch_object(env, p, res->private_key_fieldID));;
-  res->source_ = td::jni::fetch_tl_object<accountAddress>(env, td::jni::fetch_object(env, p, res->source_fieldID));;
-  res->destination_ = td::jni::fetch_tl_object<accountAddress>(env, td::jni::fetch_object(env, p, res->destination_fieldID));;
-  res->amount_ = env->GetLongField(p, res->amount_fieldID);
-  res->timeout_ = env->GetIntField(p, res->timeout_fieldID);
-  res->allow_send_to_uninited_ = (env->GetBooleanField(p, res->allow_send_to_uninited_fieldID) != 0);
-  res->message_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->message_fieldID));
+  object_ptr<exportUnencryptedKey> res = make_object<exportUnencryptedKey>();
+  res->input_key_ = td::jni::fetch_tl_object<InputKey>(env, td::jni::fetch_object(env, p, res->input_key_fieldID));;
   return res;
 }
 
-void generic_createSendGramsQuery::store(JNIEnv *env, jobject &s) const {
+void exportUnencryptedKey::store(JNIEnv *env, jobject &s) const {
   s = env->AllocObject(Class);
   if (!s) { return; }
-  if (private_key_ != nullptr) { jobject next; private_key_->store(env, next); if (next) { env->SetObjectField(s, private_key_fieldID, next); env->DeleteLocalRef(next); } }
-  if (source_ != nullptr) { jobject next; source_->store(env, next); if (next) { env->SetObjectField(s, source_fieldID, next); env->DeleteLocalRef(next); } }
-  if (destination_ != nullptr) { jobject next; destination_->store(env, next); if (next) { env->SetObjectField(s, destination_fieldID, next); env->DeleteLocalRef(next); } }
-  env->SetLongField(s, amount_fieldID, amount_);
-  env->SetIntField(s, timeout_fieldID, timeout_);
-  env->SetBooleanField(s, allow_send_to_uninited_fieldID, allow_send_to_uninited_);
-  { jbyteArray nextBytes = td::jni::to_bytes(env, message_); if (nextBytes) { env->SetObjectField(s, message_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
+  if (input_key_ != nullptr) { jobject next; input_key_->store(env, next); if (next) { env->SetObjectField(s, input_key_fieldID, next); env->DeleteLocalRef(next); } }
 }
 
-void generic_createSendGramsQuery::store(td::TlStorerToString &s, const char *field_name) const {
+void exportUnencryptedKey::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "GenericCreateSendGramsQuery");
-    if (private_key_ == nullptr) { s.store_field("privateKey", "null"); } else { private_key_->store(s, "privateKey"); }
-    if (source_ == nullptr) { s.store_field("source", "null"); } else { source_->store(s, "source"); }
-    if (destination_ == nullptr) { s.store_field("destination", "null"); } else { destination_->store(s, "destination"); }
-    s.store_field("amount", amount_);
-    s.store_field("timeout", timeout_);
-    s.store_field("allowSendToUninited", allow_send_to_uninited_);
-    s.store_bytes_field("message", message_);
+    s.store_class_begin(field_name, "ExportUnencryptedKey");
+    if (input_key_ == nullptr) { s.store_field("inputKey", "null"); } else { input_key_->store(s, "inputKey"); }
     s.store_class_end();
   }
 }
 
-generic_createSendGramsQuery::ReturnType generic_createSendGramsQuery::fetch_result(JNIEnv *env, jobject &p) {
+exportUnencryptedKey::ReturnType exportUnencryptedKey::fetch_result(JNIEnv *env, jobject &p) {
   if (p == nullptr) return ReturnType();
-  return query_info::fetch(env, p);
+  return exportedUnencryptedKey::fetch(env, p);
 }
 
-void generic_createSendGramsQuery::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$GenericCreateSendGramsQuery").c_str());
-  private_key_fieldID = td::jni::get_field_id(env, Class, "privateKey", (PSLICE() << "L" << package_name << "/TonApi$InputKey;").c_str());
-  source_fieldID = td::jni::get_field_id(env, Class, "source", (PSLICE() << "L" << package_name << "/TonApi$AccountAddress;").c_str());
-  destination_fieldID = td::jni::get_field_id(env, Class, "destination", (PSLICE() << "L" << package_name << "/TonApi$AccountAddress;").c_str());
-  amount_fieldID = td::jni::get_field_id(env, Class, "amount", "J");
-  timeout_fieldID = td::jni::get_field_id(env, Class, "timeout", "I");
-  allow_send_to_uninited_fieldID = td::jni::get_field_id(env, Class, "allowSendToUninited", "Z");
-  message_fieldID = td::jni::get_field_id(env, Class, "message", "[B");
+void exportUnencryptedKey::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$ExportUnencryptedKey").c_str());
+  input_key_fieldID = td::jni::get_field_id(env, Class, "inputKey", (PSLICE() << "L" << package_name << "/TonApi$InputKey;").c_str());
 }
 
-jclass generic_getAccountState::Class;
-jfieldID generic_getAccountState::account_address_fieldID;
+jclass getAccountAddress::Class;
+jfieldID getAccountAddress::initial_account_state_fieldID;
+jfieldID getAccountAddress::revision_fieldID;
 
-generic_getAccountState::generic_getAccountState()
+getAccountAddress::getAccountAddress()
+  : initial_account_state_()
+  , revision_()
+{}
+
+getAccountAddress::getAccountAddress(object_ptr<InitialAccountState> &&initial_account_state_, std::int32_t revision_)
+  : initial_account_state_(std::move(initial_account_state_))
+  , revision_(revision_)
+{}
+
+const std::int32_t getAccountAddress::ID;
+
+object_ptr<getAccountAddress> getAccountAddress::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<getAccountAddress> res = make_object<getAccountAddress>();
+  res->initial_account_state_ = td::jni::fetch_tl_object<InitialAccountState>(env, td::jni::fetch_object(env, p, res->initial_account_state_fieldID));;
+  res->revision_ = env->GetIntField(p, res->revision_fieldID);
+  return res;
+}
+
+void getAccountAddress::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  if (initial_account_state_ != nullptr) { jobject next; initial_account_state_->store(env, next); if (next) { env->SetObjectField(s, initial_account_state_fieldID, next); env->DeleteLocalRef(next); } }
+  env->SetIntField(s, revision_fieldID, revision_);
+}
+
+void getAccountAddress::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "GetAccountAddress");
+    if (initial_account_state_ == nullptr) { s.store_field("initialAccountState", "null"); } else { initial_account_state_->store(s, "initialAccountState"); }
+    s.store_field("revision", revision_);
+    s.store_class_end();
+  }
+}
+
+getAccountAddress::ReturnType getAccountAddress::fetch_result(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return ReturnType();
+  return accountAddress::fetch(env, p);
+}
+
+void getAccountAddress::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$GetAccountAddress").c_str());
+  initial_account_state_fieldID = td::jni::get_field_id(env, Class, "initialAccountState", (PSLICE() << "L" << package_name << "/TonApi$InitialAccountState;").c_str());
+  revision_fieldID = td::jni::get_field_id(env, Class, "revision", "I");
+}
+
+jclass getAccountState::Class;
+jfieldID getAccountState::account_address_fieldID;
+
+getAccountState::getAccountState()
   : account_address_()
 {}
 
-generic_getAccountState::generic_getAccountState(object_ptr<accountAddress> &&account_address_)
+getAccountState::getAccountState(object_ptr<accountAddress> &&account_address_)
   : account_address_(std::move(account_address_))
 {}
 
-const std::int32_t generic_getAccountState::ID;
+const std::int32_t getAccountState::ID;
 
-object_ptr<generic_getAccountState> generic_getAccountState::fetch(JNIEnv *env, jobject &p) {
+object_ptr<getAccountState> getAccountState::fetch(JNIEnv *env, jobject &p) {
   if (p == nullptr) return nullptr;
-  object_ptr<generic_getAccountState> res = make_object<generic_getAccountState>();
+  object_ptr<getAccountState> res = make_object<getAccountState>();
   res->account_address_ = td::jni::fetch_tl_object<accountAddress>(env, td::jni::fetch_object(env, p, res->account_address_fieldID));;
   return res;
 }
 
-void generic_getAccountState::store(JNIEnv *env, jobject &s) const {
+void getAccountState::store(JNIEnv *env, jobject &s) const {
   s = env->AllocObject(Class);
   if (!s) { return; }
   if (account_address_ != nullptr) { jobject next; account_address_->store(env, next); if (next) { env->SetObjectField(s, account_address_fieldID, next); env->DeleteLocalRef(next); } }
 }
 
-void generic_getAccountState::store(td::TlStorerToString &s, const char *field_name) const {
+void getAccountState::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "GenericGetAccountState");
+    s.store_class_begin(field_name, "GetAccountState");
     if (account_address_ == nullptr) { s.store_field("accountAddress", "null"); } else { account_address_->store(s, "accountAddress"); }
     s.store_class_end();
   }
 }
 
-generic_getAccountState::ReturnType generic_getAccountState::fetch_result(JNIEnv *env, jobject &p) {
+getAccountState::ReturnType getAccountState::fetch_result(JNIEnv *env, jobject &p) {
   if (p == nullptr) return ReturnType();
-  return generic_AccountState::fetch(env, p);
+  return fullAccountState::fetch(env, p);
 }
 
-void generic_getAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$GenericGetAccountState").c_str());
+void getAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$GetAccountState").c_str());
   account_address_fieldID = td::jni::get_field_id(env, Class, "accountAddress", (PSLICE() << "L" << package_name << "/TonApi$AccountAddress;").c_str());
-}
-
-jclass generic_sendGrams::Class;
-jfieldID generic_sendGrams::private_key_fieldID;
-jfieldID generic_sendGrams::source_fieldID;
-jfieldID generic_sendGrams::destination_fieldID;
-jfieldID generic_sendGrams::amount_fieldID;
-jfieldID generic_sendGrams::timeout_fieldID;
-jfieldID generic_sendGrams::allow_send_to_uninited_fieldID;
-jfieldID generic_sendGrams::message_fieldID;
-
-generic_sendGrams::generic_sendGrams()
-  : private_key_()
-  , source_()
-  , destination_()
-  , amount_()
-  , timeout_()
-  , allow_send_to_uninited_()
-  , message_()
-{}
-
-generic_sendGrams::generic_sendGrams(object_ptr<InputKey> &&private_key_, object_ptr<accountAddress> &&source_, object_ptr<accountAddress> &&destination_, std::int64_t amount_, std::int32_t timeout_, bool allow_send_to_uninited_, std::string const &message_)
-  : private_key_(std::move(private_key_))
-  , source_(std::move(source_))
-  , destination_(std::move(destination_))
-  , amount_(amount_)
-  , timeout_(timeout_)
-  , allow_send_to_uninited_(allow_send_to_uninited_)
-  , message_(std::move(message_))
-{}
-
-const std::int32_t generic_sendGrams::ID;
-
-object_ptr<generic_sendGrams> generic_sendGrams::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<generic_sendGrams> res = make_object<generic_sendGrams>();
-  res->private_key_ = td::jni::fetch_tl_object<InputKey>(env, td::jni::fetch_object(env, p, res->private_key_fieldID));;
-  res->source_ = td::jni::fetch_tl_object<accountAddress>(env, td::jni::fetch_object(env, p, res->source_fieldID));;
-  res->destination_ = td::jni::fetch_tl_object<accountAddress>(env, td::jni::fetch_object(env, p, res->destination_fieldID));;
-  res->amount_ = env->GetLongField(p, res->amount_fieldID);
-  res->timeout_ = env->GetIntField(p, res->timeout_fieldID);
-  res->allow_send_to_uninited_ = (env->GetBooleanField(p, res->allow_send_to_uninited_fieldID) != 0);
-  res->message_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->message_fieldID));
-  return res;
-}
-
-void generic_sendGrams::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  if (private_key_ != nullptr) { jobject next; private_key_->store(env, next); if (next) { env->SetObjectField(s, private_key_fieldID, next); env->DeleteLocalRef(next); } }
-  if (source_ != nullptr) { jobject next; source_->store(env, next); if (next) { env->SetObjectField(s, source_fieldID, next); env->DeleteLocalRef(next); } }
-  if (destination_ != nullptr) { jobject next; destination_->store(env, next); if (next) { env->SetObjectField(s, destination_fieldID, next); env->DeleteLocalRef(next); } }
-  env->SetLongField(s, amount_fieldID, amount_);
-  env->SetIntField(s, timeout_fieldID, timeout_);
-  env->SetBooleanField(s, allow_send_to_uninited_fieldID, allow_send_to_uninited_);
-  { jbyteArray nextBytes = td::jni::to_bytes(env, message_); if (nextBytes) { env->SetObjectField(s, message_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
-}
-
-void generic_sendGrams::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "GenericSendGrams");
-    if (private_key_ == nullptr) { s.store_field("privateKey", "null"); } else { private_key_->store(s, "privateKey"); }
-    if (source_ == nullptr) { s.store_field("source", "null"); } else { source_->store(s, "source"); }
-    if (destination_ == nullptr) { s.store_field("destination", "null"); } else { destination_->store(s, "destination"); }
-    s.store_field("amount", amount_);
-    s.store_field("timeout", timeout_);
-    s.store_field("allowSendToUninited", allow_send_to_uninited_);
-    s.store_bytes_field("message", message_);
-    s.store_class_end();
-  }
-}
-
-generic_sendGrams::ReturnType generic_sendGrams::fetch_result(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return ReturnType();
-  return sendGramsResult::fetch(env, p);
-}
-
-void generic_sendGrams::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$GenericSendGrams").c_str());
-  private_key_fieldID = td::jni::get_field_id(env, Class, "privateKey", (PSLICE() << "L" << package_name << "/TonApi$InputKey;").c_str());
-  source_fieldID = td::jni::get_field_id(env, Class, "source", (PSLICE() << "L" << package_name << "/TonApi$AccountAddress;").c_str());
-  destination_fieldID = td::jni::get_field_id(env, Class, "destination", (PSLICE() << "L" << package_name << "/TonApi$AccountAddress;").c_str());
-  amount_fieldID = td::jni::get_field_id(env, Class, "amount", "J");
-  timeout_fieldID = td::jni::get_field_id(env, Class, "timeout", "I");
-  allow_send_to_uninited_fieldID = td::jni::get_field_id(env, Class, "allowSendToUninited", "Z");
-  message_fieldID = td::jni::get_field_id(env, Class, "message", "[B");
 }
 
 jclass getBip39Hints::Class;
@@ -4330,6 +5974,50 @@ void getLogVerbosityLevel::init_jni_vars(JNIEnv *env, const char *package_name) 
   Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$GetLogVerbosityLevel").c_str());
 }
 
+jclass guessAccountRevision::Class;
+jfieldID guessAccountRevision::initial_account_state_fieldID;
+
+guessAccountRevision::guessAccountRevision()
+  : initial_account_state_()
+{}
+
+guessAccountRevision::guessAccountRevision(object_ptr<InitialAccountState> &&initial_account_state_)
+  : initial_account_state_(std::move(initial_account_state_))
+{}
+
+const std::int32_t guessAccountRevision::ID;
+
+object_ptr<guessAccountRevision> guessAccountRevision::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<guessAccountRevision> res = make_object<guessAccountRevision>();
+  res->initial_account_state_ = td::jni::fetch_tl_object<InitialAccountState>(env, td::jni::fetch_object(env, p, res->initial_account_state_fieldID));;
+  return res;
+}
+
+void guessAccountRevision::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  if (initial_account_state_ != nullptr) { jobject next; initial_account_state_->store(env, next); if (next) { env->SetObjectField(s, initial_account_state_fieldID, next); env->DeleteLocalRef(next); } }
+}
+
+void guessAccountRevision::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "GuessAccountRevision");
+    if (initial_account_state_ == nullptr) { s.store_field("initialAccountState", "null"); } else { initial_account_state_->store(s, "initialAccountState"); }
+    s.store_class_end();
+  }
+}
+
+guessAccountRevision::ReturnType guessAccountRevision::fetch_result(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return ReturnType();
+  return accountRevisionList::fetch(env, p);
+}
+
+void guessAccountRevision::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$GuessAccountRevision").c_str());
+  initial_account_state_fieldID = td::jni::get_field_id(env, Class, "initialAccountState", (PSLICE() << "L" << package_name << "/TonApi$InitialAccountState;").c_str());
+}
+
 jclass importEncryptedKey::Class;
 jfieldID importEncryptedKey::local_password_fieldID;
 jfieldID importEncryptedKey::key_password_fieldID;
@@ -4504,6 +6192,57 @@ void importPemKey::init_jni_vars(JNIEnv *env, const char *package_name) {
   exported_key_fieldID = td::jni::get_field_id(env, Class, "exportedKey", (PSLICE() << "L" << package_name << "/TonApi$ExportedPemKey;").c_str());
 }
 
+jclass importUnencryptedKey::Class;
+jfieldID importUnencryptedKey::local_password_fieldID;
+jfieldID importUnencryptedKey::exported_unencrypted_key_fieldID;
+
+importUnencryptedKey::importUnencryptedKey()
+  : local_password_()
+  , exported_unencrypted_key_()
+{}
+
+importUnencryptedKey::importUnencryptedKey(td::SecureString &&local_password_, object_ptr<exportedUnencryptedKey> &&exported_unencrypted_key_)
+  : local_password_(std::move(local_password_))
+  , exported_unencrypted_key_(std::move(exported_unencrypted_key_))
+{}
+
+const std::int32_t importUnencryptedKey::ID;
+
+object_ptr<importUnencryptedKey> importUnencryptedKey::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<importUnencryptedKey> res = make_object<importUnencryptedKey>();
+  res->local_password_ = td::jni::from_bytes_secure(env, (jbyteArray)td::jni::fetch_object(env, p, res->local_password_fieldID));
+  res->exported_unencrypted_key_ = td::jni::fetch_tl_object<exportedUnencryptedKey>(env, td::jni::fetch_object(env, p, res->exported_unencrypted_key_fieldID));;
+  return res;
+}
+
+void importUnencryptedKey::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { jbyteArray nextBytes = td::jni::to_bytes_secure(env, local_password_); if (nextBytes) { env->SetObjectField(s, local_password_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
+  if (exported_unencrypted_key_ != nullptr) { jobject next; exported_unencrypted_key_->store(env, next); if (next) { env->SetObjectField(s, exported_unencrypted_key_fieldID, next); env->DeleteLocalRef(next); } }
+}
+
+void importUnencryptedKey::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "ImportUnencryptedKey");
+    s.store_bytes_field("localPassword", local_password_);
+    if (exported_unencrypted_key_ == nullptr) { s.store_field("exportedUnencryptedKey", "null"); } else { exported_unencrypted_key_->store(s, "exportedUnencryptedKey"); }
+    s.store_class_end();
+  }
+}
+
+importUnencryptedKey::ReturnType importUnencryptedKey::fetch_result(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return ReturnType();
+  return key::fetch(env, p);
+}
+
+void importUnencryptedKey::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$ImportUnencryptedKey").c_str());
+  local_password_fieldID = td::jni::get_field_id(env, Class, "localPassword", "[B");
+  exported_unencrypted_key_fieldID = td::jni::get_field_id(env, Class, "exportedUnencryptedKey", (PSLICE() << "L" << package_name << "/TonApi$ExportedUnencryptedKey;").c_str());
+}
+
 jclass init::Class;
 jfieldID init::options_fieldID;
 
@@ -4540,7 +6279,7 @@ void init::store(td::TlStorerToString &s, const char *field_name) const {
 
 init::ReturnType init::fetch_result(JNIEnv *env, jobject &p) {
   if (p == nullptr) return ReturnType();
-  return ok::fetch(env, p);
+  return options_info::fetch(env, p);
 }
 
 void init::init_jni_vars(JNIEnv *env, const char *package_name) {
@@ -4638,6 +6377,108 @@ liteServer_getInfo::ReturnType liteServer_getInfo::fetch_result(JNIEnv *env, job
 
 void liteServer_getInfo::init_jni_vars(JNIEnv *env, const char *package_name) {
   Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$LiteServerGetInfo").c_str());
+}
+
+jclass msg_decrypt::Class;
+jfieldID msg_decrypt::input_key_fieldID;
+jfieldID msg_decrypt::data_fieldID;
+
+msg_decrypt::msg_decrypt()
+  : input_key_()
+  , data_()
+{}
+
+msg_decrypt::msg_decrypt(object_ptr<InputKey> &&input_key_, object_ptr<msg_dataEncryptedArray> &&data_)
+  : input_key_(std::move(input_key_))
+  , data_(std::move(data_))
+{}
+
+const std::int32_t msg_decrypt::ID;
+
+object_ptr<msg_decrypt> msg_decrypt::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<msg_decrypt> res = make_object<msg_decrypt>();
+  res->input_key_ = td::jni::fetch_tl_object<InputKey>(env, td::jni::fetch_object(env, p, res->input_key_fieldID));;
+  res->data_ = td::jni::fetch_tl_object<msg_dataEncryptedArray>(env, td::jni::fetch_object(env, p, res->data_fieldID));;
+  return res;
+}
+
+void msg_decrypt::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  if (input_key_ != nullptr) { jobject next; input_key_->store(env, next); if (next) { env->SetObjectField(s, input_key_fieldID, next); env->DeleteLocalRef(next); } }
+  if (data_ != nullptr) { jobject next; data_->store(env, next); if (next) { env->SetObjectField(s, data_fieldID, next); env->DeleteLocalRef(next); } }
+}
+
+void msg_decrypt::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "MsgDecrypt");
+    if (input_key_ == nullptr) { s.store_field("inputKey", "null"); } else { input_key_->store(s, "inputKey"); }
+    if (data_ == nullptr) { s.store_field("data", "null"); } else { data_->store(s, "data"); }
+    s.store_class_end();
+  }
+}
+
+msg_decrypt::ReturnType msg_decrypt::fetch_result(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return ReturnType();
+  return msg_dataDecryptedArray::fetch(env, p);
+}
+
+void msg_decrypt::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$MsgDecrypt").c_str());
+  input_key_fieldID = td::jni::get_field_id(env, Class, "inputKey", (PSLICE() << "L" << package_name << "/TonApi$InputKey;").c_str());
+  data_fieldID = td::jni::get_field_id(env, Class, "data", (PSLICE() << "L" << package_name << "/TonApi$MsgDataEncryptedArray;").c_str());
+}
+
+jclass msg_decryptWithProof::Class;
+jfieldID msg_decryptWithProof::proof_fieldID;
+jfieldID msg_decryptWithProof::data_fieldID;
+
+msg_decryptWithProof::msg_decryptWithProof()
+  : proof_()
+  , data_()
+{}
+
+msg_decryptWithProof::msg_decryptWithProof(std::string const &proof_, object_ptr<msg_dataEncrypted> &&data_)
+  : proof_(std::move(proof_))
+  , data_(std::move(data_))
+{}
+
+const std::int32_t msg_decryptWithProof::ID;
+
+object_ptr<msg_decryptWithProof> msg_decryptWithProof::fetch(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return nullptr;
+  object_ptr<msg_decryptWithProof> res = make_object<msg_decryptWithProof>();
+  res->proof_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->proof_fieldID));
+  res->data_ = td::jni::fetch_tl_object<msg_dataEncrypted>(env, td::jni::fetch_object(env, p, res->data_fieldID));;
+  return res;
+}
+
+void msg_decryptWithProof::store(JNIEnv *env, jobject &s) const {
+  s = env->AllocObject(Class);
+  if (!s) { return; }
+  { jbyteArray nextBytes = td::jni::to_bytes(env, proof_); if (nextBytes) { env->SetObjectField(s, proof_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
+  if (data_ != nullptr) { jobject next; data_->store(env, next); if (next) { env->SetObjectField(s, data_fieldID, next); env->DeleteLocalRef(next); } }
+}
+
+void msg_decryptWithProof::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "MsgDecryptWithProof");
+    s.store_bytes_field("proof", proof_);
+    if (data_ == nullptr) { s.store_field("data", "null"); } else { data_->store(s, "data"); }
+    s.store_class_end();
+  }
+}
+
+msg_decryptWithProof::ReturnType msg_decryptWithProof::fetch_result(JNIEnv *env, jobject &p) {
+  if (p == nullptr) return ReturnType();
+  return msg_Data::fetch(env, p);
+}
+
+void msg_decryptWithProof::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$MsgDecryptWithProof").c_str());
+  proof_fieldID = td::jni::get_field_id(env, Class, "proof", "[B");
+  data_fieldID = td::jni::get_field_id(env, Class, "data", (PSLICE() << "L" << package_name << "/TonApi$MsgDataEncrypted;").c_str());
 }
 
 jclass onLiteServerQueryError::Class;
@@ -4778,7 +6619,7 @@ void options_setConfig::store(td::TlStorerToString &s, const char *field_name) c
 
 options_setConfig::ReturnType options_setConfig::fetch_result(JNIEnv *env, jobject &p) {
   if (p == nullptr) return ReturnType();
-  return ok::fetch(env, p);
+  return options_configInfo::fetch(env, p);
 }
 
 void options_setConfig::init_jni_vars(JNIEnv *env, const char *package_name) {
@@ -5180,50 +7021,6 @@ void raw_createQuery::init_jni_vars(JNIEnv *env, const char *package_name) {
   body_fieldID = td::jni::get_field_id(env, Class, "body", "[B");
 }
 
-jclass raw_getAccountAddress::Class;
-jfieldID raw_getAccountAddress::initital_account_state_fieldID;
-
-raw_getAccountAddress::raw_getAccountAddress()
-  : initital_account_state_()
-{}
-
-raw_getAccountAddress::raw_getAccountAddress(object_ptr<raw_initialAccountState> &&initital_account_state_)
-  : initital_account_state_(std::move(initital_account_state_))
-{}
-
-const std::int32_t raw_getAccountAddress::ID;
-
-object_ptr<raw_getAccountAddress> raw_getAccountAddress::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<raw_getAccountAddress> res = make_object<raw_getAccountAddress>();
-  res->initital_account_state_ = td::jni::fetch_tl_object<raw_initialAccountState>(env, td::jni::fetch_object(env, p, res->initital_account_state_fieldID));;
-  return res;
-}
-
-void raw_getAccountAddress::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  if (initital_account_state_ != nullptr) { jobject next; initital_account_state_->store(env, next); if (next) { env->SetObjectField(s, initital_account_state_fieldID, next); env->DeleteLocalRef(next); } }
-}
-
-void raw_getAccountAddress::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "RawGetAccountAddress");
-    if (initital_account_state_ == nullptr) { s.store_field("inititalAccountState", "null"); } else { initital_account_state_->store(s, "inititalAccountState"); }
-    s.store_class_end();
-  }
-}
-
-raw_getAccountAddress::ReturnType raw_getAccountAddress::fetch_result(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return ReturnType();
-  return accountAddress::fetch(env, p);
-}
-
-void raw_getAccountAddress::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$RawGetAccountAddress").c_str());
-  initital_account_state_fieldID = td::jni::get_field_id(env, Class, "inititalAccountState", (PSLICE() << "L" << package_name << "/TonApi$RawInitialAccountState;").c_str());
-}
-
 jclass raw_getAccountState::Class;
 jfieldID raw_getAccountState::account_address_fieldID;
 
@@ -5260,7 +7057,7 @@ void raw_getAccountState::store(td::TlStorerToString &s, const char *field_name)
 
 raw_getAccountState::ReturnType raw_getAccountState::fetch_result(JNIEnv *env, jobject &p) {
   if (p == nullptr) return ReturnType();
-  return raw_accountState::fetch(env, p);
+  return raw_fullAccountState::fetch(env, p);
 }
 
 void raw_getAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
@@ -5269,16 +7066,19 @@ void raw_getAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
 }
 
 jclass raw_getTransactions::Class;
+jfieldID raw_getTransactions::private_key_fieldID;
 jfieldID raw_getTransactions::account_address_fieldID;
 jfieldID raw_getTransactions::from_transaction_id_fieldID;
 
 raw_getTransactions::raw_getTransactions()
-  : account_address_()
+  : private_key_()
+  , account_address_()
   , from_transaction_id_()
 {}
 
-raw_getTransactions::raw_getTransactions(object_ptr<accountAddress> &&account_address_, object_ptr<internal_transactionId> &&from_transaction_id_)
-  : account_address_(std::move(account_address_))
+raw_getTransactions::raw_getTransactions(object_ptr<InputKey> &&private_key_, object_ptr<accountAddress> &&account_address_, object_ptr<internal_transactionId> &&from_transaction_id_)
+  : private_key_(std::move(private_key_))
+  , account_address_(std::move(account_address_))
   , from_transaction_id_(std::move(from_transaction_id_))
 {}
 
@@ -5287,6 +7087,7 @@ const std::int32_t raw_getTransactions::ID;
 object_ptr<raw_getTransactions> raw_getTransactions::fetch(JNIEnv *env, jobject &p) {
   if (p == nullptr) return nullptr;
   object_ptr<raw_getTransactions> res = make_object<raw_getTransactions>();
+  res->private_key_ = td::jni::fetch_tl_object<InputKey>(env, td::jni::fetch_object(env, p, res->private_key_fieldID));;
   res->account_address_ = td::jni::fetch_tl_object<accountAddress>(env, td::jni::fetch_object(env, p, res->account_address_fieldID));;
   res->from_transaction_id_ = td::jni::fetch_tl_object<internal_transactionId>(env, td::jni::fetch_object(env, p, res->from_transaction_id_fieldID));;
   return res;
@@ -5295,6 +7096,7 @@ object_ptr<raw_getTransactions> raw_getTransactions::fetch(JNIEnv *env, jobject 
 void raw_getTransactions::store(JNIEnv *env, jobject &s) const {
   s = env->AllocObject(Class);
   if (!s) { return; }
+  if (private_key_ != nullptr) { jobject next; private_key_->store(env, next); if (next) { env->SetObjectField(s, private_key_fieldID, next); env->DeleteLocalRef(next); } }
   if (account_address_ != nullptr) { jobject next; account_address_->store(env, next); if (next) { env->SetObjectField(s, account_address_fieldID, next); env->DeleteLocalRef(next); } }
   if (from_transaction_id_ != nullptr) { jobject next; from_transaction_id_->store(env, next); if (next) { env->SetObjectField(s, from_transaction_id_fieldID, next); env->DeleteLocalRef(next); } }
 }
@@ -5302,6 +7104,7 @@ void raw_getTransactions::store(JNIEnv *env, jobject &s) const {
 void raw_getTransactions::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
     s.store_class_begin(field_name, "RawGetTransactions");
+    if (private_key_ == nullptr) { s.store_field("privateKey", "null"); } else { private_key_->store(s, "privateKey"); }
     if (account_address_ == nullptr) { s.store_field("accountAddress", "null"); } else { account_address_->store(s, "accountAddress"); }
     if (from_transaction_id_ == nullptr) { s.store_field("fromTransactionId", "null"); } else { from_transaction_id_->store(s, "fromTransactionId"); }
     s.store_class_end();
@@ -5315,6 +7118,7 @@ raw_getTransactions::ReturnType raw_getTransactions::fetch_result(JNIEnv *env, j
 
 void raw_getTransactions::init_jni_vars(JNIEnv *env, const char *package_name) {
   Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$RawGetTransactions").c_str());
+  private_key_fieldID = td::jni::get_field_id(env, Class, "privateKey", (PSLICE() << "L" << package_name << "/TonApi$InputKey;").c_str());
   account_address_fieldID = td::jni::get_field_id(env, Class, "accountAddress", (PSLICE() << "L" << package_name << "/TonApi$AccountAddress;").c_str());
   from_transaction_id_fieldID = td::jni::get_field_id(env, Class, "fromTransactionId", (PSLICE() << "L" << package_name << "/TonApi$InternalTransactionId;").c_str());
 }
@@ -5807,348 +7611,11 @@ void sync::store(td::TlStorerToString &s, const char *field_name) const {
 
 sync::ReturnType sync::fetch_result(JNIEnv *env, jobject &p) {
   if (p == nullptr) return ReturnType();
-  return ok::fetch(env, p);
+  return ton_blockIdExt::fetch(env, p);
 }
 
 void sync::init_jni_vars(JNIEnv *env, const char *package_name) {
   Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$Sync").c_str());
-}
-
-jclass testGiver_getAccountAddress::Class;
-
-testGiver_getAccountAddress::testGiver_getAccountAddress() {
-}
-
-const std::int32_t testGiver_getAccountAddress::ID;
-
-object_ptr<testGiver_getAccountAddress> testGiver_getAccountAddress::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<testGiver_getAccountAddress> res = make_object<testGiver_getAccountAddress>();
-  return res;
-}
-
-void testGiver_getAccountAddress::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-}
-
-void testGiver_getAccountAddress::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "TestGiverGetAccountAddress");
-    s.store_class_end();
-  }
-}
-
-testGiver_getAccountAddress::ReturnType testGiver_getAccountAddress::fetch_result(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return ReturnType();
-  return accountAddress::fetch(env, p);
-}
-
-void testGiver_getAccountAddress::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TestGiverGetAccountAddress").c_str());
-}
-
-jclass testGiver_getAccountState::Class;
-
-testGiver_getAccountState::testGiver_getAccountState() {
-}
-
-const std::int32_t testGiver_getAccountState::ID;
-
-object_ptr<testGiver_getAccountState> testGiver_getAccountState::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<testGiver_getAccountState> res = make_object<testGiver_getAccountState>();
-  return res;
-}
-
-void testGiver_getAccountState::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-}
-
-void testGiver_getAccountState::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "TestGiverGetAccountState");
-    s.store_class_end();
-  }
-}
-
-testGiver_getAccountState::ReturnType testGiver_getAccountState::fetch_result(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return ReturnType();
-  return testGiver_accountState::fetch(env, p);
-}
-
-void testGiver_getAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TestGiverGetAccountState").c_str());
-}
-
-jclass testGiver_sendGrams::Class;
-jfieldID testGiver_sendGrams::destination_fieldID;
-jfieldID testGiver_sendGrams::seqno_fieldID;
-jfieldID testGiver_sendGrams::amount_fieldID;
-jfieldID testGiver_sendGrams::message_fieldID;
-
-testGiver_sendGrams::testGiver_sendGrams()
-  : destination_()
-  , seqno_()
-  , amount_()
-  , message_()
-{}
-
-testGiver_sendGrams::testGiver_sendGrams(object_ptr<accountAddress> &&destination_, std::int32_t seqno_, std::int64_t amount_, std::string const &message_)
-  : destination_(std::move(destination_))
-  , seqno_(seqno_)
-  , amount_(amount_)
-  , message_(std::move(message_))
-{}
-
-const std::int32_t testGiver_sendGrams::ID;
-
-object_ptr<testGiver_sendGrams> testGiver_sendGrams::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<testGiver_sendGrams> res = make_object<testGiver_sendGrams>();
-  res->destination_ = td::jni::fetch_tl_object<accountAddress>(env, td::jni::fetch_object(env, p, res->destination_fieldID));;
-  res->seqno_ = env->GetIntField(p, res->seqno_fieldID);
-  res->amount_ = env->GetLongField(p, res->amount_fieldID);
-  res->message_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->message_fieldID));
-  return res;
-}
-
-void testGiver_sendGrams::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  if (destination_ != nullptr) { jobject next; destination_->store(env, next); if (next) { env->SetObjectField(s, destination_fieldID, next); env->DeleteLocalRef(next); } }
-  env->SetIntField(s, seqno_fieldID, seqno_);
-  env->SetLongField(s, amount_fieldID, amount_);
-  { jbyteArray nextBytes = td::jni::to_bytes(env, message_); if (nextBytes) { env->SetObjectField(s, message_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
-}
-
-void testGiver_sendGrams::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "TestGiverSendGrams");
-    if (destination_ == nullptr) { s.store_field("destination", "null"); } else { destination_->store(s, "destination"); }
-    s.store_field("seqno", seqno_);
-    s.store_field("amount", amount_);
-    s.store_bytes_field("message", message_);
-    s.store_class_end();
-  }
-}
-
-testGiver_sendGrams::ReturnType testGiver_sendGrams::fetch_result(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return ReturnType();
-  return sendGramsResult::fetch(env, p);
-}
-
-void testGiver_sendGrams::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TestGiverSendGrams").c_str());
-  destination_fieldID = td::jni::get_field_id(env, Class, "destination", (PSLICE() << "L" << package_name << "/TonApi$AccountAddress;").c_str());
-  seqno_fieldID = td::jni::get_field_id(env, Class, "seqno", "I");
-  amount_fieldID = td::jni::get_field_id(env, Class, "amount", "J");
-  message_fieldID = td::jni::get_field_id(env, Class, "message", "[B");
-}
-
-jclass testWallet_getAccountAddress::Class;
-jfieldID testWallet_getAccountAddress::initital_account_state_fieldID;
-
-testWallet_getAccountAddress::testWallet_getAccountAddress()
-  : initital_account_state_()
-{}
-
-testWallet_getAccountAddress::testWallet_getAccountAddress(object_ptr<testWallet_initialAccountState> &&initital_account_state_)
-  : initital_account_state_(std::move(initital_account_state_))
-{}
-
-const std::int32_t testWallet_getAccountAddress::ID;
-
-object_ptr<testWallet_getAccountAddress> testWallet_getAccountAddress::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<testWallet_getAccountAddress> res = make_object<testWallet_getAccountAddress>();
-  res->initital_account_state_ = td::jni::fetch_tl_object<testWallet_initialAccountState>(env, td::jni::fetch_object(env, p, res->initital_account_state_fieldID));;
-  return res;
-}
-
-void testWallet_getAccountAddress::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  if (initital_account_state_ != nullptr) { jobject next; initital_account_state_->store(env, next); if (next) { env->SetObjectField(s, initital_account_state_fieldID, next); env->DeleteLocalRef(next); } }
-}
-
-void testWallet_getAccountAddress::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "TestWalletGetAccountAddress");
-    if (initital_account_state_ == nullptr) { s.store_field("inititalAccountState", "null"); } else { initital_account_state_->store(s, "inititalAccountState"); }
-    s.store_class_end();
-  }
-}
-
-testWallet_getAccountAddress::ReturnType testWallet_getAccountAddress::fetch_result(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return ReturnType();
-  return accountAddress::fetch(env, p);
-}
-
-void testWallet_getAccountAddress::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TestWalletGetAccountAddress").c_str());
-  initital_account_state_fieldID = td::jni::get_field_id(env, Class, "inititalAccountState", (PSLICE() << "L" << package_name << "/TonApi$TestWalletInitialAccountState;").c_str());
-}
-
-jclass testWallet_getAccountState::Class;
-jfieldID testWallet_getAccountState::account_address_fieldID;
-
-testWallet_getAccountState::testWallet_getAccountState()
-  : account_address_()
-{}
-
-testWallet_getAccountState::testWallet_getAccountState(object_ptr<accountAddress> &&account_address_)
-  : account_address_(std::move(account_address_))
-{}
-
-const std::int32_t testWallet_getAccountState::ID;
-
-object_ptr<testWallet_getAccountState> testWallet_getAccountState::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<testWallet_getAccountState> res = make_object<testWallet_getAccountState>();
-  res->account_address_ = td::jni::fetch_tl_object<accountAddress>(env, td::jni::fetch_object(env, p, res->account_address_fieldID));;
-  return res;
-}
-
-void testWallet_getAccountState::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  if (account_address_ != nullptr) { jobject next; account_address_->store(env, next); if (next) { env->SetObjectField(s, account_address_fieldID, next); env->DeleteLocalRef(next); } }
-}
-
-void testWallet_getAccountState::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "TestWalletGetAccountState");
-    if (account_address_ == nullptr) { s.store_field("accountAddress", "null"); } else { account_address_->store(s, "accountAddress"); }
-    s.store_class_end();
-  }
-}
-
-testWallet_getAccountState::ReturnType testWallet_getAccountState::fetch_result(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return ReturnType();
-  return testWallet_accountState::fetch(env, p);
-}
-
-void testWallet_getAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TestWalletGetAccountState").c_str());
-  account_address_fieldID = td::jni::get_field_id(env, Class, "accountAddress", (PSLICE() << "L" << package_name << "/TonApi$AccountAddress;").c_str());
-}
-
-jclass testWallet_init::Class;
-jfieldID testWallet_init::private_key_fieldID;
-
-testWallet_init::testWallet_init()
-  : private_key_()
-{}
-
-testWallet_init::testWallet_init(object_ptr<InputKey> &&private_key_)
-  : private_key_(std::move(private_key_))
-{}
-
-const std::int32_t testWallet_init::ID;
-
-object_ptr<testWallet_init> testWallet_init::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<testWallet_init> res = make_object<testWallet_init>();
-  res->private_key_ = td::jni::fetch_tl_object<InputKey>(env, td::jni::fetch_object(env, p, res->private_key_fieldID));;
-  return res;
-}
-
-void testWallet_init::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  if (private_key_ != nullptr) { jobject next; private_key_->store(env, next); if (next) { env->SetObjectField(s, private_key_fieldID, next); env->DeleteLocalRef(next); } }
-}
-
-void testWallet_init::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "TestWalletInit");
-    if (private_key_ == nullptr) { s.store_field("privateKey", "null"); } else { private_key_->store(s, "privateKey"); }
-    s.store_class_end();
-  }
-}
-
-testWallet_init::ReturnType testWallet_init::fetch_result(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return ReturnType();
-  return ok::fetch(env, p);
-}
-
-void testWallet_init::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TestWalletInit").c_str());
-  private_key_fieldID = td::jni::get_field_id(env, Class, "privateKey", (PSLICE() << "L" << package_name << "/TonApi$InputKey;").c_str());
-}
-
-jclass testWallet_sendGrams::Class;
-jfieldID testWallet_sendGrams::private_key_fieldID;
-jfieldID testWallet_sendGrams::destination_fieldID;
-jfieldID testWallet_sendGrams::seqno_fieldID;
-jfieldID testWallet_sendGrams::amount_fieldID;
-jfieldID testWallet_sendGrams::message_fieldID;
-
-testWallet_sendGrams::testWallet_sendGrams()
-  : private_key_()
-  , destination_()
-  , seqno_()
-  , amount_()
-  , message_()
-{}
-
-testWallet_sendGrams::testWallet_sendGrams(object_ptr<InputKey> &&private_key_, object_ptr<accountAddress> &&destination_, std::int32_t seqno_, std::int64_t amount_, std::string const &message_)
-  : private_key_(std::move(private_key_))
-  , destination_(std::move(destination_))
-  , seqno_(seqno_)
-  , amount_(amount_)
-  , message_(std::move(message_))
-{}
-
-const std::int32_t testWallet_sendGrams::ID;
-
-object_ptr<testWallet_sendGrams> testWallet_sendGrams::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<testWallet_sendGrams> res = make_object<testWallet_sendGrams>();
-  res->private_key_ = td::jni::fetch_tl_object<InputKey>(env, td::jni::fetch_object(env, p, res->private_key_fieldID));;
-  res->destination_ = td::jni::fetch_tl_object<accountAddress>(env, td::jni::fetch_object(env, p, res->destination_fieldID));;
-  res->seqno_ = env->GetIntField(p, res->seqno_fieldID);
-  res->amount_ = env->GetLongField(p, res->amount_fieldID);
-  res->message_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->message_fieldID));
-  return res;
-}
-
-void testWallet_sendGrams::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  if (private_key_ != nullptr) { jobject next; private_key_->store(env, next); if (next) { env->SetObjectField(s, private_key_fieldID, next); env->DeleteLocalRef(next); } }
-  if (destination_ != nullptr) { jobject next; destination_->store(env, next); if (next) { env->SetObjectField(s, destination_fieldID, next); env->DeleteLocalRef(next); } }
-  env->SetIntField(s, seqno_fieldID, seqno_);
-  env->SetLongField(s, amount_fieldID, amount_);
-  { jbyteArray nextBytes = td::jni::to_bytes(env, message_); if (nextBytes) { env->SetObjectField(s, message_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
-}
-
-void testWallet_sendGrams::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "TestWalletSendGrams");
-    if (private_key_ == nullptr) { s.store_field("privateKey", "null"); } else { private_key_->store(s, "privateKey"); }
-    if (destination_ == nullptr) { s.store_field("destination", "null"); } else { destination_->store(s, "destination"); }
-    s.store_field("seqno", seqno_);
-    s.store_field("amount", amount_);
-    s.store_bytes_field("message", message_);
-    s.store_class_end();
-  }
-}
-
-testWallet_sendGrams::ReturnType testWallet_sendGrams::fetch_result(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return ReturnType();
-  return sendGramsResult::fetch(env, p);
-}
-
-void testWallet_sendGrams::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TestWalletSendGrams").c_str());
-  private_key_fieldID = td::jni::get_field_id(env, Class, "privateKey", (PSLICE() << "L" << package_name << "/TonApi$InputKey;").c_str());
-  destination_fieldID = td::jni::get_field_id(env, Class, "destination", (PSLICE() << "L" << package_name << "/TonApi$AccountAddress;").c_str());
-  seqno_fieldID = td::jni::get_field_id(env, Class, "seqno", "I");
-  amount_fieldID = td::jni::get_field_id(env, Class, "amount", "J");
-  message_fieldID = td::jni::get_field_id(env, Class, "message", "[B");
 }
 
 jclass unpackAccountAddress::Class;
@@ -6195,259 +7662,55 @@ void unpackAccountAddress::init_jni_vars(JNIEnv *env, const char *package_name) 
   account_address_fieldID = td::jni::get_field_id(env, Class, "accountAddress", "Ljava/lang/String;");
 }
 
-jclass wallet_getAccountAddress::Class;
-jfieldID wallet_getAccountAddress::initital_account_state_fieldID;
+jclass withBlock::Class;
+jfieldID withBlock::id_fieldID;
+jfieldID withBlock::function_fieldID;
 
-wallet_getAccountAddress::wallet_getAccountAddress()
-  : initital_account_state_()
+withBlock::withBlock()
+  : id_()
+  , function_()
 {}
 
-wallet_getAccountAddress::wallet_getAccountAddress(object_ptr<wallet_initialAccountState> &&initital_account_state_)
-  : initital_account_state_(std::move(initital_account_state_))
+withBlock::withBlock(object_ptr<ton_blockIdExt> &&id_, object_ptr<Function> &&function_)
+  : id_(std::move(id_))
+  , function_(std::move(function_))
 {}
 
-const std::int32_t wallet_getAccountAddress::ID;
+const std::int32_t withBlock::ID;
 
-object_ptr<wallet_getAccountAddress> wallet_getAccountAddress::fetch(JNIEnv *env, jobject &p) {
+object_ptr<withBlock> withBlock::fetch(JNIEnv *env, jobject &p) {
   if (p == nullptr) return nullptr;
-  object_ptr<wallet_getAccountAddress> res = make_object<wallet_getAccountAddress>();
-  res->initital_account_state_ = td::jni::fetch_tl_object<wallet_initialAccountState>(env, td::jni::fetch_object(env, p, res->initital_account_state_fieldID));;
+  object_ptr<withBlock> res = make_object<withBlock>();
+  res->id_ = td::jni::fetch_tl_object<ton_blockIdExt>(env, td::jni::fetch_object(env, p, res->id_fieldID));;
+  res->function_ = td::jni::fetch_tl_object<Function>(env, td::jni::fetch_object(env, p, res->function_fieldID));;
   return res;
 }
 
-void wallet_getAccountAddress::store(JNIEnv *env, jobject &s) const {
+void withBlock::store(JNIEnv *env, jobject &s) const {
   s = env->AllocObject(Class);
   if (!s) { return; }
-  if (initital_account_state_ != nullptr) { jobject next; initital_account_state_->store(env, next); if (next) { env->SetObjectField(s, initital_account_state_fieldID, next); env->DeleteLocalRef(next); } }
+  if (id_ != nullptr) { jobject next; id_->store(env, next); if (next) { env->SetObjectField(s, id_fieldID, next); env->DeleteLocalRef(next); } }
+  if (function_ != nullptr) { jobject next; function_->store(env, next); if (next) { env->SetObjectField(s, function_fieldID, next); env->DeleteLocalRef(next); } }
 }
 
-void wallet_getAccountAddress::store(td::TlStorerToString &s, const char *field_name) const {
+void withBlock::store(td::TlStorerToString &s, const char *field_name) const {
   if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "WalletGetAccountAddress");
-    if (initital_account_state_ == nullptr) { s.store_field("inititalAccountState", "null"); } else { initital_account_state_->store(s, "inititalAccountState"); }
+    s.store_class_begin(field_name, "WithBlock");
+    if (id_ == nullptr) { s.store_field("id", "null"); } else { id_->store(s, "id"); }
+    if (function_ == nullptr) { s.store_field("function", "null"); } else { function_->store(s, "function"); }
     s.store_class_end();
   }
 }
 
-wallet_getAccountAddress::ReturnType wallet_getAccountAddress::fetch_result(JNIEnv *env, jobject &p) {
+withBlock::ReturnType withBlock::fetch_result(JNIEnv *env, jobject &p) {
   if (p == nullptr) return ReturnType();
-  return accountAddress::fetch(env, p);
+  return Object::fetch(env, p);
 }
 
-void wallet_getAccountAddress::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletGetAccountAddress").c_str());
-  initital_account_state_fieldID = td::jni::get_field_id(env, Class, "inititalAccountState", (PSLICE() << "L" << package_name << "/TonApi$WalletInitialAccountState;").c_str());
-}
-
-jclass wallet_getAccountState::Class;
-jfieldID wallet_getAccountState::account_address_fieldID;
-
-wallet_getAccountState::wallet_getAccountState()
-  : account_address_()
-{}
-
-wallet_getAccountState::wallet_getAccountState(object_ptr<accountAddress> &&account_address_)
-  : account_address_(std::move(account_address_))
-{}
-
-const std::int32_t wallet_getAccountState::ID;
-
-object_ptr<wallet_getAccountState> wallet_getAccountState::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<wallet_getAccountState> res = make_object<wallet_getAccountState>();
-  res->account_address_ = td::jni::fetch_tl_object<accountAddress>(env, td::jni::fetch_object(env, p, res->account_address_fieldID));;
-  return res;
-}
-
-void wallet_getAccountState::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  if (account_address_ != nullptr) { jobject next; account_address_->store(env, next); if (next) { env->SetObjectField(s, account_address_fieldID, next); env->DeleteLocalRef(next); } }
-}
-
-void wallet_getAccountState::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "WalletGetAccountState");
-    if (account_address_ == nullptr) { s.store_field("accountAddress", "null"); } else { account_address_->store(s, "accountAddress"); }
-    s.store_class_end();
-  }
-}
-
-wallet_getAccountState::ReturnType wallet_getAccountState::fetch_result(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return ReturnType();
-  return wallet_accountState::fetch(env, p);
-}
-
-void wallet_getAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletGetAccountState").c_str());
-  account_address_fieldID = td::jni::get_field_id(env, Class, "accountAddress", (PSLICE() << "L" << package_name << "/TonApi$AccountAddress;").c_str());
-}
-
-jclass wallet_init::Class;
-jfieldID wallet_init::private_key_fieldID;
-
-wallet_init::wallet_init()
-  : private_key_()
-{}
-
-wallet_init::wallet_init(object_ptr<InputKey> &&private_key_)
-  : private_key_(std::move(private_key_))
-{}
-
-const std::int32_t wallet_init::ID;
-
-object_ptr<wallet_init> wallet_init::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<wallet_init> res = make_object<wallet_init>();
-  res->private_key_ = td::jni::fetch_tl_object<InputKey>(env, td::jni::fetch_object(env, p, res->private_key_fieldID));;
-  return res;
-}
-
-void wallet_init::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  if (private_key_ != nullptr) { jobject next; private_key_->store(env, next); if (next) { env->SetObjectField(s, private_key_fieldID, next); env->DeleteLocalRef(next); } }
-}
-
-void wallet_init::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "WalletInit");
-    if (private_key_ == nullptr) { s.store_field("privateKey", "null"); } else { private_key_->store(s, "privateKey"); }
-    s.store_class_end();
-  }
-}
-
-wallet_init::ReturnType wallet_init::fetch_result(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return ReturnType();
-  return ok::fetch(env, p);
-}
-
-void wallet_init::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletInit").c_str());
-  private_key_fieldID = td::jni::get_field_id(env, Class, "privateKey", (PSLICE() << "L" << package_name << "/TonApi$InputKey;").c_str());
-}
-
-jclass wallet_sendGrams::Class;
-jfieldID wallet_sendGrams::private_key_fieldID;
-jfieldID wallet_sendGrams::destination_fieldID;
-jfieldID wallet_sendGrams::seqno_fieldID;
-jfieldID wallet_sendGrams::valid_until_fieldID;
-jfieldID wallet_sendGrams::amount_fieldID;
-jfieldID wallet_sendGrams::message_fieldID;
-
-wallet_sendGrams::wallet_sendGrams()
-  : private_key_()
-  , destination_()
-  , seqno_()
-  , valid_until_()
-  , amount_()
-  , message_()
-{}
-
-wallet_sendGrams::wallet_sendGrams(object_ptr<InputKey> &&private_key_, object_ptr<accountAddress> &&destination_, std::int32_t seqno_, std::int64_t valid_until_, std::int64_t amount_, std::string const &message_)
-  : private_key_(std::move(private_key_))
-  , destination_(std::move(destination_))
-  , seqno_(seqno_)
-  , valid_until_(valid_until_)
-  , amount_(amount_)
-  , message_(std::move(message_))
-{}
-
-const std::int32_t wallet_sendGrams::ID;
-
-object_ptr<wallet_sendGrams> wallet_sendGrams::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<wallet_sendGrams> res = make_object<wallet_sendGrams>();
-  res->private_key_ = td::jni::fetch_tl_object<InputKey>(env, td::jni::fetch_object(env, p, res->private_key_fieldID));;
-  res->destination_ = td::jni::fetch_tl_object<accountAddress>(env, td::jni::fetch_object(env, p, res->destination_fieldID));;
-  res->seqno_ = env->GetIntField(p, res->seqno_fieldID);
-  res->valid_until_ = env->GetLongField(p, res->valid_until_fieldID);
-  res->amount_ = env->GetLongField(p, res->amount_fieldID);
-  res->message_ = td::jni::from_bytes(env, (jbyteArray)td::jni::fetch_object(env, p, res->message_fieldID));
-  return res;
-}
-
-void wallet_sendGrams::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  if (private_key_ != nullptr) { jobject next; private_key_->store(env, next); if (next) { env->SetObjectField(s, private_key_fieldID, next); env->DeleteLocalRef(next); } }
-  if (destination_ != nullptr) { jobject next; destination_->store(env, next); if (next) { env->SetObjectField(s, destination_fieldID, next); env->DeleteLocalRef(next); } }
-  env->SetIntField(s, seqno_fieldID, seqno_);
-  env->SetLongField(s, valid_until_fieldID, valid_until_);
-  env->SetLongField(s, amount_fieldID, amount_);
-  { jbyteArray nextBytes = td::jni::to_bytes(env, message_); if (nextBytes) { env->SetObjectField(s, message_fieldID, nextBytes); env->DeleteLocalRef(nextBytes); } }
-}
-
-void wallet_sendGrams::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "WalletSendGrams");
-    if (private_key_ == nullptr) { s.store_field("privateKey", "null"); } else { private_key_->store(s, "privateKey"); }
-    if (destination_ == nullptr) { s.store_field("destination", "null"); } else { destination_->store(s, "destination"); }
-    s.store_field("seqno", seqno_);
-    s.store_field("validUntil", valid_until_);
-    s.store_field("amount", amount_);
-    s.store_bytes_field("message", message_);
-    s.store_class_end();
-  }
-}
-
-wallet_sendGrams::ReturnType wallet_sendGrams::fetch_result(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return ReturnType();
-  return sendGramsResult::fetch(env, p);
-}
-
-void wallet_sendGrams::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletSendGrams").c_str());
-  private_key_fieldID = td::jni::get_field_id(env, Class, "privateKey", (PSLICE() << "L" << package_name << "/TonApi$InputKey;").c_str());
-  destination_fieldID = td::jni::get_field_id(env, Class, "destination", (PSLICE() << "L" << package_name << "/TonApi$AccountAddress;").c_str());
-  seqno_fieldID = td::jni::get_field_id(env, Class, "seqno", "I");
-  valid_until_fieldID = td::jni::get_field_id(env, Class, "validUntil", "J");
-  amount_fieldID = td::jni::get_field_id(env, Class, "amount", "J");
-  message_fieldID = td::jni::get_field_id(env, Class, "message", "[B");
-}
-
-jclass wallet_v3_getAccountAddress::Class;
-jfieldID wallet_v3_getAccountAddress::initital_account_state_fieldID;
-
-wallet_v3_getAccountAddress::wallet_v3_getAccountAddress()
-  : initital_account_state_()
-{}
-
-wallet_v3_getAccountAddress::wallet_v3_getAccountAddress(object_ptr<wallet_v3_initialAccountState> &&initital_account_state_)
-  : initital_account_state_(std::move(initital_account_state_))
-{}
-
-const std::int32_t wallet_v3_getAccountAddress::ID;
-
-object_ptr<wallet_v3_getAccountAddress> wallet_v3_getAccountAddress::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<wallet_v3_getAccountAddress> res = make_object<wallet_v3_getAccountAddress>();
-  res->initital_account_state_ = td::jni::fetch_tl_object<wallet_v3_initialAccountState>(env, td::jni::fetch_object(env, p, res->initital_account_state_fieldID));;
-  return res;
-}
-
-void wallet_v3_getAccountAddress::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  if (initital_account_state_ != nullptr) { jobject next; initital_account_state_->store(env, next); if (next) { env->SetObjectField(s, initital_account_state_fieldID, next); env->DeleteLocalRef(next); } }
-}
-
-void wallet_v3_getAccountAddress::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "WalletV3GetAccountAddress");
-    if (initital_account_state_ == nullptr) { s.store_field("inititalAccountState", "null"); } else { initital_account_state_->store(s, "inititalAccountState"); }
-    s.store_class_end();
-  }
-}
-
-wallet_v3_getAccountAddress::ReturnType wallet_v3_getAccountAddress::fetch_result(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return ReturnType();
-  return accountAddress::fetch(env, p);
-}
-
-void wallet_v3_getAccountAddress::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletV3GetAccountAddress").c_str());
-  initital_account_state_fieldID = td::jni::get_field_id(env, Class, "inititalAccountState", (PSLICE() << "L" << package_name << "/TonApi$WalletV3InitialAccountState;").c_str());
+void withBlock::init_jni_vars(JNIEnv *env, const char *package_name) {
+  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WithBlock").c_str());
+  id_fieldID = td::jni::get_field_id(env, Class, "id", (PSLICE() << "L" << package_name << "/TonApi$TonBlockIdExt;").c_str());
+  function_fieldID = td::jni::get_field_id(env, Class, "function", (PSLICE() << "L" << package_name << "/TonApi$Function;").c_str());
 }
 }  // namespace tonlib_api
 }  // namespace ton

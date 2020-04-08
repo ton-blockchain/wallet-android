@@ -14,7 +14,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with TON Blockchain Library.  If not, see <http://www.gnu.org/licenses/>.
 
-    Copyright 2017-2019 Telegram Systems LLP
+    Copyright 2017-2020 Telegram Systems LLP
 */
 #pragma once
 
@@ -101,6 +101,10 @@ class Bignum {
     BN_copy(val, x.val);
     return *this;
   }
+  Bignum& operator=(Bignum&& x) {
+    swap(x);
+    return *this;
+  }
   Bignum& operator=(long x) {
     return set_long(x);
   }
@@ -109,6 +113,10 @@ class Bignum {
   }
   Bignum& operator=(const hex_string& hs) {
     return set_hex_str(hs.str);
+  }
+  Bignum& swap(Bignum& x) {
+    std::swap(val, x.val);
+    return *this;
   }
   BIGNUM* bn_ptr() {
     return val;

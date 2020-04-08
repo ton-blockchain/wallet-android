@@ -114,6 +114,8 @@ public class WalletActionSheet extends BottomSheet {
     private boolean wasFirstAttach;
     private long currentBalance = -1;
 
+    private boolean sendUnencrypted;
+
     private int titleRow;
     private int recipientHeaderRow;
     private int recipientRow;
@@ -799,7 +801,7 @@ public class WalletActionSheet extends BottomSheet {
         if (requestCode == SEND_ACTIVITY_RESULT_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 dismiss();
-                parentFragment.presentFragment(new WalletPasscodeActivity(false, null, walletAddress, recipientString, amountValue, commentString, hasWalletInBack));
+                parentFragment.presentFragment(new WalletPasscodeActivity(false, null, walletAddress, recipientString, amountValue, commentString, sendUnencrypted, hasWalletInBack));
             }
         }
     }
@@ -808,7 +810,7 @@ public class WalletActionSheet extends BottomSheet {
         AlertDialog progressDialog = new AlertDialog(getContext(), 3);
         progressDialog.setCanCacnel(false);
         progressDialog.show();
-        TonController.getInstance(currentAccount).getSendFee(walletAddress, recipientString, amountValue, commentString, fee -> {
+        TonController.getInstance(currentAccount).getSendFee(walletAddress, recipientString, amountValue, commentString, (fee, unencrypted) -> {
             progressDialog.dismiss();
 
             Context context = getContext();
@@ -816,8 +818,9 @@ public class WalletActionSheet extends BottomSheet {
             builder.setTitle(LocaleController.getString("WalletConfirmation", R.string.WalletConfirmation));
             builder.setMessage(AndroidUtilities.replaceTags(LocaleController.formatString("WalletConfirmationText", R.string.WalletConfirmationText, TonController.formatCurrency(amountValue))));
 
-            FrameLayout frameLayout = new FrameLayout(context);
-            frameLayout.setClipToPadding(false);
+            LinearLayout linearLayout = new LinearLayout(context);
+            linearLayout.setClipToPadding(false);
+            linearLayout.setOrientation(LinearLayout.VERTICAL);
 
             TextView addressValueTextView = new TextView(context);
             addressValueTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
@@ -831,9 +834,7 @@ public class WalletActionSheet extends BottomSheet {
             stringBuilder.insert(0, " ");
             stringBuilder.insert(stringBuilder.length(), " ");
             addressValueTextView.setText(stringBuilder);
-            frameLayout.addView(addressValueTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL));
-
-            int height = 64;
+            linearLayout.addView(addressValueTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL));
 
             if (fee > 0) {
                 TextView feeTextView = new TextView(context);
@@ -841,10 +842,18 @@ public class WalletActionSheet extends BottomSheet {
                 feeTextView.setTextColor(Theme.getColor(Theme.key_dialogTextGray3));
                 feeTextView.setGravity(Gravity.CENTER);
                 feeTextView.setText(LocaleController.formatString("WalletFee", R.string.WalletFee, TonController.formatCurrency(fee)));
-                frameLayout.addView(feeTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, 67, 0, 0));
-                height += 34;
+                linearLayout.addView(feeTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, 6, 0, 0));
             }
-            builder.setView(frameLayout, height);
+
+            if (unencrypted) {
+                TextView messageTextView = new TextView(getContext());
+                messageTextView.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
+                messageTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
+                messageTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP);
+                messageTextView.setText(AndroidUtilities.replaceTags(LocaleController.formatString("WalletCantEncryptComment", R.string.WalletCantEncryptComment, commentString)));
+                linearLayout.addView(messageTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 24, 8, 24, 0));
+            }
+            builder.setView(linearLayout);
 
             builder.setPositiveButton(LocaleController.getString("WalletConfirm", R.string.WalletConfirm).toUpperCase(), (dialogInterface, i) -> {
                 if (parentFragment == null || parentFragment.getParentActivity() == null) {
@@ -853,6 +862,7 @@ public class WalletActionSheet extends BottomSheet {
                 switch (TonController.getInstance(currentAccount).getKeyProtectionType()) {
                     case TonController.KEY_PROTECTION_TYPE_LOCKSCREEN: {
                         if (Build.VERSION.SDK_INT >= 23) {
+                            sendUnencrypted = unencrypted;
                             KeyguardManager keyguardManager = (KeyguardManager) ApplicationLoader.applicationContext.getSystemService(Context.KEYGUARD_SERVICE);
                             Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(LocaleController.getString("Wallet", R.string.Wallet), LocaleController.getString("WalletSendConfirmCredentials", R.string.WalletSendConfirmCredentials));
                             parentFragment.getParentActivity().startActivityForResult(intent, SEND_ACTIVITY_RESULT_CODE);
@@ -862,13 +872,13 @@ public class WalletActionSheet extends BottomSheet {
                     case TonController.KEY_PROTECTION_TYPE_BIOMETRIC: {
                         biometricPromtHelper.promtWithCipher(TonController.getInstance(currentAccount).getCipherForDecrypt(), LocaleController.getString("WalletSendConfirmCredentials", R.string.WalletSendConfirmCredentials), (cipher) -> {
                             dismiss();
-                            parentFragment.presentFragment(new WalletPasscodeActivity(false, cipher, walletAddress, recipientString, amountValue, commentString, hasWalletInBack));
+                            parentFragment.presentFragment(new WalletPasscodeActivity(false, cipher, walletAddress, recipientString, amountValue, commentString, unencrypted, hasWalletInBack));
                         });
                         break;
                     }
                     case TonController.KEY_PROTECTION_TYPE_NONE: {
                         AndroidUtilities.hideKeyboard(getCurrentFocus());
-                        parentFragment.presentFragment(new WalletPasscodeActivity(true, null, walletAddress, recipientString, amountValue, commentString, hasWalletInBack));
+                        parentFragment.presentFragment(new WalletPasscodeActivity(true, null, walletAddress, recipientString, amountValue, commentString, unencrypted, hasWalletInBack));
                         dismiss();
                         break;
                     }
@@ -1024,7 +1034,7 @@ public class WalletActionSheet extends BottomSheet {
                 case 7: {
                     TextInfoPrivacyCell cell = (TextInfoPrivacyCell) itemView;
                     if (position == sendBalanceRow) {
-                        TonApi.GenericAccountState state = TonController.getInstance(currentAccount).getCachedAccountState();
+                        TonApi.FullAccountState state = TonController.getInstance(currentAccount).getCachedAccountState();
                         if (state != null) {
                             cell.setText(LocaleController.formatString("WalletSendBalance", R.string.WalletSendBalance, TonController.formatCurrency(currentBalance = TonController.getBalance(state))));
                         }

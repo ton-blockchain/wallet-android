@@ -14,7 +14,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with TON Blockchain Library.  If not, see <http://www.gnu.org/licenses/>.
 
-    Copyright 2017-2019 Telegram Systems LLP
+    Copyright 2017-2020 Telegram Systems LLP
 */
 #include "td/utils/crypto.h"
 
@@ -253,6 +253,13 @@ int pq_factorize(Slice pq_str, string *p_str, string *q_str) {
   return 0;
 }
 
+#ifdef OPENSSL_IS_BORINGSSL
+extern "C" {
+void AES_ige_encrypt(const unsigned char *in_ptr, unsigned char *out, size_t length, const AES_KEY *key,
+                     unsigned char *ivec, const int enc);
+}
+#endif
+
 static void aes_ige_xcrypt(Slice aes_key, MutableSlice aes_iv, Slice from, MutableSlice to, bool encrypt_flag) {
   CHECK(aes_key.size() == 32);
   CHECK(aes_iv.size() == 16);
@@ -299,16 +306,16 @@ void aes_cbc_decrypt(Slice aes_key, MutableSlice aes_iv, Slice from, MutableSlic
   aes_cbc_xcrypt(aes_key, aes_iv, from, to, false);
 }
 
-AesCbcState::AesCbcState(Slice key256, Slice iv128) : key_(key256), iv_(iv128) {
-  CHECK(key_.size() == 32);
-  CHECK(iv_.size() == 16);
+AesCbcState::AesCbcState(Slice key256, Slice iv128) : raw_{td::SecureString(key256), td::SecureString(iv128)} {
+  CHECK(raw_.key.size() == 32);
+  CHECK(raw_.iv.size() == 16);
 }
 
 void AesCbcState::encrypt(Slice from, MutableSlice to) {
-  ::td::aes_cbc_encrypt(key_.as_slice(), iv_.as_mutable_slice(), from, to);
+  ::td::aes_cbc_encrypt(raw_.key.as_slice(), raw_.iv.as_mutable_slice(), from, to);
 }
 void AesCbcState::decrypt(Slice from, MutableSlice to) {
-  ::td::aes_cbc_decrypt(key_.as_slice(), iv_.as_mutable_slice(), from, to);
+  ::td::aes_cbc_decrypt(raw_.key.as_slice(), raw_.iv.as_mutable_slice(), from, to);
 }
 
 class AesCtrState::Impl {
@@ -522,7 +529,11 @@ void hmac_sha512(Slice key, Slice message, MutableSlice dest) {
 }
 
 static int get_evp_pkey_type(EVP_PKEY *pkey) {
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
   return EVP_PKEY_type(pkey->type);
+#else
+  return EVP_PKEY_base_id(pkey);
+#endif
 }
 
 Result<BufferSlice> rsa_encrypt_pkcs1_oaep(Slice public_key, Slice data) {

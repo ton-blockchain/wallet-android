@@ -890,6 +890,7 @@ public class WalletPasscodeActivity extends BaseFragment {
     public static final int TYPE_PASSCODE_CHANGE = 1;
     public static final int TYPE_PASSCODE_EXPORT = 2;
     public static final int TYPE_NO_PASSCODE_SEND = 3;
+    public static final int TYPE_MEM_INPUT_KEY = 4;
 
     private PasscodeView passcodeView;
     private TextView continueButton;
@@ -906,13 +907,14 @@ public class WalletPasscodeActivity extends BaseFragment {
     private Cipher sendingCipher;
     private boolean sendingFinished;
     private boolean failedToOpenFinished;
+    private boolean sendUnencrypted;
 
     public WalletPasscodeActivity(int type) {
         super();
         currentType = type;
     }
 
-    public WalletPasscodeActivity(boolean passcode, Cipher cipher, String fromAddress, String toAddress, long amount, String message, boolean hasWallet) {
+    public WalletPasscodeActivity(boolean passcode, Cipher cipher, String fromAddress, String toAddress, long amount, String message, boolean unecrypted, boolean hasWallet) {
         this(passcode ? TYPE_PASSCODE_SEND : TYPE_NO_PASSCODE_SEND);
         fromWallet = fromAddress;
         toWallet = toAddress;
@@ -920,6 +922,7 @@ public class WalletPasscodeActivity extends BaseFragment {
         sendingMessage = message;
         hasWalletInBack = hasWallet;
         sendingCipher = cipher;
+        sendUnencrypted = unecrypted;
         if (!passcode) {
             checkPasscode(null);
         }
@@ -1107,6 +1110,26 @@ public class WalletPasscodeActivity extends BaseFragment {
                     AlertsCreator.showSimpleAlert(this, LocaleController.getString("Wallet", R.string.Wallet), LocaleController.getString("ErrorOccurred", R.string.ErrorOccurred) + "\n" + (error != null ? error.message : text));
                 }
             });
+        } else if (currentType == TYPE_MEM_INPUT_KEY) {
+            if (getParentActivity() == null) {
+                return;
+            }
+            AlertDialog progressDialog = new AlertDialog(getParentActivity(), 3);
+            progressDialog.setCanCacnel(false);
+            progressDialog.show();
+            getTonController().fillMemInputKey(passcode, null, () -> {
+                passcodeView.onGoodPasscode(false);
+                progressDialog.dismiss();
+                finishFragment();
+            }, (text, error) -> {
+                allowEditing = true;
+                progressDialog.dismiss();
+                if ("PASSCODE_INVALID".equals(text)) {
+                    passcodeView.onWrongPasscode();
+                } else {
+                    AlertsCreator.showSimpleAlert(this, LocaleController.getString("Wallet", R.string.Wallet), LocaleController.getString("ErrorOccurred", R.string.ErrorOccurred) + "\n" + (error != null ? error.message : text));
+                }
+            });
         } else if (currentType == TYPE_PASSCODE_SEND || currentType == TYPE_NO_PASSCODE_SEND) {
             trySendGrams(passcode, null);
         }
@@ -1121,7 +1144,7 @@ public class WalletPasscodeActivity extends BaseFragment {
         } else {
             progressDialog = null;
         }
-        getTonController().sendGrams(passcode, sendingCipher, key, fromWallet, toWallet, sendingAmount, sendingMessage, () -> {
+        getTonController().sendGrams(passcode, sendingCipher, key, fromWallet, toWallet, sendingAmount, sendingMessage, sendUnencrypted, () -> {
             passcodeView.onGoodPasscode(true);
             if (progressDialog != null) {
                 progressDialog.dismiss();

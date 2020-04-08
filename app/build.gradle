@@ -13,15 +13,15 @@ configurations {
 
 dependencies {
     implementation 'androidx.core:core:1.1.0-beta01'
-    implementation 'androidx.customview:customview:1.1.0-alpha01'
-    implementation 'androidx.exifinterface:exifinterface:1.1.0-rc01'
+    implementation 'androidx.exifinterface:exifinterface:1.1.0'
 
     implementation 'com.google.android.gms:play-services-vision:16.2.0'
 }
 
 android {
     compileSdkVersion 29
-    buildToolsVersion '29.0.2'
+    buildToolsVersion '29.0.3'
+    ndkVersion "20.0.5594570"
 
     defaultConfig.applicationId = "org.telegram.messenger.wallet"
 
@@ -154,7 +154,7 @@ android {
         }
     }
 
-    defaultConfig.versionCode = 1000
+    defaultConfig.versionCode = 1001
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
@@ -187,8 +187,8 @@ android {
 
     defaultConfig {
         minSdkVersion 18
-        targetSdkVersion 27
-        versionName "1.0"
+        targetSdkVersion 28
+        versionName "1.1"
 
         vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
 

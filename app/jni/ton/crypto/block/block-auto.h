@@ -15,11 +15,18 @@
 // uses built-in type `uint`
 // uses built-in type `bits`
 // uses built-in type `int8`
+// uses built-in type `uint8`
+// uses built-in type `uint13`
 // uses built-in type `uint15`
+// uses built-in type `int16`
 // uses built-in type `uint16`
 // uses built-in type `int32`
 // uses built-in type `uint32`
+// uses built-in type `uint63`
+// uses built-in type `int64`
 // uses built-in type `uint64`
+// uses built-in type `uint256`
+// uses built-in type `int257`
 // uses built-in type `bits256`
 
 namespace block {
@@ -47,7 +54,7 @@ struct Unit final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return true;
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override {
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override {
     return true;
   }
   bool fetch_enum_to(vm::CellSlice& cs, char& value) const;
@@ -88,7 +95,7 @@ struct True final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return true;
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override {
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override {
     return true;
   }
   bool fetch_enum_to(vm::CellSlice& cs, char& value) const;
@@ -132,7 +139,7 @@ struct Bool final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(1);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override {
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override {
     return cs.advance(1);
   }
   bool fetch_enum_to(vm::CellSlice& cs, char& value) const;
@@ -181,7 +188,7 @@ struct BoolFalse final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(1);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool fetch_enum_to(vm::CellSlice& cs, char& value) const;
   bool store_enum_from(vm::CellBuilder& cb, int value) const;
   bool unpack(vm::CellSlice& cs, Record& data) const;
@@ -221,7 +228,7 @@ struct BoolTrue final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(1);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool fetch_enum_to(vm::CellSlice& cs, char& value) const;
   bool store_enum_from(vm::CellBuilder& cb, int value) const;
   bool unpack(vm::CellSlice& cs, Record& data) const;
@@ -263,7 +270,7 @@ struct Maybe final : TLB_Complex {
     Record_just(Ref<CellSlice> _value) : value(std::move(_value)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_nothing& data) const;
   bool unpack_nothing(vm::CellSlice& cs) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_nothing& data) const;
@@ -312,7 +319,7 @@ struct Either final : TLB_Complex {
     Record_right(Ref<CellSlice> _value) : value(std::move(_value)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_left& data) const;
   bool unpack_left(vm::CellSlice& cs, Ref<CellSlice>& value) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_left& data) const;
@@ -356,7 +363,7 @@ struct Both final : TLB_Complex {
     Record(Ref<CellSlice> _first, Ref<CellSlice> _second) : first(std::move(_first)), second(std::move(_second)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_pair(vm::CellSlice& cs, Ref<CellSlice>& first, Ref<CellSlice>& second) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -394,7 +401,7 @@ struct Bit final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(1);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override {
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override {
     return cs.advance(1);
   }
   bool unpack(vm::CellSlice& cs, Record& data) const;
@@ -429,7 +436,7 @@ struct Hashmap final : TLB_Complex {
   Hashmap(int m, const TLB& X) : m_(m), X_(X) {}
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -473,7 +480,7 @@ struct HashmapNode final : TLB_Complex {
   };
   struct Record_hmn_fork;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_hmn_leaf& data) const;
   bool unpack_hmn_leaf(vm::CellSlice& cs, Ref<CellSlice>& value) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_hmn_leaf& data) const;
@@ -522,8 +529,8 @@ struct HmLabel final : TLB_Complex {
   struct Record_hml_same;
   bool skip(vm::CellSlice& cs) const override;
   bool skip(vm::CellSlice& cs, int& m_) const;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak, int& m_) const;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int *ops, vm::CellSlice& cs, bool weak, int& m_) const;
   bool fetch_to(vm::CellSlice& cs, Ref<vm::CellSlice>& res, int& m_) const;
   bool unpack(vm::CellSlice& cs, Record_hml_short& data, int& m_) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_hml_short& data, int& m_) const;
@@ -603,8 +610,8 @@ struct Unary final : TLB_Complex {
   };
   bool skip(vm::CellSlice& cs) const override;
   bool skip(vm::CellSlice& cs, int& m_) const;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak, int& m_) const;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int *ops, vm::CellSlice& cs, bool weak, int& m_) const;
   bool fetch_to(vm::CellSlice& cs, Ref<vm::CellSlice>& res, int& m_) const;
   bool unpack(vm::CellSlice& cs, Record_unary_zero& data, int& m_) const;
   bool unpack_unary_zero(vm::CellSlice& cs, int& m_) const;
@@ -656,7 +663,7 @@ struct HashmapE final : TLB_Complex {
     Record_hme_root(Ref<Cell> _root) : n(-1), root(std::move(_root)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_hme_empty& data) const;
   bool unpack_hme_empty(vm::CellSlice& cs) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_hme_empty& data) const;
@@ -700,7 +707,7 @@ struct BitstringSet final : TLB_Complex {
     Record(Ref<CellSlice> _x) : n(-1), x(std::move(_x)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_cons1(vm::CellSlice& cs, int& n, Ref<CellSlice>& x) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -731,7 +738,7 @@ struct HashmapAug final : TLB_Complex {
   HashmapAug(int m, const TLB& X, const TLB& Y) : m_(m), X_(X), Y_(Y) {}
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -776,7 +783,7 @@ struct HashmapAugNode final : TLB_Complex {
   };
   struct Record_ahmn_fork;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_ahmn_leaf& data) const;
   bool unpack_ahmn_leaf(vm::CellSlice& cs, Ref<CellSlice>& extra, Ref<CellSlice>& value) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_ahmn_leaf& data) const;
@@ -825,7 +832,7 @@ struct HashmapAugE final : TLB_Complex {
   };
   struct Record_ahme_root;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_ahme_empty& data) const;
   bool unpack_ahme_empty(vm::CellSlice& cs, Ref<CellSlice>& extra) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_ahme_empty& data) const;
@@ -873,7 +880,7 @@ struct VarHashmap final : TLB_Complex {
   VarHashmap(int m, const TLB& X) : m_(m), X_(X) {}
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -919,7 +926,7 @@ struct VarHashmapNode final : TLB_Complex {
   struct Record_vhmn_fork;
   struct Record_vhmn_cont;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_vhmn_leaf& data) const;
   bool unpack_vhmn_leaf(vm::CellSlice& cs, Ref<CellSlice>& value) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vhmn_leaf& data) const;
@@ -987,7 +994,7 @@ struct VarHashmapE final : TLB_Complex {
     Record_vhme_root(Ref<Cell> _root) : n(-1), root(std::move(_root)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_vhme_empty& data) const;
   bool unpack_vhme_empty(vm::CellSlice& cs) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vhme_empty& data) const;
@@ -1026,7 +1033,7 @@ struct PfxHashmap final : TLB_Complex {
   PfxHashmap(int m, const TLB& X) : m_(m), X_(X) {}
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -1070,7 +1077,7 @@ struct PfxHashmapNode final : TLB_Complex {
   };
   struct Record_phmn_fork;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_phmn_leaf& data) const;
   bool unpack_phmn_leaf(vm::CellSlice& cs, Ref<CellSlice>& value) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_phmn_leaf& data) const;
@@ -1127,7 +1134,7 @@ struct PfxHashmapE final : TLB_Complex {
     Record_phme_root(Ref<Cell> _root) : n(-1), root(std::move(_root)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_phme_empty& data) const;
   bool unpack_phme_empty(vm::CellSlice& cs) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_phme_empty& data) const;
@@ -1172,7 +1179,7 @@ struct MsgAddressExt final : TLB_Complex {
     Record_addr_extern(int _len, Ref<td::BitString> _external_address) : len(_len), external_address(std::move(_external_address)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_addr_none& data) const;
   bool unpack_addr_none(vm::CellSlice& cs) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_addr_none& data) const;
@@ -1216,7 +1223,7 @@ struct Anycast final : TLB_Complex {
     Record(int _depth, Ref<td::BitString> _rewrite_pfx) : depth(_depth), rewrite_pfx(std::move(_rewrite_pfx)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_anycast_info(vm::CellSlice& cs, int& depth, Ref<td::BitString>& rewrite_pfx) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -1248,7 +1255,7 @@ struct MsgAddressInt final : TLB_Complex {
   struct Record_addr_std;
   struct Record_addr_var;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_addr_std& data) const;
   bool unpack_addr_std(vm::CellSlice& cs, Ref<CellSlice>& anycast, int& workchain_id, td::BitArray<256>& address) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_addr_std& data) const;
@@ -1312,7 +1319,7 @@ struct MsgAddress final : TLB_Complex {
     Record_cons2(Ref<CellSlice> _x) : x(std::move(_x)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_cons1& data) const;
   bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& x) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_cons1& data) const;
@@ -1352,7 +1359,7 @@ struct VarUInteger final : TLB_Complex {
   VarUInteger(int m) : m_(m) {}
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_var_uint(vm::CellSlice& cs, int& n, int& len, RefInt256& value) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -1391,7 +1398,7 @@ struct VarInteger final : TLB_Complex {
   VarInteger(int m) : m_(m) {}
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_var_int(vm::CellSlice& cs, int& n, int& len, RefInt256& value) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -1433,7 +1440,7 @@ struct Grams final : TLB_Complex {
     Record(Ref<CellSlice> _amount) : amount(std::move(_amount)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_nanograms(vm::CellSlice& cs, Ref<CellSlice>& amount) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -1468,7 +1475,7 @@ struct ExtraCurrencyCollection final : TLB_Complex {
     Record(Ref<CellSlice> _dict) : dict(std::move(_dict)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_extra_currencies(vm::CellSlice& cs, Ref<CellSlice>& dict) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -1504,7 +1511,7 @@ struct CurrencyCollection final : TLB_Complex {
     Record(Ref<CellSlice> _grams, Ref<CellSlice> _other) : grams(std::move(_grams)), other(std::move(_other)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_currencies(vm::CellSlice& cs, Ref<CellSlice>& grams, Ref<CellSlice>& other) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -1537,7 +1544,7 @@ struct CommonMsgInfo final : TLB_Complex {
   struct Record_ext_in_msg_info;
   struct Record_ext_out_msg_info;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_int_msg_info& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_int_msg_info& data) const;
   bool pack(vm::CellBuilder& cb, const Record_int_msg_info& data) const;
@@ -1612,7 +1619,7 @@ struct CommonMsgInfoRelaxed final : TLB_Complex {
   struct Record_int_msg_info;
   struct Record_ext_out_msg_info;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_int_msg_info& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_int_msg_info& data) const;
   bool pack(vm::CellBuilder& cb, const Record_int_msg_info& data) const;
@@ -1679,7 +1686,7 @@ struct TickTock final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(2);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override {
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override {
     return cs.advance(2);
   }
   bool unpack(vm::CellSlice& cs, Record& data) const;
@@ -1711,7 +1718,7 @@ struct StateInit final : TLB_Complex {
   static constexpr int cons_len_exact = 0;
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -1759,7 +1766,7 @@ struct SimpleLib final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance_ext(0x10001);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_simple_lib(vm::CellSlice& cs, bool& public1, Ref<Cell>& root) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -1791,7 +1798,7 @@ struct Message final : TLB_Complex {
   Message(const TLB& X) : X_(X) {}
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_message(vm::CellSlice& cs, Ref<CellSlice>& info, Ref<CellSlice>& init, Ref<CellSlice>& body) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -1830,7 +1837,7 @@ struct MessageRelaxed final : TLB_Complex {
   MessageRelaxed(const TLB& X) : X_(X) {}
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_message(vm::CellSlice& cs, Ref<CellSlice>& info, Ref<CellSlice>& init, Ref<CellSlice>& body) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -1857,6 +1864,41 @@ struct MessageRelaxed::Record {
   Record() = default;
   Record(Ref<CellSlice> _info, Ref<CellSlice> _init, Ref<CellSlice> _body) : info(std::move(_info)), init(std::move(_init)), body(std::move(_body)) {}
 };
+
+//
+// headers for type `MessageAny`
+//
+
+struct MessageAny final : TLB_Complex {
+  enum { cons1 };
+  static constexpr int cons_len_exact = 0;
+  struct Record {
+    typedef MessageAny type_class;
+    Ref<CellSlice> x;  	// Message Any
+    Record() = default;
+    Record(Ref<CellSlice> _x) : x(std::move(_x)) {}
+  };
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& x) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool cell_unpack_cons1(Ref<vm::Cell> cell_ref, Ref<CellSlice>& x) const;
+  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool pack_cons1(vm::CellBuilder& cb, Ref<CellSlice> x) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool cell_pack_cons1(Ref<vm::Cell>& cell_ref, Ref<CellSlice> x) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "MessageAny";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return 0;
+  }
+};
+
+extern const MessageAny t_MessageAny;
 
 //
 // headers for type `IntermediateAddress`
@@ -1887,7 +1929,7 @@ struct IntermediateAddress final : TLB_Complex {
     Record_interm_addr_ext(int _workchain_id, unsigned long long _addr_pfx) : workchain_id(_workchain_id), addr_pfx(_addr_pfx) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_interm_addr_regular& data) const;
   bool unpack_interm_addr_regular(vm::CellSlice& cs, int& use_dest_bits) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_interm_addr_regular& data) const;
@@ -1934,7 +1976,7 @@ struct MsgEnvelope final : TLB_Complex {
   static constexpr unsigned char cons_tag[1] = { 4 };
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -1983,7 +2025,7 @@ struct InMsg final : TLB_Complex {
   struct Record_msg_discard_fin;
   struct Record_msg_discard_tr;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_msg_import_ext& data) const;
   bool unpack_msg_import_ext(vm::CellSlice& cs, Ref<Cell>& msg, Ref<Cell>& transaction) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_msg_import_ext& data) const;
@@ -2115,7 +2157,7 @@ struct ImportFees final : TLB_Complex {
     Record(Ref<CellSlice> _fees_collected, Ref<CellSlice> _value_imported) : fees_collected(std::move(_fees_collected)), value_imported(std::move(_value_imported)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_import_fees(vm::CellSlice& cs, Ref<CellSlice>& fees_collected, Ref<CellSlice>& value_imported) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -2150,7 +2192,7 @@ struct InMsgDescr final : TLB_Complex {
     Record(Ref<CellSlice> _x) : x(std::move(_x)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& x) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -2176,9 +2218,9 @@ extern const InMsgDescr t_InMsgDescr;
 //
 
 struct OutMsg final : TLB_Complex {
-  enum { msg_export_ext, msg_export_new, msg_export_imm, msg_export_tr, msg_export_deq_imm, msg_export_deq, msg_export_tr_req };
-  static constexpr int cons_len_exact = 3;
-  static constexpr unsigned char cons_tag[7] = { 0, 1, 2, 3, 4, 6, 7 };
+  enum { msg_export_ext, msg_export_new, msg_export_imm, msg_export_tr, msg_export_deq_imm, msg_export_deq, msg_export_deq_short, msg_export_tr_req };
+  static constexpr char cons_len[8] = { 3, 3, 3, 3, 3, 4, 4, 3 };
+  static constexpr unsigned char cons_tag[8] = { 0, 1, 2, 3, 4, 12, 13, 7 };
   struct Record_msg_export_ext {
     typedef OutMsg type_class;
     Ref<Cell> msg;  	// msg : ^(Message Any)
@@ -2204,10 +2246,11 @@ struct OutMsg final : TLB_Complex {
   struct Record_msg_export_deq {
     typedef OutMsg type_class;
     Ref<Cell> out_msg;  	// out_msg : ^MsgEnvelope
-    unsigned long long import_block_lt;  	// import_block_lt : uint64
+    long long import_block_lt;  	// import_block_lt : uint63
     Record_msg_export_deq() = default;
-    Record_msg_export_deq(Ref<Cell> _out_msg, unsigned long long _import_block_lt) : out_msg(std::move(_out_msg)), import_block_lt(_import_block_lt) {}
+    Record_msg_export_deq(Ref<Cell> _out_msg, long long _import_block_lt) : out_msg(std::move(_out_msg)), import_block_lt(_import_block_lt) {}
   };
+  struct Record_msg_export_deq_short;
   struct Record_msg_export_tr_req {
     typedef OutMsg type_class;
     Ref<Cell> out_msg;  	// out_msg : ^MsgEnvelope
@@ -2223,7 +2266,7 @@ struct OutMsg final : TLB_Complex {
     Record_msg_export_deq_imm(Ref<Cell> _out_msg, Ref<Cell> _reimport) : out_msg(std::move(_out_msg)), reimport(std::move(_reimport)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_msg_export_ext& data) const;
   bool unpack_msg_export_ext(vm::CellSlice& cs, Ref<Cell>& msg, Ref<Cell>& transaction) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_msg_export_ext& data) const;
@@ -2257,13 +2300,17 @@ struct OutMsg final : TLB_Complex {
   bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_msg_export_tr& data) const;
   bool cell_pack_msg_export_tr(Ref<vm::Cell>& cell_ref, Ref<Cell> out_msg, Ref<Cell> imported) const;
   bool unpack(vm::CellSlice& cs, Record_msg_export_deq& data) const;
-  bool unpack_msg_export_deq(vm::CellSlice& cs, Ref<Cell>& out_msg, unsigned long long& import_block_lt) const;
+  bool unpack_msg_export_deq(vm::CellSlice& cs, Ref<Cell>& out_msg, long long& import_block_lt) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_msg_export_deq& data) const;
-  bool cell_unpack_msg_export_deq(Ref<vm::Cell> cell_ref, Ref<Cell>& out_msg, unsigned long long& import_block_lt) const;
+  bool cell_unpack_msg_export_deq(Ref<vm::Cell> cell_ref, Ref<Cell>& out_msg, long long& import_block_lt) const;
   bool pack(vm::CellBuilder& cb, const Record_msg_export_deq& data) const;
-  bool pack_msg_export_deq(vm::CellBuilder& cb, Ref<Cell> out_msg, unsigned long long import_block_lt) const;
+  bool pack_msg_export_deq(vm::CellBuilder& cb, Ref<Cell> out_msg, long long import_block_lt) const;
   bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_msg_export_deq& data) const;
-  bool cell_pack_msg_export_deq(Ref<vm::Cell>& cell_ref, Ref<Cell> out_msg, unsigned long long import_block_lt) const;
+  bool cell_pack_msg_export_deq(Ref<vm::Cell>& cell_ref, Ref<Cell> out_msg, long long import_block_lt) const;
+  bool unpack(vm::CellSlice& cs, Record_msg_export_deq_short& data) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_msg_export_deq_short& data) const;
+  bool pack(vm::CellBuilder& cb, const Record_msg_export_deq_short& data) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_msg_export_deq_short& data) const;
   bool unpack(vm::CellSlice& cs, Record_msg_export_tr_req& data) const;
   bool unpack_msg_export_tr_req(vm::CellSlice& cs, Ref<Cell>& out_msg, Ref<Cell>& imported) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_msg_export_tr_req& data) const;
@@ -2286,7 +2333,7 @@ struct OutMsg final : TLB_Complex {
   }
   int check_tag(const vm::CellSlice& cs) const override;
   int get_tag(const vm::CellSlice& cs) const override {
-    return cs.bselect(3, 0xdf);
+    return cs.bselect_ext(4, 0x7155);
   }
 };
 
@@ -2297,6 +2344,16 @@ struct OutMsg::Record_msg_export_imm {
   Ref<Cell> reimport;  	// reimport : ^InMsg
   Record_msg_export_imm() = default;
   Record_msg_export_imm(Ref<Cell> _out_msg, Ref<Cell> _transaction, Ref<Cell> _reimport) : out_msg(std::move(_out_msg)), transaction(std::move(_transaction)), reimport(std::move(_reimport)) {}
+};
+
+struct OutMsg::Record_msg_export_deq_short {
+  typedef OutMsg type_class;
+  td::BitArray<256> msg_env_hash;  	// msg_env_hash : bits256
+  int next_workchain;  	// next_workchain : int32
+  unsigned long long next_addr_pfx;  	// next_addr_pfx : uint64
+  unsigned long long import_block_lt;  	// import_block_lt : uint64
+  Record_msg_export_deq_short() = default;
+  Record_msg_export_deq_short(const td::BitArray<256>& _msg_env_hash, int _next_workchain, unsigned long long _next_addr_pfx, unsigned long long _import_block_lt) : msg_env_hash(_msg_env_hash), next_workchain(_next_workchain), next_addr_pfx(_next_addr_pfx), import_block_lt(_import_block_lt) {}
 };
 
 extern const OutMsg t_OutMsg;
@@ -2321,7 +2378,7 @@ struct EnqueuedMsg final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance_ext(0x10040);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_cons1(vm::CellSlice& cs, unsigned long long& enqueued_lt, Ref<Cell>& out_msg) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -2356,7 +2413,7 @@ struct OutMsgDescr final : TLB_Complex {
     Record(Ref<CellSlice> _x) : x(std::move(_x)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& x) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -2391,7 +2448,7 @@ struct OutMsgQueue final : TLB_Complex {
     Record(Ref<CellSlice> _x) : x(std::move(_x)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& x) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -2432,7 +2489,7 @@ struct ProcessedUpto final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(320);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override {
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override {
     return cs.advance(320);
   }
   bool unpack(vm::CellSlice& cs, Record& data) const;
@@ -2469,7 +2526,7 @@ struct ProcessedInfo final : TLB_Complex {
     Record(Ref<CellSlice> _x) : x(std::move(_x)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& x) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -2509,7 +2566,7 @@ struct IhrPendingSince final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(64);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override {
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override {
     return cs.advance(64);
   }
   bool unpack(vm::CellSlice& cs, Record& data) const;
@@ -2546,7 +2603,7 @@ struct IhrPendingInfo final : TLB_Complex {
     Record(Ref<CellSlice> _x) : x(std::move(_x)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& x) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -2576,7 +2633,7 @@ struct OutMsgQueueInfo final : TLB_Complex {
   static constexpr int cons_len_exact = 0;
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& out_queue, Ref<CellSlice>& proc_info, Ref<CellSlice>& ihr_pending) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -2615,7 +2672,7 @@ struct StorageUsed final : TLB_Complex {
   static constexpr int cons_len_exact = 0;
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_storage_used(vm::CellSlice& cs, Ref<CellSlice>& cells, Ref<CellSlice>& bits, Ref<CellSlice>& public_cells) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -2660,7 +2717,7 @@ struct StorageUsedShort final : TLB_Complex {
     Record(Ref<CellSlice> _cells, Ref<CellSlice> _bits) : cells(std::move(_cells)), bits(std::move(_bits)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_storage_used_short(vm::CellSlice& cs, Ref<CellSlice>& cells, Ref<CellSlice>& bits) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -2690,7 +2747,7 @@ struct StorageInfo final : TLB_Complex {
   static constexpr int cons_len_exact = 0;
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_storage_info(vm::CellSlice& cs, Ref<CellSlice>& used, unsigned& last_paid, Ref<CellSlice>& due_payment) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -2732,7 +2789,7 @@ struct Account final : TLB_Complex {
   };
   struct Record_account;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_account_none& data) const;
   bool unpack_account_none(vm::CellSlice& cs) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_account_none& data) const;
@@ -2779,7 +2836,7 @@ struct AccountStorage final : TLB_Complex {
   static constexpr int cons_len_exact = 0;
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_account_storage(vm::CellSlice& cs, unsigned long long& last_trans_lt, Ref<CellSlice>& balance, Ref<CellSlice>& state) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -2833,7 +2890,7 @@ struct AccountState final : TLB_Complex {
     Record_account_frozen(const td::BitArray<256>& _state_hash) : state_hash(_state_hash) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_account_uninit& data) const;
   bool unpack_account_uninit(vm::CellSlice& cs) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_account_uninit& data) const;
@@ -2895,7 +2952,7 @@ struct AccountStatus final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(2);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override {
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override {
     return cs.advance(2);
   }
   bool fetch_enum_to(vm::CellSlice& cs, char& value) const;
@@ -2958,7 +3015,7 @@ struct ShardAccount final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance_ext(0x10140);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_account_descr(vm::CellSlice& cs, Ref<Cell>& account, td::BitArray<256>& last_trans_hash, unsigned long long& last_trans_lt) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -3003,7 +3060,7 @@ struct DepthBalanceInfo final : TLB_Complex {
     Record(int _split_depth, Ref<CellSlice> _balance) : split_depth(_split_depth), balance(std::move(_balance)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_depth_balance(vm::CellSlice& cs, int& split_depth, Ref<CellSlice>& balance) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -3038,7 +3095,7 @@ struct ShardAccounts final : TLB_Complex {
     Record(Ref<CellSlice> _x) : x(std::move(_x)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& x) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -3074,7 +3131,7 @@ struct Transaction_aux final : TLB_Complex {
     Record(Ref<CellSlice> _in_msg, Ref<CellSlice> _out_msgs) : in_msg(std::move(_in_msg)), out_msgs(std::move(_out_msgs)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& in_msg, Ref<CellSlice>& out_msgs) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -3105,7 +3162,7 @@ struct Transaction final : TLB_Complex {
   static constexpr unsigned char cons_tag[1] = { 7 };
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -3160,7 +3217,7 @@ struct MERKLE_UPDATE final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance_ext(0x20208);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -3208,7 +3265,7 @@ struct HASH_UPDATE final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(520);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_update_hashes(vm::CellSlice& cs, td::BitArray<256>& old_hash, td::BitArray<256>& new_hash) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -3237,7 +3294,7 @@ struct AccountBlock final : TLB_Complex {
   static constexpr unsigned char cons_tag[1] = { 5 };
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_acc_trans(vm::CellSlice& cs, td::BitArray<256>& account_addr, Ref<CellSlice>& transactions, Ref<Cell>& state_update) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -3281,7 +3338,7 @@ struct ShardAccountBlocks final : TLB_Complex {
     Record(Ref<CellSlice> _x) : x(std::move(_x)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& x) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -3311,7 +3368,7 @@ struct TrStoragePhase final : TLB_Complex {
   static constexpr int cons_len_exact = 0;
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_tr_phase_storage(vm::CellSlice& cs, Ref<CellSlice>& storage_fees_collected, Ref<CellSlice>& storage_fees_due, char& status_change) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -3359,7 +3416,7 @@ struct AccStatusChange final : TLB_Complex {
     typedef AccStatusChange type_class;
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool fetch_enum_to(vm::CellSlice& cs, char& value) const;
   bool store_enum_from(vm::CellBuilder& cb, int value) const;
   bool unpack(vm::CellSlice& cs, Record_acst_unchanged& data) const;
@@ -3413,7 +3470,7 @@ struct TrCreditPhase final : TLB_Complex {
     Record(Ref<CellSlice> _due_fees_collected, Ref<CellSlice> _credit) : due_fees_collected(std::move(_due_fees_collected)), credit(std::move(_credit)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_tr_phase_credit(vm::CellSlice& cs, Ref<CellSlice>& due_fees_collected, Ref<CellSlice>& credit) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -3443,7 +3500,7 @@ struct TrComputePhase_aux final : TLB_Complex {
   static constexpr int cons_len_exact = 0;
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -3490,7 +3547,7 @@ struct TrComputePhase final : TLB_Complex {
   };
   struct Record_tr_phase_compute_vm;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_tr_phase_compute_skipped& data) const;
   bool unpack_tr_phase_compute_skipped(vm::CellSlice& cs, char& reason) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_tr_phase_compute_skipped& data) const;
@@ -3548,7 +3605,7 @@ struct ComputeSkipReason final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(2);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool fetch_enum_to(vm::CellSlice& cs, char& value) const;
   bool store_enum_from(vm::CellBuilder& cb, int value) const;
   bool unpack(vm::CellSlice& cs, Record_cskip_no_state& data) const;
@@ -3596,7 +3653,7 @@ struct TrActionPhase final : TLB_Complex {
   static constexpr int cons_len_exact = 0;
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -3653,7 +3710,7 @@ struct TrBouncePhase final : TLB_Complex {
   };
   struct Record_tr_phase_bounce_ok;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_tr_phase_bounce_negfunds& data) const;
   bool unpack_tr_phase_bounce_negfunds(vm::CellSlice& cs) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_tr_phase_bounce_negfunds& data) const;
@@ -3713,7 +3770,7 @@ struct SplitMergeInfo final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(524);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override {
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override {
     return cs.advance(524);
   }
   bool unpack(vm::CellSlice& cs, Record& data) const;
@@ -3763,7 +3820,7 @@ struct TransactionDescr final : TLB_Complex {
   struct Record_trans_merge_prepare;
   struct Record_trans_merge_install;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_trans_ord& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_trans_ord& data) const;
   bool pack(vm::CellBuilder& cb, const Record_trans_ord& data) const;
@@ -3896,7 +3953,7 @@ struct SmartContractInfo final : TLB_Complex {
   static constexpr unsigned cons_tag[1] = { 0x76ef1ea };
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -3941,7 +3998,7 @@ struct OutList final : TLB_Complex {
   };
   struct Record_out_list;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_out_list_empty& data) const;
   bool unpack_out_list_empty(vm::CellSlice& cs) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_out_list_empty& data) const;
@@ -3976,13 +4033,62 @@ struct OutList::Record_out_list {
 };
 
 //
+// headers for type `LibRef`
+//
+
+struct LibRef final : TLB_Complex {
+  enum { libref_hash, libref_ref };
+  static constexpr int cons_len_exact = 1;
+  struct Record_libref_hash {
+    typedef LibRef type_class;
+    td::BitArray<256> lib_hash;  	// lib_hash : bits256
+    Record_libref_hash() = default;
+    Record_libref_hash(const td::BitArray<256>& _lib_hash) : lib_hash(_lib_hash) {}
+  };
+  struct Record_libref_ref {
+    typedef LibRef type_class;
+    Ref<Cell> library;  	// library : ^Cell
+    Record_libref_ref() = default;
+    Record_libref_ref(Ref<Cell> _library) : library(std::move(_library)) {}
+  };
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record_libref_hash& data) const;
+  bool unpack_libref_hash(vm::CellSlice& cs, td::BitArray<256>& lib_hash) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_libref_hash& data) const;
+  bool cell_unpack_libref_hash(Ref<vm::Cell> cell_ref, td::BitArray<256>& lib_hash) const;
+  bool pack(vm::CellBuilder& cb, const Record_libref_hash& data) const;
+  bool pack_libref_hash(vm::CellBuilder& cb, td::BitArray<256> lib_hash) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_libref_hash& data) const;
+  bool cell_pack_libref_hash(Ref<vm::Cell>& cell_ref, td::BitArray<256> lib_hash) const;
+  bool unpack(vm::CellSlice& cs, Record_libref_ref& data) const;
+  bool unpack_libref_ref(vm::CellSlice& cs, Ref<Cell>& library) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_libref_ref& data) const;
+  bool cell_unpack_libref_ref(Ref<vm::Cell> cell_ref, Ref<Cell>& library) const;
+  bool pack(vm::CellBuilder& cb, const Record_libref_ref& data) const;
+  bool pack_libref_ref(vm::CellBuilder& cb, Ref<Cell> library) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_libref_ref& data) const;
+  bool cell_pack_libref_ref(Ref<vm::Cell>& cell_ref, Ref<Cell> library) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "LibRef";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return (int)cs.prefetch_ulong(1);
+  }
+};
+
+extern const LibRef t_LibRef;
+
+//
 // headers for type `OutAction`
 //
 
 struct OutAction final : TLB_Complex {
-  enum { action_send_msg, action_reserve_currency, action_set_code };
+  enum { action_send_msg, action_change_library, action_reserve_currency, action_set_code };
   static constexpr int cons_len_exact = 32;
-  static constexpr unsigned cons_tag[3] = { 0xec3c86d, 0x36e6b809, 0xad4de08eU };
+  static constexpr unsigned cons_tag[4] = { 0xec3c86d, 0x26fa1dd4, 0x36e6b809, 0xad4de08eU };
   struct Record_action_send_msg {
     typedef OutAction type_class;
     int mode;  	// mode : ## 8
@@ -4003,8 +4109,15 @@ struct OutAction final : TLB_Complex {
     Record_action_reserve_currency() = default;
     Record_action_reserve_currency(int _mode, Ref<CellSlice> _currency) : mode(_mode), currency(std::move(_currency)) {}
   };
+  struct Record_action_change_library {
+    typedef OutAction type_class;
+    int mode;  	// mode : ## 7
+    Ref<CellSlice> libref;  	// libref : LibRef
+    Record_action_change_library() = default;
+    Record_action_change_library(int _mode, Ref<CellSlice> _libref) : mode(_mode), libref(std::move(_libref)) {}
+  };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_action_send_msg& data) const;
   bool unpack_action_send_msg(vm::CellSlice& cs, int& mode, Ref<Cell>& out_msg) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_action_send_msg& data) const;
@@ -4029,13 +4142,21 @@ struct OutAction final : TLB_Complex {
   bool pack_action_reserve_currency(vm::CellBuilder& cb, int mode, Ref<CellSlice> currency) const;
   bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_action_reserve_currency& data) const;
   bool cell_pack_action_reserve_currency(Ref<vm::Cell>& cell_ref, int mode, Ref<CellSlice> currency) const;
+  bool unpack(vm::CellSlice& cs, Record_action_change_library& data) const;
+  bool unpack_action_change_library(vm::CellSlice& cs, int& mode, Ref<CellSlice>& libref) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_action_change_library& data) const;
+  bool cell_unpack_action_change_library(Ref<vm::Cell> cell_ref, int& mode, Ref<CellSlice>& libref) const;
+  bool pack(vm::CellBuilder& cb, const Record_action_change_library& data) const;
+  bool pack_action_change_library(vm::CellBuilder& cb, int mode, Ref<CellSlice> libref) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_action_change_library& data) const;
+  bool cell_pack_action_change_library(Ref<vm::Cell>& cell_ref, int mode, Ref<CellSlice> libref) const;
   bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
   std::ostream& print_type(std::ostream& os) const override {
     return os << "OutAction";
   }
   int check_tag(const vm::CellSlice& cs) const override;
   int get_tag(const vm::CellSlice& cs) const override {
-    return cs.bselect(3, 0x23);
+    return cs.bselect(4, 0x40d);
   }
 };
 
@@ -4056,7 +4177,7 @@ struct OutListNode final : TLB_Complex {
     Record(Ref<Cell> _prev, Ref<CellSlice> _action) : prev(std::move(_prev)), action(std::move(_action)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_out_list_node(vm::CellSlice& cs, Ref<Cell>& prev, Ref<CellSlice>& action) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -4091,7 +4212,7 @@ struct ShardIdent final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(104);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_shard_ident(vm::CellSlice& cs, int& shard_pfx_bits, int& workchain_id, unsigned long long& shard_prefix) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -4135,7 +4256,7 @@ struct ExtBlkRef final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(608);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override {
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override {
     return cs.advance(608);
   }
   bool unpack(vm::CellSlice& cs, Record& data) const;
@@ -4178,7 +4299,7 @@ struct BlockIdExt final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(648);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -4224,7 +4345,7 @@ struct BlkMasterInfo final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(608);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override {
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override {
     return cs.advance(608);
   }
   bool unpack(vm::CellSlice& cs, Record& data) const;
@@ -4256,7 +4377,7 @@ struct ShardStateUnsplit_aux final : TLB_Complex {
   static constexpr int cons_len_exact = 0;
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -4295,7 +4416,7 @@ struct ShardStateUnsplit final : TLB_Complex {
   static constexpr unsigned cons_tag[1] = { 0x9023afe2U };
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -4352,7 +4473,7 @@ struct ShardState final : TLB_Complex {
     Record_split_state(Ref<Cell> _left, Ref<Cell> _right) : left(std::move(_left)), right(std::move(_right)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_cons1& data) const;
   bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& x) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_cons1& data) const;
@@ -4396,7 +4517,7 @@ struct LibDescr final : TLB_Complex {
     Record(Ref<Cell> _lib, Ref<CellSlice> _publishers) : lib(std::move(_lib)), publishers(std::move(_publishers)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_shared_lib_descr(vm::CellSlice& cs, Ref<Cell>& lib, Ref<CellSlice>& publishers) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -4427,7 +4548,7 @@ struct BlockInfo final : TLB_Complex {
   static constexpr unsigned cons_tag[1] = { 0x9bc7a987U };
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -4464,11 +4585,12 @@ struct BlockInfo::Record {
   unsigned gen_catchain_seqno;  	// gen_catchain_seqno : uint32
   unsigned min_ref_mc_seqno;  	// min_ref_mc_seqno : uint32
   unsigned prev_key_block_seqno;  	// prev_key_block_seqno : uint32
+  Ref<CellSlice> gen_software;  	// gen_software : flags.0?GlobalVersion
   Ref<Cell> master_ref;  	// master_ref : not_master?^BlkMasterInfo
   Ref<Cell> prev_ref;  	// prev_ref : ^(BlkPrevInfo after_merge)
   Ref<Cell> prev_vert_ref;  	// prev_vert_ref : vert_seqno_incr?^(BlkPrevInfo 0)
   Record() = default;
-  Record(unsigned _version, bool _not_master, bool _after_merge, bool _before_split, bool _after_split, bool _want_split, bool _want_merge, bool _key_block, bool _vert_seqno_incr, int _flags, int _seq_no, int _vert_seq_no, Ref<CellSlice> _shard, unsigned _gen_utime, unsigned long long _start_lt, unsigned long long _end_lt, unsigned _gen_validator_list_hash_short, unsigned _gen_catchain_seqno, unsigned _min_ref_mc_seqno, unsigned _prev_key_block_seqno, Ref<Cell> _master_ref, Ref<Cell> _prev_ref, Ref<Cell> _prev_vert_ref) : version(_version), not_master(_not_master), after_merge(_after_merge), before_split(_before_split), after_split(_after_split), want_split(_want_split), want_merge(_want_merge), key_block(_key_block), vert_seqno_incr(_vert_seqno_incr), flags(_flags), seq_no(_seq_no), vert_seq_no(_vert_seq_no), shard(std::move(_shard)), gen_utime(_gen_utime), start_lt(_start_lt), end_lt(_end_lt), gen_validator_list_hash_short(_gen_validator_list_hash_short), gen_catchain_seqno(_gen_catchain_seqno), min_ref_mc_seqno(_min_ref_mc_seqno), prev_key_block_seqno(_prev_key_block_seqno), master_ref(std::move(_master_ref)), prev_ref(std::move(_prev_ref)), prev_vert_ref(std::move(_prev_vert_ref)) {}
+  Record(unsigned _version, bool _not_master, bool _after_merge, bool _before_split, bool _after_split, bool _want_split, bool _want_merge, bool _key_block, bool _vert_seqno_incr, int _flags, int _seq_no, int _vert_seq_no, Ref<CellSlice> _shard, unsigned _gen_utime, unsigned long long _start_lt, unsigned long long _end_lt, unsigned _gen_validator_list_hash_short, unsigned _gen_catchain_seqno, unsigned _min_ref_mc_seqno, unsigned _prev_key_block_seqno, Ref<CellSlice> _gen_software, Ref<Cell> _master_ref, Ref<Cell> _prev_ref, Ref<Cell> _prev_vert_ref) : version(_version), not_master(_not_master), after_merge(_after_merge), before_split(_before_split), after_split(_after_split), want_split(_want_split), want_merge(_want_merge), key_block(_key_block), vert_seqno_incr(_vert_seqno_incr), flags(_flags), seq_no(_seq_no), vert_seq_no(_vert_seq_no), shard(std::move(_shard)), gen_utime(_gen_utime), start_lt(_start_lt), end_lt(_end_lt), gen_validator_list_hash_short(_gen_validator_list_hash_short), gen_catchain_seqno(_gen_catchain_seqno), min_ref_mc_seqno(_min_ref_mc_seqno), prev_key_block_seqno(_prev_key_block_seqno), gen_software(std::move(_gen_software)), master_ref(std::move(_master_ref)), prev_ref(std::move(_prev_ref)), prev_vert_ref(std::move(_prev_vert_ref)) {}
 };
 
 extern const BlockInfo t_BlockInfo;
@@ -4496,7 +4618,7 @@ struct BlkPrevInfo final : TLB_Complex {
     Record_prev_blks_info(Ref<Cell> _prev1, Ref<Cell> _prev2) : prev1(std::move(_prev1)), prev2(std::move(_prev2)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_prev_blk_info& data) const;
   bool unpack_prev_blk_info(vm::CellSlice& cs, Ref<CellSlice>& prev) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_prev_blk_info& data) const;
@@ -4536,7 +4658,7 @@ struct Block final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance_ext(0x40040);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -4574,7 +4696,7 @@ struct BlockExtra final : TLB_Complex {
   static constexpr unsigned cons_tag[1] = { 0x4a33f6fd };
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -4612,7 +4734,7 @@ struct ValueFlow_aux final : TLB_Complex {
   static constexpr int cons_len_exact = 0;
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -4648,7 +4770,7 @@ struct ValueFlow_aux1 final : TLB_Complex {
   static constexpr int cons_len_exact = 0;
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -4685,7 +4807,7 @@ struct ValueFlow final : TLB_Complex {
   static constexpr unsigned cons_tag[1] = { 0xb8e48dfbU };
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -4734,7 +4856,7 @@ struct BinTree final : TLB_Complex {
     Record_bt_fork(Ref<Cell> _left, Ref<Cell> _right) : left(std::move(_left)), right(std::move(_right)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_bt_leaf& data) const;
   bool unpack_bt_leaf(vm::CellSlice& cs, Ref<CellSlice>& leaf) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_bt_leaf& data) const;
@@ -4787,7 +4909,7 @@ struct FutureSplitMerge final : TLB_Complex {
     Record_fsm_merge(unsigned _merge_utime, unsigned _interval) : merge_utime(_merge_utime), interval(_interval) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_fsm_none& data) const;
   bool unpack_fsm_none(vm::CellSlice& cs) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_fsm_none& data) const;
@@ -4825,23 +4947,32 @@ struct FutureSplitMerge final : TLB_Complex {
 extern const FutureSplitMerge t_FutureSplitMerge;
 
 //
-// headers for type `ShardDescr`
+// headers for auxiliary type `ShardDescr_aux`
 //
 
-struct ShardDescr final : TLB_Complex {
-  enum { shard_descr };
-  static constexpr int cons_len_exact = 4;
-  static constexpr unsigned char cons_tag[1] = { 11 };
-  struct Record;
+struct ShardDescr_aux final : TLB_Complex {
+  enum { cons1 };
+  static constexpr int cons_len_exact = 0;
+  struct Record {
+    typedef ShardDescr_aux type_class;
+    Ref<CellSlice> fees_collected;  	// fees_collected : CurrencyCollection
+    Ref<CellSlice> funds_created;  	// funds_created : CurrencyCollection
+    Record() = default;
+    Record(Ref<CellSlice> _fees_collected, Ref<CellSlice> _funds_created) : fees_collected(std::move(_fees_collected)), funds_created(std::move(_funds_created)) {}
+  };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& fees_collected, Ref<CellSlice>& funds_created) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool cell_unpack_cons1(Ref<vm::Cell> cell_ref, Ref<CellSlice>& fees_collected, Ref<CellSlice>& funds_created) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool pack_cons1(vm::CellBuilder& cb, Ref<CellSlice> fees_collected, Ref<CellSlice> funds_created) const;
   bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool cell_pack_cons1(Ref<vm::Cell>& cell_ref, Ref<CellSlice> fees_collected, Ref<CellSlice> funds_created) const;
   bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
   std::ostream& print_type(std::ostream& os) const override {
-    return os << "ShardDescr";
+    return os << "ShardDescr_aux";
   }
   int check_tag(const vm::CellSlice& cs) const override;
   int get_tag(const vm::CellSlice& cs) const override {
@@ -4849,7 +4980,39 @@ struct ShardDescr final : TLB_Complex {
   }
 };
 
-struct ShardDescr::Record {
+extern const ShardDescr_aux t_ShardDescr_aux;
+
+//
+// headers for type `ShardDescr`
+//
+
+struct ShardDescr final : TLB_Complex {
+  enum { shard_descr_new, shard_descr };
+  static constexpr int cons_len_exact = 4;
+  static constexpr unsigned char cons_tag[2] = { 10, 11 };
+  struct Record_shard_descr;
+  struct Record_shard_descr_new;
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record_shard_descr& data) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_shard_descr& data) const;
+  bool pack(vm::CellBuilder& cb, const Record_shard_descr& data) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_shard_descr& data) const;
+  bool unpack(vm::CellSlice& cs, Record_shard_descr_new& data) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_shard_descr_new& data) const;
+  bool pack(vm::CellBuilder& cb, const Record_shard_descr_new& data) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_shard_descr_new& data) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "ShardDescr";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return cs.bselect(4, 0xc00);
+  }
+};
+
+struct ShardDescr::Record_shard_descr {
   typedef ShardDescr type_class;
   unsigned seq_no;  	// seq_no : uint32
   unsigned reg_mc_seqno;  	// reg_mc_seqno : uint32
@@ -4870,8 +5033,32 @@ struct ShardDescr::Record {
   Ref<CellSlice> split_merge_at;  	// split_merge_at : FutureSplitMerge
   Ref<CellSlice> fees_collected;  	// fees_collected : CurrencyCollection
   Ref<CellSlice> funds_created;  	// funds_created : CurrencyCollection
-  Record() = default;
-  Record(unsigned _seq_no, unsigned _reg_mc_seqno, unsigned long long _start_lt, unsigned long long _end_lt, const td::BitArray<256>& _root_hash, const td::BitArray<256>& _file_hash, bool _before_split, bool _before_merge, bool _want_split, bool _want_merge, bool _nx_cc_updated, int _flags, unsigned _next_catchain_seqno, unsigned long long _next_validator_shard, unsigned _min_ref_mc_seqno, unsigned _gen_utime, Ref<CellSlice> _split_merge_at, Ref<CellSlice> _fees_collected, Ref<CellSlice> _funds_created) : seq_no(_seq_no), reg_mc_seqno(_reg_mc_seqno), start_lt(_start_lt), end_lt(_end_lt), root_hash(_root_hash), file_hash(_file_hash), before_split(_before_split), before_merge(_before_merge), want_split(_want_split), want_merge(_want_merge), nx_cc_updated(_nx_cc_updated), flags(_flags), next_catchain_seqno(_next_catchain_seqno), next_validator_shard(_next_validator_shard), min_ref_mc_seqno(_min_ref_mc_seqno), gen_utime(_gen_utime), split_merge_at(std::move(_split_merge_at)), fees_collected(std::move(_fees_collected)), funds_created(std::move(_funds_created)) {}
+  Record_shard_descr() = default;
+  Record_shard_descr(unsigned _seq_no, unsigned _reg_mc_seqno, unsigned long long _start_lt, unsigned long long _end_lt, const td::BitArray<256>& _root_hash, const td::BitArray<256>& _file_hash, bool _before_split, bool _before_merge, bool _want_split, bool _want_merge, bool _nx_cc_updated, int _flags, unsigned _next_catchain_seqno, unsigned long long _next_validator_shard, unsigned _min_ref_mc_seqno, unsigned _gen_utime, Ref<CellSlice> _split_merge_at, Ref<CellSlice> _fees_collected, Ref<CellSlice> _funds_created) : seq_no(_seq_no), reg_mc_seqno(_reg_mc_seqno), start_lt(_start_lt), end_lt(_end_lt), root_hash(_root_hash), file_hash(_file_hash), before_split(_before_split), before_merge(_before_merge), want_split(_want_split), want_merge(_want_merge), nx_cc_updated(_nx_cc_updated), flags(_flags), next_catchain_seqno(_next_catchain_seqno), next_validator_shard(_next_validator_shard), min_ref_mc_seqno(_min_ref_mc_seqno), gen_utime(_gen_utime), split_merge_at(std::move(_split_merge_at)), fees_collected(std::move(_fees_collected)), funds_created(std::move(_funds_created)) {}
+};
+
+struct ShardDescr::Record_shard_descr_new {
+  typedef ShardDescr type_class;
+  unsigned seq_no;  	// seq_no : uint32
+  unsigned reg_mc_seqno;  	// reg_mc_seqno : uint32
+  unsigned long long start_lt;  	// start_lt : uint64
+  unsigned long long end_lt;  	// end_lt : uint64
+  td::BitArray<256> root_hash;  	// root_hash : bits256
+  td::BitArray<256> file_hash;  	// file_hash : bits256
+  bool before_split;  	// before_split : Bool
+  bool before_merge;  	// before_merge : Bool
+  bool want_split;  	// want_split : Bool
+  bool want_merge;  	// want_merge : Bool
+  bool nx_cc_updated;  	// nx_cc_updated : Bool
+  int flags;  	// flags : ## 3
+  unsigned next_catchain_seqno;  	// next_catchain_seqno : uint32
+  unsigned long long next_validator_shard;  	// next_validator_shard : uint64
+  unsigned min_ref_mc_seqno;  	// min_ref_mc_seqno : uint32
+  unsigned gen_utime;  	// gen_utime : uint32
+  Ref<CellSlice> split_merge_at;  	// split_merge_at : FutureSplitMerge
+  ShardDescr_aux::Record r1;  	// ^[$_ fees_collected:CurrencyCollection funds_created:CurrencyCollection ]
+  Record_shard_descr_new() = default;
+  Record_shard_descr_new(unsigned _seq_no, unsigned _reg_mc_seqno, unsigned long long _start_lt, unsigned long long _end_lt, const td::BitArray<256>& _root_hash, const td::BitArray<256>& _file_hash, bool _before_split, bool _before_merge, bool _want_split, bool _want_merge, bool _nx_cc_updated, int _flags, unsigned _next_catchain_seqno, unsigned long long _next_validator_shard, unsigned _min_ref_mc_seqno, unsigned _gen_utime, Ref<CellSlice> _split_merge_at, const ShardDescr_aux::Record& _r1) : seq_no(_seq_no), reg_mc_seqno(_reg_mc_seqno), start_lt(_start_lt), end_lt(_end_lt), root_hash(_root_hash), file_hash(_file_hash), before_split(_before_split), before_merge(_before_merge), want_split(_want_split), want_merge(_want_merge), nx_cc_updated(_nx_cc_updated), flags(_flags), next_catchain_seqno(_next_catchain_seqno), next_validator_shard(_next_validator_shard), min_ref_mc_seqno(_min_ref_mc_seqno), gen_utime(_gen_utime), split_merge_at(std::move(_split_merge_at)), r1(_r1) {}
 };
 
 extern const ShardDescr t_ShardDescr;
@@ -4890,7 +5077,7 @@ struct ShardHashes final : TLB_Complex {
     Record(Ref<CellSlice> _x) : x(std::move(_x)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& x) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -4929,7 +5116,7 @@ struct BinTreeAug final : TLB_Complex {
   };
   struct Record_bta_fork;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_bta_leaf& data) const;
   bool unpack_bta_leaf(vm::CellSlice& cs, Ref<CellSlice>& extra, Ref<CellSlice>& leaf) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_bta_leaf& data) const;
@@ -4980,7 +5167,7 @@ struct ShardFeeCreated final : TLB_Complex {
     Record(Ref<CellSlice> _fees, Ref<CellSlice> _create) : fees(std::move(_fees)), create(std::move(_create)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& fees, Ref<CellSlice>& create) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -5015,7 +5202,7 @@ struct ShardFees final : TLB_Complex {
     Record(Ref<CellSlice> _x) : x(std::move(_x)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& x) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -5056,7 +5243,7 @@ struct ConfigParams final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance_ext(0x10100);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_cons1(vm::CellSlice& cs, td::BitArray<256>& config_addr, Ref<Cell>& config) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -5091,7 +5278,7 @@ struct ValidatorInfo final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(65);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override {
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override {
     return cs.advance(65);
   }
   bool unpack(vm::CellSlice& cs, Record& data) const;
@@ -5143,7 +5330,7 @@ struct ValidatorBaseInfo final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(64);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override {
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override {
     return cs.advance(64);
   }
   bool unpack(vm::CellSlice& cs, Record& data) const;
@@ -5186,7 +5373,7 @@ struct KeyMaxLt final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(65);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override {
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override {
     return cs.advance(65);
   }
   bool unpack(vm::CellSlice& cs, Record& data) const;
@@ -5229,7 +5416,7 @@ struct KeyExtBlkRef final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(609);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override {
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override {
     return cs.advance(609);
   }
   bool unpack(vm::CellSlice& cs, Record& data) const;
@@ -5266,7 +5453,7 @@ struct OldMcBlocksInfo final : TLB_Complex {
     Record(Ref<CellSlice> _x) : x(std::move(_x)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& x) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -5301,7 +5488,7 @@ struct Counters final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(224);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override {
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override {
     return cs.advance(224);
   }
   bool unpack(vm::CellSlice& cs, Record& data) const;
@@ -5351,7 +5538,7 @@ struct CreatorStats final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(452);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_creator_info(vm::CellSlice& cs, Ref<CellSlice>& mc_blocks, Ref<CellSlice>& shard_blocks) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -5377,32 +5564,46 @@ extern const CreatorStats t_CreatorStats;
 //
 
 struct BlockCreateStats final : TLB_Complex {
-  enum { block_create_stats };
+  enum { block_create_stats, block_create_stats_ext };
   static constexpr int cons_len_exact = 8;
-  static constexpr unsigned char cons_tag[1] = { 23 };
-  struct Record {
+  static constexpr unsigned char cons_tag[2] = { 23, 0x34 };
+  struct Record_block_create_stats {
     typedef BlockCreateStats type_class;
     Ref<CellSlice> counters;  	// counters : HashmapE 256 CreatorStats
-    Record() = default;
-    Record(Ref<CellSlice> _counters) : counters(std::move(_counters)) {}
+    Record_block_create_stats() = default;
+    Record_block_create_stats(Ref<CellSlice> _counters) : counters(std::move(_counters)) {}
+  };
+  struct Record_block_create_stats_ext {
+    typedef BlockCreateStats type_class;
+    Ref<CellSlice> counters;  	// counters : HashmapAugE 256 CreatorStats uint32
+    Record_block_create_stats_ext() = default;
+    Record_block_create_stats_ext(Ref<CellSlice> _counters) : counters(std::move(_counters)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
-  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record_block_create_stats& data) const;
   bool unpack_block_create_stats(vm::CellSlice& cs, Ref<CellSlice>& counters) const;
-  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_block_create_stats& data) const;
   bool cell_unpack_block_create_stats(Ref<vm::Cell> cell_ref, Ref<CellSlice>& counters) const;
-  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool pack(vm::CellBuilder& cb, const Record_block_create_stats& data) const;
   bool pack_block_create_stats(vm::CellBuilder& cb, Ref<CellSlice> counters) const;
-  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_block_create_stats& data) const;
   bool cell_pack_block_create_stats(Ref<vm::Cell>& cell_ref, Ref<CellSlice> counters) const;
+  bool unpack(vm::CellSlice& cs, Record_block_create_stats_ext& data) const;
+  bool unpack_block_create_stats_ext(vm::CellSlice& cs, Ref<CellSlice>& counters) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_block_create_stats_ext& data) const;
+  bool cell_unpack_block_create_stats_ext(Ref<vm::Cell> cell_ref, Ref<CellSlice>& counters) const;
+  bool pack(vm::CellBuilder& cb, const Record_block_create_stats_ext& data) const;
+  bool pack_block_create_stats_ext(vm::CellBuilder& cb, Ref<CellSlice> counters) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_block_create_stats_ext& data) const;
+  bool cell_pack_block_create_stats_ext(Ref<vm::Cell>& cell_ref, Ref<CellSlice> counters) const;
   bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
   std::ostream& print_type(std::ostream& os) const override {
     return os << "BlockCreateStats";
   }
   int check_tag(const vm::CellSlice& cs) const override;
   int get_tag(const vm::CellSlice& cs) const override {
-    return 0;
+    return cs.bselect(3, 3);
   }
 };
 
@@ -5417,7 +5618,7 @@ struct McStateExtra_aux final : TLB_Complex {
   static constexpr int cons_len_exact = 0;
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -5456,7 +5657,7 @@ struct McStateExtra final : TLB_Complex {
   static constexpr unsigned short cons_tag[1] = { 0xcc26 };
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -5503,7 +5704,7 @@ struct SigPubKey final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(288);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_ed25519_pubkey(vm::CellSlice& cs, td::BitArray<256>& pubkey) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -5545,7 +5746,7 @@ struct CryptoSignatureSimple final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(516);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_ed25519_signature(vm::CellSlice& cs, td::BitArray<256>& R, td::BitArray<256>& s) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -5581,7 +5782,7 @@ struct CryptoSignaturePair final : TLB_Complex {
     Record(const td::BitArray<256>& _node_id_short, Ref<CellSlice> _sign) : node_id_short(_node_id_short), sign(std::move(_sign)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_sig_pair(vm::CellSlice& cs, td::BitArray<256>& node_id_short, Ref<CellSlice>& sign) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -5617,7 +5818,7 @@ struct Certificate final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(356);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_certificate(vm::CellSlice& cs, Ref<CellSlice>& temp_key, unsigned& valid_since, unsigned& valid_until) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -5667,7 +5868,7 @@ struct CertificateEnv final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(384);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_certificate_env(vm::CellSlice& cs, Ref<CellSlice>& certificate) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -5703,7 +5904,7 @@ struct SignedCertificate final : TLB_Complex {
     Record(Ref<CellSlice> _certificate, Ref<CellSlice> _certificate_signature) : certificate(std::move(_certificate)), certificate_signature(std::move(_certificate_signature)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_signed_certificate(vm::CellSlice& cs, Ref<CellSlice>& certificate, Ref<CellSlice>& certificate_signature) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -5746,7 +5947,7 @@ struct CryptoSignature final : TLB_Complex {
     Record_chained_signature(Ref<Cell> _signed_cert, Ref<CellSlice> _temp_key_signature) : signed_cert(std::move(_signed_cert)), temp_key_signature(std::move(_temp_key_signature)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_cons1& data) const;
   bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& x) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_cons1& data) const;
@@ -5784,7 +5985,7 @@ struct McBlockExtra_aux final : TLB_Complex {
   static constexpr int cons_len_exact = 0;
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& prev_blk_signatures, Ref<CellSlice>& recover_create_msg, Ref<CellSlice>& mint_msg) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -5824,7 +6025,7 @@ struct McBlockExtra final : TLB_Complex {
   static constexpr unsigned short cons_tag[1] = { 0xcca5 };
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -5869,7 +6070,7 @@ struct ValidatorDescr final : TLB_Complex {
   };
   struct Record_validator_addr;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_validator& data) const;
   bool unpack_validator(vm::CellSlice& cs, Ref<CellSlice>& public_key, unsigned long long& weight) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_validator& data) const;
@@ -5918,7 +6119,7 @@ struct ValidatorSet final : TLB_Complex {
   struct Record_validators;
   struct Record_validators_ext;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_validators& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_validators& data) const;
   bool pack(vm::CellBuilder& cb, const Record_validators& data) const;
@@ -5981,7 +6182,7 @@ struct GlobalVersion final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(104);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_capabilities(vm::CellSlice& cs, unsigned& version, unsigned long long& capabilities) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -6003,6 +6204,176 @@ struct GlobalVersion final : TLB_Complex {
 extern const GlobalVersion t_GlobalVersion;
 
 //
+// headers for type `ConfigProposalSetup`
+//
+
+struct ConfigProposalSetup final : TLB_Complex {
+  enum { cfg_vote_cfg };
+  static constexpr int cons_len_exact = 8;
+  static constexpr unsigned char cons_tag[1] = { 0x36 };
+  struct Record;
+  int get_size(const vm::CellSlice& cs) const override {
+    return 168;
+  }
+  bool skip(vm::CellSlice& cs) const override {
+    return cs.advance(168);
+  }
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "ConfigProposalSetup";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return 0;
+  }
+};
+
+struct ConfigProposalSetup::Record {
+  typedef ConfigProposalSetup type_class;
+  int min_tot_rounds;  	// min_tot_rounds : uint8
+  int max_tot_rounds;  	// max_tot_rounds : uint8
+  int min_wins;  	// min_wins : uint8
+  int max_losses;  	// max_losses : uint8
+  unsigned min_store_sec;  	// min_store_sec : uint32
+  unsigned max_store_sec;  	// max_store_sec : uint32
+  unsigned bit_price;  	// bit_price : uint32
+  unsigned cell_price;  	// cell_price : uint32
+  Record() = default;
+  Record(int _min_tot_rounds, int _max_tot_rounds, int _min_wins, int _max_losses, unsigned _min_store_sec, unsigned _max_store_sec, unsigned _bit_price, unsigned _cell_price) : min_tot_rounds(_min_tot_rounds), max_tot_rounds(_max_tot_rounds), min_wins(_min_wins), max_losses(_max_losses), min_store_sec(_min_store_sec), max_store_sec(_max_store_sec), bit_price(_bit_price), cell_price(_cell_price) {}
+};
+
+extern const ConfigProposalSetup t_ConfigProposalSetup;
+
+//
+// headers for type `ConfigVotingSetup`
+//
+
+struct ConfigVotingSetup final : TLB_Complex {
+  enum { cfg_vote_setup };
+  static constexpr int cons_len_exact = 8;
+  static constexpr unsigned char cons_tag[1] = { 0x91 };
+  struct Record {
+    typedef ConfigVotingSetup type_class;
+    Ref<Cell> normal_params;  	// normal_params : ^ConfigProposalSetup
+    Ref<Cell> critical_params;  	// critical_params : ^ConfigProposalSetup
+    Record() = default;
+    Record(Ref<Cell> _normal_params, Ref<Cell> _critical_params) : normal_params(std::move(_normal_params)), critical_params(std::move(_critical_params)) {}
+  };
+  int get_size(const vm::CellSlice& cs) const override {
+    return 0x20008;
+  }
+  bool skip(vm::CellSlice& cs) const override {
+    return cs.advance_ext(0x20008);
+  }
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool unpack_cfg_vote_setup(vm::CellSlice& cs, Ref<Cell>& normal_params, Ref<Cell>& critical_params) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool cell_unpack_cfg_vote_setup(Ref<vm::Cell> cell_ref, Ref<Cell>& normal_params, Ref<Cell>& critical_params) const;
+  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool pack_cfg_vote_setup(vm::CellBuilder& cb, Ref<Cell> normal_params, Ref<Cell> critical_params) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool cell_pack_cfg_vote_setup(Ref<vm::Cell>& cell_ref, Ref<Cell> normal_params, Ref<Cell> critical_params) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "ConfigVotingSetup";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return 0;
+  }
+};
+
+extern const ConfigVotingSetup t_ConfigVotingSetup;
+
+//
+// headers for type `ConfigProposal`
+//
+
+struct ConfigProposal final : TLB_Complex {
+  enum { cfg_proposal };
+  static constexpr int cons_len_exact = 8;
+  static constexpr unsigned char cons_tag[1] = { 0xf3 };
+  struct Record;
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool unpack_cfg_proposal(vm::CellSlice& cs, int& param_id, Ref<CellSlice>& param_value, Ref<CellSlice>& if_hash_equal) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool cell_unpack_cfg_proposal(Ref<vm::Cell> cell_ref, int& param_id, Ref<CellSlice>& param_value, Ref<CellSlice>& if_hash_equal) const;
+  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool pack_cfg_proposal(vm::CellBuilder& cb, int param_id, Ref<CellSlice> param_value, Ref<CellSlice> if_hash_equal) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool cell_pack_cfg_proposal(Ref<vm::Cell>& cell_ref, int param_id, Ref<CellSlice> param_value, Ref<CellSlice> if_hash_equal) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "ConfigProposal";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return 0;
+  }
+};
+
+struct ConfigProposal::Record {
+  typedef ConfigProposal type_class;
+  int param_id;  	// param_id : int32
+  Ref<CellSlice> param_value;  	// param_value : Maybe ^Cell
+  Ref<CellSlice> if_hash_equal;  	// if_hash_equal : Maybe uint256
+  Record() = default;
+  Record(int _param_id, Ref<CellSlice> _param_value, Ref<CellSlice> _if_hash_equal) : param_id(_param_id), param_value(std::move(_param_value)), if_hash_equal(std::move(_if_hash_equal)) {}
+};
+
+extern const ConfigProposal t_ConfigProposal;
+
+//
+// headers for type `ConfigProposalStatus`
+//
+
+struct ConfigProposalStatus final : TLB_Complex {
+  enum { cfg_proposal_status };
+  static constexpr int cons_len_exact = 8;
+  static constexpr unsigned char cons_tag[1] = { 0xce };
+  struct Record;
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "ConfigProposalStatus";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return 0;
+  }
+};
+
+struct ConfigProposalStatus::Record {
+  typedef ConfigProposalStatus type_class;
+  unsigned expires;  	// expires : uint32
+  Ref<Cell> proposal;  	// proposal : ^ConfigProposal
+  bool is_critical;  	// is_critical : Bool
+  Ref<CellSlice> voters;  	// voters : HashmapE 16 True
+  long long remaining_weight;  	// remaining_weight : int64
+  RefInt256 validator_set_id;  	// validator_set_id : uint256
+  int rounds_remaining;  	// rounds_remaining : uint8
+  int wins;  	// wins : uint8
+  int losses;  	// losses : uint8
+  Record() = default;
+  Record(unsigned _expires, Ref<Cell> _proposal, bool _is_critical, Ref<CellSlice> _voters, long long _remaining_weight, RefInt256 _validator_set_id, int _rounds_remaining, int _wins, int _losses) : expires(_expires), proposal(std::move(_proposal)), is_critical(_is_critical), voters(std::move(_voters)), remaining_weight(_remaining_weight), validator_set_id(std::move(_validator_set_id)), rounds_remaining(_rounds_remaining), wins(_wins), losses(_losses) {}
+};
+
+extern const ConfigProposalStatus t_ConfigProposalStatus;
+
+//
 // headers for type `WorkchainFormat`
 //
 
@@ -6020,7 +6391,7 @@ struct WorkchainFormat final : TLB_Complex {
   };
   struct Record_wfmt_ext;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_wfmt_basic& data) const;
   bool unpack_wfmt_basic(vm::CellSlice& cs, int& vm_version, unsigned long long& vm_mode) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_wfmt_basic& data) const;
@@ -6063,7 +6434,7 @@ struct WorkchainDescr final : TLB_Complex {
   static constexpr unsigned char cons_tag[1] = { 0xa6 };
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -6099,6 +6470,46 @@ struct WorkchainDescr::Record {
 extern const WorkchainDescr t_WorkchainDescr;
 
 //
+// headers for type `ComplaintPricing`
+//
+
+struct ComplaintPricing final : TLB_Complex {
+  enum { complaint_prices };
+  static constexpr int cons_len_exact = 8;
+  static constexpr unsigned char cons_tag[1] = { 26 };
+  struct Record;
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool unpack_complaint_prices(vm::CellSlice& cs, Ref<CellSlice>& deposit, Ref<CellSlice>& bit_price, Ref<CellSlice>& cell_price) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool cell_unpack_complaint_prices(Ref<vm::Cell> cell_ref, Ref<CellSlice>& deposit, Ref<CellSlice>& bit_price, Ref<CellSlice>& cell_price) const;
+  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool pack_complaint_prices(vm::CellBuilder& cb, Ref<CellSlice> deposit, Ref<CellSlice> bit_price, Ref<CellSlice> cell_price) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool cell_pack_complaint_prices(Ref<vm::Cell>& cell_ref, Ref<CellSlice> deposit, Ref<CellSlice> bit_price, Ref<CellSlice> cell_price) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "ComplaintPricing";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return 0;
+  }
+};
+
+struct ComplaintPricing::Record {
+  typedef ComplaintPricing type_class;
+  Ref<CellSlice> deposit;  	// deposit : Grams
+  Ref<CellSlice> bit_price;  	// bit_price : Grams
+  Ref<CellSlice> cell_price;  	// cell_price : Grams
+  Record() = default;
+  Record(Ref<CellSlice> _deposit, Ref<CellSlice> _bit_price, Ref<CellSlice> _cell_price) : deposit(std::move(_deposit)), bit_price(std::move(_bit_price)), cell_price(std::move(_cell_price)) {}
+};
+
+extern const ComplaintPricing t_ComplaintPricing;
+
+//
 // headers for type `BlockCreateFees`
 //
 
@@ -6114,7 +6525,7 @@ struct BlockCreateFees final : TLB_Complex {
     Record(Ref<CellSlice> _masterchain_block_fee, Ref<CellSlice> _basechain_block_fee) : masterchain_block_fee(std::move(_masterchain_block_fee)), basechain_block_fee(std::move(_basechain_block_fee)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_block_grams_created(vm::CellSlice& cs, Ref<CellSlice>& masterchain_block_fee, Ref<CellSlice>& basechain_block_fee) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -6150,7 +6561,7 @@ struct StoragePrices final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(296);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -6190,7 +6601,7 @@ struct GasLimitsPrices final : TLB_Complex {
   struct Record_gas_prices_ext;
   struct Record_gas_flat_pfx;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_gas_prices& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_gas_prices& data) const;
   bool pack(vm::CellBuilder& cb, const Record_gas_prices& data) const;
@@ -6266,7 +6677,7 @@ struct ParamLimits final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(104);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_param_limits(vm::CellSlice& cs, int& underload, int& soft_limit, int& hard_limit) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -6311,7 +6722,7 @@ struct BlockLimits final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(320);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_block_limits(vm::CellSlice& cs, Ref<CellSlice>& bytes, Ref<CellSlice>& gas, Ref<CellSlice>& lt_delta) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -6356,7 +6767,7 @@ struct MsgForwardPrices final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(264);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -6400,7 +6811,7 @@ struct CatchainConfig final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(136);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -6442,7 +6853,7 @@ struct ConsensusConfig final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(264);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -6488,7 +6899,7 @@ struct ValidatorTempKey final : TLB_Complex {
   bool skip(vm::CellSlice& cs) const override {
     return cs.advance(612);
   }
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -6531,7 +6942,7 @@ struct ValidatorSignedTempKey final : TLB_Complex {
     Record(Ref<Cell> _key, Ref<CellSlice> _signature) : key(std::move(_key)), signature(std::move(_signature)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_signed_temp_key(vm::CellSlice& cs, Ref<Cell>& key, Ref<CellSlice>& signature) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -6557,7 +6968,7 @@ extern const ValidatorSignedTempKey t_ValidatorSignedTempKey;
 //
 
 struct ConfigParam final : TLB_Complex {
-  enum { cons32, cons33, cons34, cons35, cons36, cons37, config_mc_block_limits, config_block_limits, cons14, cons0, cons1, cons2, cons3, cons4, cons6, cons7, cons9, cons12, cons15, cons16, cons17, cons18, cons31, cons39, cons28, cons8, config_mc_gas_prices, config_gas_prices, cons29, config_mc_fwd_prices, config_fwd_prices };
+  enum { cons32, cons33, cons34, cons35, cons36, cons37, cons13, config_mc_block_limits, config_block_limits, cons14, cons0, cons1, cons2, cons3, cons4, cons6, cons7, cons9, cons10, cons12, cons15, cons16, cons17, cons18, cons31, cons39, cons11, cons28, cons8, config_mc_gas_prices, config_gas_prices, cons29, config_mc_fwd_prices, config_fwd_prices };
   static constexpr int cons_len_exact = 0;
   int m_;
   ConfigParam(int m) : m_(m) {}
@@ -6616,11 +7027,29 @@ struct ConfigParam final : TLB_Complex {
     Record_cons9() = default;
     Record_cons9(Ref<CellSlice> _mandatory_params) : mandatory_params(std::move(_mandatory_params)) {}
   };
+  struct Record_cons10 {
+    typedef ConfigParam type_class;
+    Ref<CellSlice> critical_params;  	// critical_params : Hashmap 32 True
+    Record_cons10() = default;
+    Record_cons10(Ref<CellSlice> _critical_params) : critical_params(std::move(_critical_params)) {}
+  };
+  struct Record_cons11 {
+    typedef ConfigParam type_class;
+    Ref<CellSlice> x;  	// ConfigVotingSetup
+    Record_cons11() = default;
+    Record_cons11(Ref<CellSlice> _x) : x(std::move(_x)) {}
+  };
   struct Record_cons12 {
     typedef ConfigParam type_class;
     Ref<CellSlice> workchains;  	// workchains : HashmapE 32 WorkchainDescr
     Record_cons12() = default;
     Record_cons12(Ref<CellSlice> _workchains) : workchains(std::move(_workchains)) {}
+  };
+  struct Record_cons13 {
+    typedef ConfigParam type_class;
+    Ref<CellSlice> x;  	// ComplaintPricing
+    Record_cons13() = default;
+    Record_cons13(Ref<CellSlice> _x) : x(std::move(_x)) {}
   };
   struct Record_cons14 {
     typedef ConfigParam type_class;
@@ -6734,7 +7163,7 @@ struct ConfigParam final : TLB_Complex {
     Record_cons39(Ref<CellSlice> _x) : x(std::move(_x)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_cons0& data) const;
   bool unpack_cons0(vm::CellSlice& cs, td::BitArray<256>& config_addr) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_cons0& data) const;
@@ -6807,6 +7236,22 @@ struct ConfigParam final : TLB_Complex {
   bool pack_cons9(vm::CellBuilder& cb, Ref<CellSlice> mandatory_params) const;
   bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_cons9& data) const;
   bool cell_pack_cons9(Ref<vm::Cell>& cell_ref, Ref<CellSlice> mandatory_params) const;
+  bool unpack(vm::CellSlice& cs, Record_cons10& data) const;
+  bool unpack_cons10(vm::CellSlice& cs, Ref<CellSlice>& critical_params) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_cons10& data) const;
+  bool cell_unpack_cons10(Ref<vm::Cell> cell_ref, Ref<CellSlice>& critical_params) const;
+  bool pack(vm::CellBuilder& cb, const Record_cons10& data) const;
+  bool pack_cons10(vm::CellBuilder& cb, Ref<CellSlice> critical_params) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_cons10& data) const;
+  bool cell_pack_cons10(Ref<vm::Cell>& cell_ref, Ref<CellSlice> critical_params) const;
+  bool unpack(vm::CellSlice& cs, Record_cons11& data) const;
+  bool unpack_cons11(vm::CellSlice& cs, Ref<CellSlice>& x) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_cons11& data) const;
+  bool cell_unpack_cons11(Ref<vm::Cell> cell_ref, Ref<CellSlice>& x) const;
+  bool pack(vm::CellBuilder& cb, const Record_cons11& data) const;
+  bool pack_cons11(vm::CellBuilder& cb, Ref<CellSlice> x) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_cons11& data) const;
+  bool cell_pack_cons11(Ref<vm::Cell>& cell_ref, Ref<CellSlice> x) const;
   bool unpack(vm::CellSlice& cs, Record_cons12& data) const;
   bool unpack_cons12(vm::CellSlice& cs, Ref<CellSlice>& workchains) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_cons12& data) const;
@@ -6815,6 +7260,14 @@ struct ConfigParam final : TLB_Complex {
   bool pack_cons12(vm::CellBuilder& cb, Ref<CellSlice> workchains) const;
   bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_cons12& data) const;
   bool cell_pack_cons12(Ref<vm::Cell>& cell_ref, Ref<CellSlice> workchains) const;
+  bool unpack(vm::CellSlice& cs, Record_cons13& data) const;
+  bool unpack_cons13(vm::CellSlice& cs, Ref<CellSlice>& x) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_cons13& data) const;
+  bool cell_unpack_cons13(Ref<vm::Cell> cell_ref, Ref<CellSlice>& x) const;
+  bool pack(vm::CellBuilder& cb, const Record_cons13& data) const;
+  bool pack_cons13(vm::CellBuilder& cb, Ref<CellSlice> x) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_cons13& data) const;
+  bool cell_pack_cons13(Ref<vm::Cell>& cell_ref, Ref<CellSlice> x) const;
   bool unpack(vm::CellSlice& cs, Record_cons14& data) const;
   bool unpack_cons14(vm::CellSlice& cs, Ref<CellSlice>& x) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_cons14& data) const;
@@ -7021,7 +7474,7 @@ struct BlockSignaturesPure final : TLB_Complex {
   static constexpr int cons_len_exact = 0;
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_block_signatures_pure(vm::CellSlice& cs, unsigned& sig_count, unsigned long long& sig_weight, Ref<CellSlice>& signatures) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -7067,7 +7520,7 @@ struct BlockSignatures final : TLB_Complex {
     Record(Ref<CellSlice> _validator_info, Ref<CellSlice> _pure_signatures) : validator_info(std::move(_validator_info)), pure_signatures(std::move(_pure_signatures)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_block_signatures(vm::CellSlice& cs, Ref<CellSlice>& validator_info, Ref<CellSlice>& pure_signatures) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -7098,7 +7551,7 @@ struct BlockProof final : TLB_Complex {
   static constexpr unsigned char cons_tag[1] = { 0xc3 };
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_block_proof(vm::CellSlice& cs, Ref<CellSlice>& proof_for, Ref<Cell>& root, Ref<CellSlice>& signatures) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -7142,7 +7595,7 @@ struct ProofChain final : TLB_Complex {
   };
   struct Record_chain_link;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record_chain_empty& data) const;
   bool unpack_chain_empty(vm::CellSlice& cs) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record_chain_empty& data) const;
@@ -7186,7 +7639,7 @@ struct TopBlockDescr final : TLB_Complex {
   static constexpr unsigned char cons_tag[1] = { 0xd5 };
   struct Record;
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
   bool pack(vm::CellBuilder& cb, const Record& data) const;
@@ -7228,7 +7681,7 @@ struct TopBlockDescrSet final : TLB_Complex {
     Record(Ref<CellSlice> _collection) : collection(std::move(_collection)) {}
   };
   bool skip(vm::CellSlice& cs) const override;
-  bool validate_skip(vm::CellSlice& cs, bool weak = false) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
   bool unpack(vm::CellSlice& cs, Record& data) const;
   bool unpack_top_block_descr_set(vm::CellSlice& cs, Ref<CellSlice>& collection) const;
   bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
@@ -7248,6 +7701,1314 @@ struct TopBlockDescrSet final : TLB_Complex {
 };
 
 extern const TopBlockDescrSet t_TopBlockDescrSet;
+
+//
+// headers for type `ComplaintDescr`
+//
+
+struct ComplaintDescr final : TLB_Complex {
+  enum { no_blk_gen };
+  static constexpr int cons_len_exact = 32;
+  static constexpr unsigned cons_tag[1] = { 0x7e545dda };
+  struct Record;
+  int get_size(const vm::CellSlice& cs) const override {
+    return 0x202c0;
+  }
+  bool skip(vm::CellSlice& cs) const override {
+    return cs.advance_ext(0x202c0);
+  }
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "ComplaintDescr";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return 0;
+  }
+};
+
+struct ComplaintDescr::Record {
+  typedef ComplaintDescr type_class;
+  Ref<CellSlice> mc_blk_ref;  	// mc_blk_ref : ExtBlkRef
+  unsigned from_utime;  	// from_utime : uint32
+  unsigned to_utime;  	// to_utime : uint32
+  Ref<Cell> state_proof;  	// state_proof : ^Cell
+  Ref<Cell> prod_proof;  	// prod_proof : ^Cell
+  Record() = default;
+  Record(Ref<CellSlice> _mc_blk_ref, unsigned _from_utime, unsigned _to_utime, Ref<Cell> _state_proof, Ref<Cell> _prod_proof) : mc_blk_ref(std::move(_mc_blk_ref)), from_utime(_from_utime), to_utime(_to_utime), state_proof(std::move(_state_proof)), prod_proof(std::move(_prod_proof)) {}
+};
+
+extern const ComplaintDescr t_ComplaintDescr;
+
+//
+// headers for type `ValidatorComplaint`
+//
+
+struct ValidatorComplaint final : TLB_Complex {
+  enum { validator_complaint };
+  static constexpr int cons_len_exact = 8;
+  static constexpr unsigned char cons_tag[1] = { 0xba };
+  struct Record;
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "ValidatorComplaint";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return 0;
+  }
+};
+
+struct ValidatorComplaint::Record {
+  typedef ValidatorComplaint type_class;
+  RefInt256 validator_pubkey;  	// validator_pubkey : uint256
+  Ref<Cell> description;  	// description : ^ComplaintDescr
+  int severity;  	// severity : uint8
+  RefInt256 reward_addr;  	// reward_addr : uint256
+  Ref<CellSlice> paid;  	// paid : Grams
+  Ref<CellSlice> suggested_fine;  	// suggested_fine : Grams
+  unsigned suggested_fine_part;  	// suggested_fine_part : uint32
+  Record() = default;
+  Record(RefInt256 _validator_pubkey, Ref<Cell> _description, int _severity, RefInt256 _reward_addr, Ref<CellSlice> _paid, Ref<CellSlice> _suggested_fine, unsigned _suggested_fine_part) : validator_pubkey(std::move(_validator_pubkey)), description(std::move(_description)), severity(_severity), reward_addr(std::move(_reward_addr)), paid(std::move(_paid)), suggested_fine(std::move(_suggested_fine)), suggested_fine_part(_suggested_fine_part) {}
+};
+
+extern const ValidatorComplaint t_ValidatorComplaint;
+
+//
+// headers for type `ValidatorComplaintStatus`
+//
+
+struct ValidatorComplaintStatus final : TLB_Complex {
+  enum { complaint_status };
+  static constexpr int cons_len_exact = 8;
+  static constexpr unsigned char cons_tag[1] = { 0x2d };
+  struct Record;
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "ValidatorComplaintStatus";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return 0;
+  }
+};
+
+struct ValidatorComplaintStatus::Record {
+  typedef ValidatorComplaintStatus type_class;
+  Ref<Cell> complaint;  	// complaint : ^ValidatorComplaint
+  Ref<CellSlice> voters;  	// voters : HashmapE 16 True
+  RefInt256 vset_id;  	// vset_id : uint256
+  long long weight_remaining;  	// weight_remaining : int64
+  Record() = default;
+  Record(Ref<Cell> _complaint, Ref<CellSlice> _voters, RefInt256 _vset_id, long long _weight_remaining) : complaint(std::move(_complaint)), voters(std::move(_voters)), vset_id(std::move(_vset_id)), weight_remaining(_weight_remaining) {}
+};
+
+extern const ValidatorComplaintStatus t_ValidatorComplaintStatus;
+
+//
+// headers for type `VmCellSlice`
+//
+
+struct VmCellSlice final : TLB_Complex {
+  enum { cons1 };
+  static constexpr int cons_len_exact = 0;
+  struct Record;
+  int get_size(const vm::CellSlice& cs) const override {
+    return 0x1001a;
+  }
+  bool skip(vm::CellSlice& cs) const override {
+    return cs.advance_ext(0x1001a);
+  }
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "VmCellSlice";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return 0;
+  }
+};
+
+struct VmCellSlice::Record {
+  typedef VmCellSlice type_class;
+  Ref<Cell> cell;  	// cell : ^Cell
+  int st_bits;  	// st_bits : ## 10
+  int end_bits;  	// end_bits : ## 10
+  int st_ref;  	// st_ref : #<= 4
+  int end_ref;  	// end_ref : #<= 4
+  Record() = default;
+  Record(Ref<Cell> _cell, int _st_bits, int _end_bits, int _st_ref, int _end_ref) : cell(std::move(_cell)), st_bits(_st_bits), end_bits(_end_bits), st_ref(_st_ref), end_ref(_end_ref) {}
+};
+
+extern const VmCellSlice t_VmCellSlice;
+
+//
+// headers for type `VmTupleRef`
+//
+
+struct VmTupleRef final : TLB_Complex {
+  enum { vm_tupref_nil, vm_tupref_single, vm_tupref_any };
+  static constexpr int cons_len_exact = 0;
+  int m_;
+  VmTupleRef(int m) : m_(m) {}
+  struct Record_vm_tupref_nil {
+    typedef VmTupleRef type_class;
+  };
+  struct Record_vm_tupref_single {
+    typedef VmTupleRef type_class;
+    Ref<Cell> entry;  	// entry : ^VmStackValue
+    Record_vm_tupref_single() = default;
+    Record_vm_tupref_single(Ref<Cell> _entry) : entry(std::move(_entry)) {}
+  };
+  struct Record_vm_tupref_any {
+    typedef VmTupleRef type_class;
+    int n;  	// n : #
+    Ref<Cell> ref;  	// ref : ^(VmTuple (n + 2))
+    Record_vm_tupref_any() = default;
+    Record_vm_tupref_any(Ref<Cell> _ref) : n(-1), ref(std::move(_ref)) {}
+  };
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record_vm_tupref_nil& data) const;
+  bool unpack_vm_tupref_nil(vm::CellSlice& cs) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vm_tupref_nil& data) const;
+  bool cell_unpack_vm_tupref_nil(Ref<vm::Cell> cell_ref) const;
+  bool pack(vm::CellBuilder& cb, const Record_vm_tupref_nil& data) const;
+  bool pack_vm_tupref_nil(vm::CellBuilder& cb) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vm_tupref_nil& data) const;
+  bool cell_pack_vm_tupref_nil(Ref<vm::Cell>& cell_ref) const;
+  bool unpack(vm::CellSlice& cs, Record_vm_tupref_single& data) const;
+  bool unpack_vm_tupref_single(vm::CellSlice& cs, Ref<Cell>& entry) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vm_tupref_single& data) const;
+  bool cell_unpack_vm_tupref_single(Ref<vm::Cell> cell_ref, Ref<Cell>& entry) const;
+  bool pack(vm::CellBuilder& cb, const Record_vm_tupref_single& data) const;
+  bool pack_vm_tupref_single(vm::CellBuilder& cb, Ref<Cell> entry) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vm_tupref_single& data) const;
+  bool cell_pack_vm_tupref_single(Ref<vm::Cell>& cell_ref, Ref<Cell> entry) const;
+  bool unpack(vm::CellSlice& cs, Record_vm_tupref_any& data) const;
+  bool unpack_vm_tupref_any(vm::CellSlice& cs, int& n, Ref<Cell>& ref) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vm_tupref_any& data) const;
+  bool cell_unpack_vm_tupref_any(Ref<vm::Cell> cell_ref, int& n, Ref<Cell>& ref) const;
+  bool pack(vm::CellBuilder& cb, const Record_vm_tupref_any& data) const;
+  bool pack_vm_tupref_any(vm::CellBuilder& cb, Ref<Cell> ref) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vm_tupref_any& data) const;
+  bool cell_pack_vm_tupref_any(Ref<vm::Cell>& cell_ref, Ref<Cell> ref) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "(VmTupleRef " << m_ << ")";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override;
+};
+
+//
+// headers for type `VmTuple`
+//
+
+struct VmTuple final : TLB_Complex {
+  enum { vm_tuple_nil, vm_tuple_tcons };
+  static constexpr int cons_len_exact = 0;
+  int m_;
+  VmTuple(int m) : m_(m) {}
+  struct Record_vm_tuple_nil {
+    typedef VmTuple type_class;
+  };
+  struct Record_vm_tuple_tcons;
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record_vm_tuple_nil& data) const;
+  bool unpack_vm_tuple_nil(vm::CellSlice& cs) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vm_tuple_nil& data) const;
+  bool cell_unpack_vm_tuple_nil(Ref<vm::Cell> cell_ref) const;
+  bool pack(vm::CellBuilder& cb, const Record_vm_tuple_nil& data) const;
+  bool pack_vm_tuple_nil(vm::CellBuilder& cb) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vm_tuple_nil& data) const;
+  bool cell_pack_vm_tuple_nil(Ref<vm::Cell>& cell_ref) const;
+  bool unpack(vm::CellSlice& cs, Record_vm_tuple_tcons& data) const;
+  bool unpack_vm_tuple_tcons(vm::CellSlice& cs, int& n, Ref<CellSlice>& head, Ref<Cell>& tail) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vm_tuple_tcons& data) const;
+  bool cell_unpack_vm_tuple_tcons(Ref<vm::Cell> cell_ref, int& n, Ref<CellSlice>& head, Ref<Cell>& tail) const;
+  bool pack(vm::CellBuilder& cb, const Record_vm_tuple_tcons& data) const;
+  bool pack_vm_tuple_tcons(vm::CellBuilder& cb, Ref<CellSlice> head, Ref<Cell> tail) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vm_tuple_tcons& data) const;
+  bool cell_pack_vm_tuple_tcons(Ref<vm::Cell>& cell_ref, Ref<CellSlice> head, Ref<Cell> tail) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "(VmTuple " << m_ << ")";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override;
+};
+
+struct VmTuple::Record_vm_tuple_tcons {
+  typedef VmTuple type_class;
+  int n;  	// n : #
+  Ref<CellSlice> head;  	// head : VmTupleRef n
+  Ref<Cell> tail;  	// tail : ^VmStackValue
+  Record_vm_tuple_tcons() = default;
+  Record_vm_tuple_tcons(Ref<CellSlice> _head, Ref<Cell> _tail) : n(-1), head(std::move(_head)), tail(std::move(_tail)) {}
+};
+
+//
+// headers for type `VmStackValue`
+//
+
+struct VmStackValue final : TLB_Complex {
+  enum { vm_stk_null, vm_stk_tinyint, vm_stk_int, vm_stk_nan, vm_stk_cell, vm_stk_slice, vm_stk_builder, vm_stk_cont, vm_stk_tuple };
+  static constexpr char cons_len[9] = { 8, 8, 15, 16, 8, 8, 8, 8, 8 };
+  static constexpr unsigned short cons_tag[9] = { 0, 1, 0x100, 0x2ff, 3, 4, 5, 6, 7 };
+  struct Record_vm_stk_null {
+    typedef VmStackValue type_class;
+  };
+  struct Record_vm_stk_tinyint {
+    typedef VmStackValue type_class;
+    long long value;  	// value : int64
+    Record_vm_stk_tinyint() = default;
+    Record_vm_stk_tinyint(long long _value) : value(_value) {}
+  };
+  struct Record_vm_stk_int {
+    typedef VmStackValue type_class;
+    RefInt256 value;  	// value : int257
+    Record_vm_stk_int() = default;
+    Record_vm_stk_int(RefInt256 _value) : value(std::move(_value)) {}
+  };
+  struct Record_vm_stk_nan {
+    typedef VmStackValue type_class;
+  };
+  struct Record_vm_stk_cell {
+    typedef VmStackValue type_class;
+    Ref<Cell> cell;  	// cell : ^Cell
+    Record_vm_stk_cell() = default;
+    Record_vm_stk_cell(Ref<Cell> _cell) : cell(std::move(_cell)) {}
+  };
+  struct Record_vm_stk_slice {
+    typedef VmStackValue type_class;
+    Ref<CellSlice> x;  	// VmCellSlice
+    Record_vm_stk_slice() = default;
+    Record_vm_stk_slice(Ref<CellSlice> _x) : x(std::move(_x)) {}
+  };
+  struct Record_vm_stk_builder {
+    typedef VmStackValue type_class;
+    Ref<Cell> cell;  	// cell : ^Cell
+    Record_vm_stk_builder() = default;
+    Record_vm_stk_builder(Ref<Cell> _cell) : cell(std::move(_cell)) {}
+  };
+  struct Record_vm_stk_cont {
+    typedef VmStackValue type_class;
+    Ref<CellSlice> cont;  	// cont : VmCont
+    Record_vm_stk_cont() = default;
+    Record_vm_stk_cont(Ref<CellSlice> _cont) : cont(std::move(_cont)) {}
+  };
+  struct Record_vm_stk_tuple {
+    typedef VmStackValue type_class;
+    int len;  	// len : ## 16
+    Ref<CellSlice> data;  	// data : VmTuple len
+    Record_vm_stk_tuple() = default;
+    Record_vm_stk_tuple(int _len, Ref<CellSlice> _data) : len(_len), data(std::move(_data)) {}
+  };
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record_vm_stk_null& data) const;
+  bool unpack_vm_stk_null(vm::CellSlice& cs) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vm_stk_null& data) const;
+  bool cell_unpack_vm_stk_null(Ref<vm::Cell> cell_ref) const;
+  bool pack(vm::CellBuilder& cb, const Record_vm_stk_null& data) const;
+  bool pack_vm_stk_null(vm::CellBuilder& cb) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vm_stk_null& data) const;
+  bool cell_pack_vm_stk_null(Ref<vm::Cell>& cell_ref) const;
+  bool unpack(vm::CellSlice& cs, Record_vm_stk_tinyint& data) const;
+  bool unpack_vm_stk_tinyint(vm::CellSlice& cs, long long& value) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vm_stk_tinyint& data) const;
+  bool cell_unpack_vm_stk_tinyint(Ref<vm::Cell> cell_ref, long long& value) const;
+  bool pack(vm::CellBuilder& cb, const Record_vm_stk_tinyint& data) const;
+  bool pack_vm_stk_tinyint(vm::CellBuilder& cb, long long value) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vm_stk_tinyint& data) const;
+  bool cell_pack_vm_stk_tinyint(Ref<vm::Cell>& cell_ref, long long value) const;
+  bool unpack(vm::CellSlice& cs, Record_vm_stk_int& data) const;
+  bool unpack_vm_stk_int(vm::CellSlice& cs, RefInt256& value) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vm_stk_int& data) const;
+  bool cell_unpack_vm_stk_int(Ref<vm::Cell> cell_ref, RefInt256& value) const;
+  bool pack(vm::CellBuilder& cb, const Record_vm_stk_int& data) const;
+  bool pack_vm_stk_int(vm::CellBuilder& cb, RefInt256 value) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vm_stk_int& data) const;
+  bool cell_pack_vm_stk_int(Ref<vm::Cell>& cell_ref, RefInt256 value) const;
+  bool unpack(vm::CellSlice& cs, Record_vm_stk_nan& data) const;
+  bool unpack_vm_stk_nan(vm::CellSlice& cs) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vm_stk_nan& data) const;
+  bool cell_unpack_vm_stk_nan(Ref<vm::Cell> cell_ref) const;
+  bool pack(vm::CellBuilder& cb, const Record_vm_stk_nan& data) const;
+  bool pack_vm_stk_nan(vm::CellBuilder& cb) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vm_stk_nan& data) const;
+  bool cell_pack_vm_stk_nan(Ref<vm::Cell>& cell_ref) const;
+  bool unpack(vm::CellSlice& cs, Record_vm_stk_cell& data) const;
+  bool unpack_vm_stk_cell(vm::CellSlice& cs, Ref<Cell>& cell) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vm_stk_cell& data) const;
+  bool cell_unpack_vm_stk_cell(Ref<vm::Cell> cell_ref, Ref<Cell>& cell) const;
+  bool pack(vm::CellBuilder& cb, const Record_vm_stk_cell& data) const;
+  bool pack_vm_stk_cell(vm::CellBuilder& cb, Ref<Cell> cell) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vm_stk_cell& data) const;
+  bool cell_pack_vm_stk_cell(Ref<vm::Cell>& cell_ref, Ref<Cell> cell) const;
+  bool unpack(vm::CellSlice& cs, Record_vm_stk_slice& data) const;
+  bool unpack_vm_stk_slice(vm::CellSlice& cs, Ref<CellSlice>& x) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vm_stk_slice& data) const;
+  bool cell_unpack_vm_stk_slice(Ref<vm::Cell> cell_ref, Ref<CellSlice>& x) const;
+  bool pack(vm::CellBuilder& cb, const Record_vm_stk_slice& data) const;
+  bool pack_vm_stk_slice(vm::CellBuilder& cb, Ref<CellSlice> x) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vm_stk_slice& data) const;
+  bool cell_pack_vm_stk_slice(Ref<vm::Cell>& cell_ref, Ref<CellSlice> x) const;
+  bool unpack(vm::CellSlice& cs, Record_vm_stk_builder& data) const;
+  bool unpack_vm_stk_builder(vm::CellSlice& cs, Ref<Cell>& cell) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vm_stk_builder& data) const;
+  bool cell_unpack_vm_stk_builder(Ref<vm::Cell> cell_ref, Ref<Cell>& cell) const;
+  bool pack(vm::CellBuilder& cb, const Record_vm_stk_builder& data) const;
+  bool pack_vm_stk_builder(vm::CellBuilder& cb, Ref<Cell> cell) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vm_stk_builder& data) const;
+  bool cell_pack_vm_stk_builder(Ref<vm::Cell>& cell_ref, Ref<Cell> cell) const;
+  bool unpack(vm::CellSlice& cs, Record_vm_stk_cont& data) const;
+  bool unpack_vm_stk_cont(vm::CellSlice& cs, Ref<CellSlice>& cont) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vm_stk_cont& data) const;
+  bool cell_unpack_vm_stk_cont(Ref<vm::Cell> cell_ref, Ref<CellSlice>& cont) const;
+  bool pack(vm::CellBuilder& cb, const Record_vm_stk_cont& data) const;
+  bool pack_vm_stk_cont(vm::CellBuilder& cb, Ref<CellSlice> cont) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vm_stk_cont& data) const;
+  bool cell_pack_vm_stk_cont(Ref<vm::Cell>& cell_ref, Ref<CellSlice> cont) const;
+  bool unpack(vm::CellSlice& cs, Record_vm_stk_tuple& data) const;
+  bool unpack_vm_stk_tuple(vm::CellSlice& cs, int& len, Ref<CellSlice>& data) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vm_stk_tuple& data) const;
+  bool cell_unpack_vm_stk_tuple(Ref<vm::Cell> cell_ref, int& len, Ref<CellSlice>& data) const;
+  bool pack(vm::CellBuilder& cb, const Record_vm_stk_tuple& data) const;
+  bool pack_vm_stk_tuple(vm::CellBuilder& cb, int len, Ref<CellSlice> data) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vm_stk_tuple& data) const;
+  bool cell_pack_vm_stk_tuple(Ref<vm::Cell>& cell_ref, int len, Ref<CellSlice> data) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "VmStackValue";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override;
+};
+
+extern const VmStackValue t_VmStackValue;
+
+//
+// headers for type `VmStack`
+//
+
+struct VmStack final : TLB_Complex {
+  enum { vm_stack };
+  static constexpr int cons_len_exact = 0;
+  struct Record {
+    typedef VmStack type_class;
+    int depth;  	// depth : ## 24
+    Ref<CellSlice> stack;  	// stack : VmStackList depth
+    Record() = default;
+    Record(int _depth, Ref<CellSlice> _stack) : depth(_depth), stack(std::move(_stack)) {}
+  };
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool unpack_vm_stack(vm::CellSlice& cs, int& depth, Ref<CellSlice>& stack) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool cell_unpack_vm_stack(Ref<vm::Cell> cell_ref, int& depth, Ref<CellSlice>& stack) const;
+  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool pack_vm_stack(vm::CellBuilder& cb, int depth, Ref<CellSlice> stack) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool cell_pack_vm_stack(Ref<vm::Cell>& cell_ref, int depth, Ref<CellSlice> stack) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "VmStack";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return 0;
+  }
+};
+
+extern const VmStack t_VmStack;
+
+//
+// headers for type `VmStackList`
+//
+
+struct VmStackList final : TLB_Complex {
+  enum { vm_stk_cons, vm_stk_nil };
+  static constexpr int cons_len_exact = 0;
+  int m_;
+  VmStackList(int m) : m_(m) {}
+  struct Record_vm_stk_cons;
+  struct Record_vm_stk_nil {
+    typedef VmStackList type_class;
+  };
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record_vm_stk_cons& data) const;
+  bool unpack_vm_stk_cons(vm::CellSlice& cs, int& n, Ref<Cell>& rest, Ref<CellSlice>& tos) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vm_stk_cons& data) const;
+  bool cell_unpack_vm_stk_cons(Ref<vm::Cell> cell_ref, int& n, Ref<Cell>& rest, Ref<CellSlice>& tos) const;
+  bool pack(vm::CellBuilder& cb, const Record_vm_stk_cons& data) const;
+  bool pack_vm_stk_cons(vm::CellBuilder& cb, Ref<Cell> rest, Ref<CellSlice> tos) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vm_stk_cons& data) const;
+  bool cell_pack_vm_stk_cons(Ref<vm::Cell>& cell_ref, Ref<Cell> rest, Ref<CellSlice> tos) const;
+  bool unpack(vm::CellSlice& cs, Record_vm_stk_nil& data) const;
+  bool unpack_vm_stk_nil(vm::CellSlice& cs) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vm_stk_nil& data) const;
+  bool cell_unpack_vm_stk_nil(Ref<vm::Cell> cell_ref) const;
+  bool pack(vm::CellBuilder& cb, const Record_vm_stk_nil& data) const;
+  bool pack_vm_stk_nil(vm::CellBuilder& cb) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vm_stk_nil& data) const;
+  bool cell_pack_vm_stk_nil(Ref<vm::Cell>& cell_ref) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "(VmStackList " << m_ << ")";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override;
+};
+
+struct VmStackList::Record_vm_stk_cons {
+  typedef VmStackList type_class;
+  int n;  	// n : #
+  Ref<Cell> rest;  	// rest : ^(VmStackList n)
+  Ref<CellSlice> tos;  	// tos : VmStackValue
+  Record_vm_stk_cons() = default;
+  Record_vm_stk_cons(Ref<Cell> _rest, Ref<CellSlice> _tos) : n(-1), rest(std::move(_rest)), tos(std::move(_tos)) {}
+};
+
+//
+// headers for type `VmSaveList`
+//
+
+struct VmSaveList final : TLB_Complex {
+  enum { cons1 };
+  static constexpr int cons_len_exact = 0;
+  struct Record {
+    typedef VmSaveList type_class;
+    Ref<CellSlice> cregs;  	// cregs : HashmapE 4 VmStackValue
+    Record() = default;
+    Record(Ref<CellSlice> _cregs) : cregs(std::move(_cregs)) {}
+  };
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& cregs) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool cell_unpack_cons1(Ref<vm::Cell> cell_ref, Ref<CellSlice>& cregs) const;
+  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool pack_cons1(vm::CellBuilder& cb, Ref<CellSlice> cregs) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool cell_pack_cons1(Ref<vm::Cell>& cell_ref, Ref<CellSlice> cregs) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "VmSaveList";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return 0;
+  }
+};
+
+extern const VmSaveList t_VmSaveList;
+
+//
+// headers for auxiliary type `VmGasLimits_aux`
+//
+
+struct VmGasLimits_aux final : TLB_Complex {
+  enum { cons1 };
+  static constexpr int cons_len_exact = 0;
+  struct Record;
+  int get_size(const vm::CellSlice& cs) const override {
+    return 192;
+  }
+  bool skip(vm::CellSlice& cs) const override {
+    return cs.advance(192);
+  }
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override {
+    return cs.advance(192);
+  }
+  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool unpack_cons1(vm::CellSlice& cs, long long& max_limit, long long& cur_limit, long long& credit) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool cell_unpack_cons1(Ref<vm::Cell> cell_ref, long long& max_limit, long long& cur_limit, long long& credit) const;
+  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool pack_cons1(vm::CellBuilder& cb, long long max_limit, long long cur_limit, long long credit) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool cell_pack_cons1(Ref<vm::Cell>& cell_ref, long long max_limit, long long cur_limit, long long credit) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "VmGasLimits_aux";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return 0;
+  }
+};
+
+struct VmGasLimits_aux::Record {
+  typedef VmGasLimits_aux type_class;
+  long long max_limit;  	// max_limit : int64
+  long long cur_limit;  	// cur_limit : int64
+  long long credit;  	// credit : int64
+  Record() = default;
+  Record(long long _max_limit, long long _cur_limit, long long _credit) : max_limit(_max_limit), cur_limit(_cur_limit), credit(_credit) {}
+};
+
+extern const VmGasLimits_aux t_VmGasLimits_aux;
+
+//
+// headers for type `VmGasLimits`
+//
+
+struct VmGasLimits final : TLB_Complex {
+  enum { gas_limits };
+  static constexpr int cons_len_exact = 0;
+  struct Record {
+    typedef VmGasLimits type_class;
+    long long remaining;  	// remaining : int64
+    VmGasLimits_aux::Record r1;  	// ^[$_ max_limit:int64 cur_limit:int64 credit:int64 ]
+    Record() = default;
+    Record(long long _remaining, const VmGasLimits_aux::Record& _r1) : remaining(_remaining), r1(_r1) {}
+  };
+  int get_size(const vm::CellSlice& cs) const override {
+    return 0x10040;
+  }
+  bool skip(vm::CellSlice& cs) const override {
+    return cs.advance_ext(0x10040);
+  }
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "VmGasLimits";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return 0;
+  }
+};
+
+extern const VmGasLimits t_VmGasLimits;
+
+//
+// headers for type `VmLibraries`
+//
+
+struct VmLibraries final : TLB_Complex {
+  enum { cons1 };
+  static constexpr int cons_len_exact = 0;
+  struct Record {
+    typedef VmLibraries type_class;
+    Ref<CellSlice> libraries;  	// libraries : HashmapE 256 ^Cell
+    Record() = default;
+    Record(Ref<CellSlice> _libraries) : libraries(std::move(_libraries)) {}
+  };
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& libraries) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool cell_unpack_cons1(Ref<vm::Cell> cell_ref, Ref<CellSlice>& libraries) const;
+  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool pack_cons1(vm::CellBuilder& cb, Ref<CellSlice> libraries) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool cell_pack_cons1(Ref<vm::Cell>& cell_ref, Ref<CellSlice> libraries) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "VmLibraries";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return 0;
+  }
+};
+
+extern const VmLibraries t_VmLibraries;
+
+//
+// headers for type `VmControlData`
+//
+
+struct VmControlData final : TLB_Complex {
+  enum { vm_ctl_data };
+  static constexpr int cons_len_exact = 0;
+  struct Record;
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "VmControlData";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return 0;
+  }
+};
+
+struct VmControlData::Record {
+  typedef VmControlData type_class;
+  Ref<CellSlice> nargs;  	// nargs : Maybe uint13
+  Ref<CellSlice> stack;  	// stack : Maybe VmStack
+  Ref<CellSlice> save;  	// save : VmSaveList
+  Ref<CellSlice> cp;  	// cp : Maybe int16
+  Record() = default;
+  Record(Ref<CellSlice> _nargs, Ref<CellSlice> _stack, Ref<CellSlice> _save, Ref<CellSlice> _cp) : nargs(std::move(_nargs)), stack(std::move(_stack)), save(std::move(_save)), cp(std::move(_cp)) {}
+};
+
+extern const VmControlData t_VmControlData;
+
+//
+// headers for type `VmCont`
+//
+
+struct VmCont final : TLB_Complex {
+  enum { vmc_std, vmc_envelope, vmc_quit, vmc_quit_exc, vmc_repeat, vmc_until, vmc_again, vmc_while_cond, vmc_while_body, vmc_pushint };
+  static constexpr char cons_len[10] = { 2, 2, 4, 4, 5, 6, 6, 6, 6, 4 };
+  static constexpr unsigned char cons_tag[10] = { 0, 1, 8, 9, 20, 0x30, 0x31, 0x32, 0x33, 15 };
+  struct Record_vmc_std {
+    typedef VmCont type_class;
+    Ref<CellSlice> cdata;  	// cdata : VmControlData
+    Ref<CellSlice> code;  	// code : VmCellSlice
+    Record_vmc_std() = default;
+    Record_vmc_std(Ref<CellSlice> _cdata, Ref<CellSlice> _code) : cdata(std::move(_cdata)), code(std::move(_code)) {}
+  };
+  struct Record_vmc_envelope {
+    typedef VmCont type_class;
+    Ref<CellSlice> cdata;  	// cdata : VmControlData
+    Ref<Cell> next;  	// next : ^VmCont
+    Record_vmc_envelope() = default;
+    Record_vmc_envelope(Ref<CellSlice> _cdata, Ref<Cell> _next) : cdata(std::move(_cdata)), next(std::move(_next)) {}
+  };
+  struct Record_vmc_quit {
+    typedef VmCont type_class;
+    int exit_code;  	// exit_code : int32
+    Record_vmc_quit() = default;
+    Record_vmc_quit(int _exit_code) : exit_code(_exit_code) {}
+  };
+  struct Record_vmc_quit_exc {
+    typedef VmCont type_class;
+  };
+  struct Record_vmc_repeat;
+  struct Record_vmc_until {
+    typedef VmCont type_class;
+    Ref<Cell> body;  	// body : ^VmCont
+    Ref<Cell> after;  	// after : ^VmCont
+    Record_vmc_until() = default;
+    Record_vmc_until(Ref<Cell> _body, Ref<Cell> _after) : body(std::move(_body)), after(std::move(_after)) {}
+  };
+  struct Record_vmc_again {
+    typedef VmCont type_class;
+    Ref<Cell> body;  	// body : ^VmCont
+    Record_vmc_again() = default;
+    Record_vmc_again(Ref<Cell> _body) : body(std::move(_body)) {}
+  };
+  struct Record_vmc_while_cond;
+  struct Record_vmc_while_body;
+  struct Record_vmc_pushint {
+    typedef VmCont type_class;
+    int value;  	// value : int32
+    Ref<Cell> next;  	// next : ^VmCont
+    Record_vmc_pushint() = default;
+    Record_vmc_pushint(int _value, Ref<Cell> _next) : value(_value), next(std::move(_next)) {}
+  };
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record_vmc_std& data) const;
+  bool unpack_vmc_std(vm::CellSlice& cs, Ref<CellSlice>& cdata, Ref<CellSlice>& code) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vmc_std& data) const;
+  bool cell_unpack_vmc_std(Ref<vm::Cell> cell_ref, Ref<CellSlice>& cdata, Ref<CellSlice>& code) const;
+  bool pack(vm::CellBuilder& cb, const Record_vmc_std& data) const;
+  bool pack_vmc_std(vm::CellBuilder& cb, Ref<CellSlice> cdata, Ref<CellSlice> code) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vmc_std& data) const;
+  bool cell_pack_vmc_std(Ref<vm::Cell>& cell_ref, Ref<CellSlice> cdata, Ref<CellSlice> code) const;
+  bool unpack(vm::CellSlice& cs, Record_vmc_envelope& data) const;
+  bool unpack_vmc_envelope(vm::CellSlice& cs, Ref<CellSlice>& cdata, Ref<Cell>& next) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vmc_envelope& data) const;
+  bool cell_unpack_vmc_envelope(Ref<vm::Cell> cell_ref, Ref<CellSlice>& cdata, Ref<Cell>& next) const;
+  bool pack(vm::CellBuilder& cb, const Record_vmc_envelope& data) const;
+  bool pack_vmc_envelope(vm::CellBuilder& cb, Ref<CellSlice> cdata, Ref<Cell> next) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vmc_envelope& data) const;
+  bool cell_pack_vmc_envelope(Ref<vm::Cell>& cell_ref, Ref<CellSlice> cdata, Ref<Cell> next) const;
+  bool unpack(vm::CellSlice& cs, Record_vmc_quit& data) const;
+  bool unpack_vmc_quit(vm::CellSlice& cs, int& exit_code) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vmc_quit& data) const;
+  bool cell_unpack_vmc_quit(Ref<vm::Cell> cell_ref, int& exit_code) const;
+  bool pack(vm::CellBuilder& cb, const Record_vmc_quit& data) const;
+  bool pack_vmc_quit(vm::CellBuilder& cb, int exit_code) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vmc_quit& data) const;
+  bool cell_pack_vmc_quit(Ref<vm::Cell>& cell_ref, int exit_code) const;
+  bool unpack(vm::CellSlice& cs, Record_vmc_quit_exc& data) const;
+  bool unpack_vmc_quit_exc(vm::CellSlice& cs) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vmc_quit_exc& data) const;
+  bool cell_unpack_vmc_quit_exc(Ref<vm::Cell> cell_ref) const;
+  bool pack(vm::CellBuilder& cb, const Record_vmc_quit_exc& data) const;
+  bool pack_vmc_quit_exc(vm::CellBuilder& cb) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vmc_quit_exc& data) const;
+  bool cell_pack_vmc_quit_exc(Ref<vm::Cell>& cell_ref) const;
+  bool unpack(vm::CellSlice& cs, Record_vmc_repeat& data) const;
+  bool unpack_vmc_repeat(vm::CellSlice& cs, long long& count, Ref<Cell>& body, Ref<Cell>& after) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vmc_repeat& data) const;
+  bool cell_unpack_vmc_repeat(Ref<vm::Cell> cell_ref, long long& count, Ref<Cell>& body, Ref<Cell>& after) const;
+  bool pack(vm::CellBuilder& cb, const Record_vmc_repeat& data) const;
+  bool pack_vmc_repeat(vm::CellBuilder& cb, long long count, Ref<Cell> body, Ref<Cell> after) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vmc_repeat& data) const;
+  bool cell_pack_vmc_repeat(Ref<vm::Cell>& cell_ref, long long count, Ref<Cell> body, Ref<Cell> after) const;
+  bool unpack(vm::CellSlice& cs, Record_vmc_until& data) const;
+  bool unpack_vmc_until(vm::CellSlice& cs, Ref<Cell>& body, Ref<Cell>& after) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vmc_until& data) const;
+  bool cell_unpack_vmc_until(Ref<vm::Cell> cell_ref, Ref<Cell>& body, Ref<Cell>& after) const;
+  bool pack(vm::CellBuilder& cb, const Record_vmc_until& data) const;
+  bool pack_vmc_until(vm::CellBuilder& cb, Ref<Cell> body, Ref<Cell> after) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vmc_until& data) const;
+  bool cell_pack_vmc_until(Ref<vm::Cell>& cell_ref, Ref<Cell> body, Ref<Cell> after) const;
+  bool unpack(vm::CellSlice& cs, Record_vmc_again& data) const;
+  bool unpack_vmc_again(vm::CellSlice& cs, Ref<Cell>& body) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vmc_again& data) const;
+  bool cell_unpack_vmc_again(Ref<vm::Cell> cell_ref, Ref<Cell>& body) const;
+  bool pack(vm::CellBuilder& cb, const Record_vmc_again& data) const;
+  bool pack_vmc_again(vm::CellBuilder& cb, Ref<Cell> body) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vmc_again& data) const;
+  bool cell_pack_vmc_again(Ref<vm::Cell>& cell_ref, Ref<Cell> body) const;
+  bool unpack(vm::CellSlice& cs, Record_vmc_while_cond& data) const;
+  bool unpack_vmc_while_cond(vm::CellSlice& cs, Ref<Cell>& cond, Ref<Cell>& body, Ref<Cell>& after) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vmc_while_cond& data) const;
+  bool cell_unpack_vmc_while_cond(Ref<vm::Cell> cell_ref, Ref<Cell>& cond, Ref<Cell>& body, Ref<Cell>& after) const;
+  bool pack(vm::CellBuilder& cb, const Record_vmc_while_cond& data) const;
+  bool pack_vmc_while_cond(vm::CellBuilder& cb, Ref<Cell> cond, Ref<Cell> body, Ref<Cell> after) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vmc_while_cond& data) const;
+  bool cell_pack_vmc_while_cond(Ref<vm::Cell>& cell_ref, Ref<Cell> cond, Ref<Cell> body, Ref<Cell> after) const;
+  bool unpack(vm::CellSlice& cs, Record_vmc_while_body& data) const;
+  bool unpack_vmc_while_body(vm::CellSlice& cs, Ref<Cell>& cond, Ref<Cell>& body, Ref<Cell>& after) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vmc_while_body& data) const;
+  bool cell_unpack_vmc_while_body(Ref<vm::Cell> cell_ref, Ref<Cell>& cond, Ref<Cell>& body, Ref<Cell>& after) const;
+  bool pack(vm::CellBuilder& cb, const Record_vmc_while_body& data) const;
+  bool pack_vmc_while_body(vm::CellBuilder& cb, Ref<Cell> cond, Ref<Cell> body, Ref<Cell> after) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vmc_while_body& data) const;
+  bool cell_pack_vmc_while_body(Ref<vm::Cell>& cell_ref, Ref<Cell> cond, Ref<Cell> body, Ref<Cell> after) const;
+  bool unpack(vm::CellSlice& cs, Record_vmc_pushint& data) const;
+  bool unpack_vmc_pushint(vm::CellSlice& cs, int& value, Ref<Cell>& next) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_vmc_pushint& data) const;
+  bool cell_unpack_vmc_pushint(Ref<vm::Cell> cell_ref, int& value, Ref<Cell>& next) const;
+  bool pack(vm::CellBuilder& cb, const Record_vmc_pushint& data) const;
+  bool pack_vmc_pushint(vm::CellBuilder& cb, int value, Ref<Cell> next) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_vmc_pushint& data) const;
+  bool cell_pack_vmc_pushint(Ref<vm::Cell>& cell_ref, int value, Ref<Cell> next) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "VmCont";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return cs.bselect_ext(6, 0x100f011100010001ULL);
+  }
+};
+
+struct VmCont::Record_vmc_repeat {
+  typedef VmCont type_class;
+  long long count;  	// count : uint63
+  Ref<Cell> body;  	// body : ^VmCont
+  Ref<Cell> after;  	// after : ^VmCont
+  Record_vmc_repeat() = default;
+  Record_vmc_repeat(long long _count, Ref<Cell> _body, Ref<Cell> _after) : count(_count), body(std::move(_body)), after(std::move(_after)) {}
+};
+
+struct VmCont::Record_vmc_while_cond {
+  typedef VmCont type_class;
+  Ref<Cell> cond;  	// cond : ^VmCont
+  Ref<Cell> body;  	// body : ^VmCont
+  Ref<Cell> after;  	// after : ^VmCont
+  Record_vmc_while_cond() = default;
+  Record_vmc_while_cond(Ref<Cell> _cond, Ref<Cell> _body, Ref<Cell> _after) : cond(std::move(_cond)), body(std::move(_body)), after(std::move(_after)) {}
+};
+
+struct VmCont::Record_vmc_while_body {
+  typedef VmCont type_class;
+  Ref<Cell> cond;  	// cond : ^VmCont
+  Ref<Cell> body;  	// body : ^VmCont
+  Ref<Cell> after;  	// after : ^VmCont
+  Record_vmc_while_body() = default;
+  Record_vmc_while_body(Ref<Cell> _cond, Ref<Cell> _body, Ref<Cell> _after) : cond(std::move(_cond)), body(std::move(_body)), after(std::move(_after)) {}
+};
+
+extern const VmCont t_VmCont;
+
+//
+// headers for type `DNS_RecordSet`
+//
+
+struct DNS_RecordSet final : TLB_Complex {
+  enum { cons1 };
+  static constexpr int cons_len_exact = 0;
+  struct Record {
+    typedef DNS_RecordSet type_class;
+    Ref<CellSlice> x;  	// HashmapE 16 ^DNSRecord
+    Record() = default;
+    Record(Ref<CellSlice> _x) : x(std::move(_x)) {}
+  };
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool unpack_cons1(vm::CellSlice& cs, Ref<CellSlice>& x) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool cell_unpack_cons1(Ref<vm::Cell> cell_ref, Ref<CellSlice>& x) const;
+  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool pack_cons1(vm::CellBuilder& cb, Ref<CellSlice> x) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool cell_pack_cons1(Ref<vm::Cell>& cell_ref, Ref<CellSlice> x) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "DNS_RecordSet";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return 0;
+  }
+};
+
+extern const DNS_RecordSet t_DNS_RecordSet;
+
+//
+// headers for type `TextChunkRef`
+//
+
+struct TextChunkRef final : TLB_Complex {
+  enum { chunk_ref, chunk_ref_empty };
+  static constexpr int cons_len_exact = 0;
+  int m_;
+  TextChunkRef(int m) : m_(m) {}
+  struct Record_chunk_ref {
+    typedef TextChunkRef type_class;
+    int n;  	// n : #
+    Ref<Cell> ref;  	// ref : ^(TextChunks (n + 1))
+    Record_chunk_ref() = default;
+    Record_chunk_ref(Ref<Cell> _ref) : n(-1), ref(std::move(_ref)) {}
+  };
+  struct Record_chunk_ref_empty {
+    typedef TextChunkRef type_class;
+  };
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record_chunk_ref& data) const;
+  bool unpack_chunk_ref(vm::CellSlice& cs, int& n, Ref<Cell>& ref) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_chunk_ref& data) const;
+  bool cell_unpack_chunk_ref(Ref<vm::Cell> cell_ref, int& n, Ref<Cell>& ref) const;
+  bool pack(vm::CellBuilder& cb, const Record_chunk_ref& data) const;
+  bool pack_chunk_ref(vm::CellBuilder& cb, Ref<Cell> ref) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_chunk_ref& data) const;
+  bool cell_pack_chunk_ref(Ref<vm::Cell>& cell_ref, Ref<Cell> ref) const;
+  bool unpack(vm::CellSlice& cs, Record_chunk_ref_empty& data) const;
+  bool unpack_chunk_ref_empty(vm::CellSlice& cs) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_chunk_ref_empty& data) const;
+  bool cell_unpack_chunk_ref_empty(Ref<vm::Cell> cell_ref) const;
+  bool pack(vm::CellBuilder& cb, const Record_chunk_ref_empty& data) const;
+  bool pack_chunk_ref_empty(vm::CellBuilder& cb) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_chunk_ref_empty& data) const;
+  bool cell_pack_chunk_ref_empty(Ref<vm::Cell>& cell_ref) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "(TextChunkRef " << m_ << ")";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override;
+};
+
+//
+// headers for type `TextChunks`
+//
+
+struct TextChunks final : TLB_Complex {
+  enum { text_chunk, text_chunk_empty };
+  static constexpr int cons_len_exact = 0;
+  int m_;
+  TextChunks(int m) : m_(m) {}
+  struct Record_text_chunk;
+  struct Record_text_chunk_empty {
+    typedef TextChunks type_class;
+  };
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record_text_chunk& data) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_text_chunk& data) const;
+  bool pack(vm::CellBuilder& cb, const Record_text_chunk& data) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_text_chunk& data) const;
+  bool unpack(vm::CellSlice& cs, Record_text_chunk_empty& data) const;
+  bool unpack_text_chunk_empty(vm::CellSlice& cs) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_text_chunk_empty& data) const;
+  bool cell_unpack_text_chunk_empty(Ref<vm::Cell> cell_ref) const;
+  bool pack(vm::CellBuilder& cb, const Record_text_chunk_empty& data) const;
+  bool pack_text_chunk_empty(vm::CellBuilder& cb) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_text_chunk_empty& data) const;
+  bool cell_pack_text_chunk_empty(Ref<vm::Cell>& cell_ref) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "(TextChunks " << m_ << ")";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override;
+};
+
+struct TextChunks::Record_text_chunk {
+  typedef TextChunks type_class;
+  int n;  	// n : #
+  int len;  	// len : ## 8
+  Ref<td::BitString> data;  	// data : bits (8 * len)
+  Ref<CellSlice> next;  	// next : TextChunkRef n
+  Record_text_chunk() = default;
+  Record_text_chunk(int _len, Ref<td::BitString> _data, Ref<CellSlice> _next) : n(-1), len(_len), data(std::move(_data)), next(std::move(_next)) {}
+};
+
+//
+// headers for type `Text`
+//
+
+struct Text final : TLB_Complex {
+  enum { text };
+  static constexpr int cons_len_exact = 0;
+  struct Record {
+    typedef Text type_class;
+    int chunks;  	// chunks : ## 8
+    Ref<CellSlice> rest;  	// rest : TextChunks chunks
+    Record() = default;
+    Record(int _chunks, Ref<CellSlice> _rest) : chunks(_chunks), rest(std::move(_rest)) {}
+  };
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool unpack_text(vm::CellSlice& cs, int& chunks, Ref<CellSlice>& rest) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool cell_unpack_text(Ref<vm::Cell> cell_ref, int& chunks, Ref<CellSlice>& rest) const;
+  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool pack_text(vm::CellBuilder& cb, int chunks, Ref<CellSlice> rest) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool cell_pack_text(Ref<vm::Cell>& cell_ref, int chunks, Ref<CellSlice> rest) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "Text";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return 0;
+  }
+};
+
+extern const Text t_Text;
+
+//
+// headers for type `ProtoList`
+//
+
+struct ProtoList final : TLB_Complex {
+  enum { proto_list_nil, proto_list_next };
+  static constexpr int cons_len_exact = 1;
+  struct Record_proto_list_nil {
+    typedef ProtoList type_class;
+  };
+  struct Record_proto_list_next {
+    typedef ProtoList type_class;
+    char head;  	// head : Protocol
+    Ref<CellSlice> tail;  	// tail : ProtoList
+    Record_proto_list_next() = default;
+    Record_proto_list_next(char _head, Ref<CellSlice> _tail) : head(_head), tail(std::move(_tail)) {}
+  };
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record_proto_list_nil& data) const;
+  bool unpack_proto_list_nil(vm::CellSlice& cs) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_proto_list_nil& data) const;
+  bool cell_unpack_proto_list_nil(Ref<vm::Cell> cell_ref) const;
+  bool pack(vm::CellBuilder& cb, const Record_proto_list_nil& data) const;
+  bool pack_proto_list_nil(vm::CellBuilder& cb) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_proto_list_nil& data) const;
+  bool cell_pack_proto_list_nil(Ref<vm::Cell>& cell_ref) const;
+  bool unpack(vm::CellSlice& cs, Record_proto_list_next& data) const;
+  bool unpack_proto_list_next(vm::CellSlice& cs, char& head, Ref<CellSlice>& tail) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_proto_list_next& data) const;
+  bool cell_unpack_proto_list_next(Ref<vm::Cell> cell_ref, char& head, Ref<CellSlice>& tail) const;
+  bool pack(vm::CellBuilder& cb, const Record_proto_list_next& data) const;
+  bool pack_proto_list_next(vm::CellBuilder& cb, char head, Ref<CellSlice> tail) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_proto_list_next& data) const;
+  bool cell_pack_proto_list_next(Ref<vm::Cell>& cell_ref, char head, Ref<CellSlice> tail) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "ProtoList";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return (int)cs.prefetch_ulong(1);
+  }
+};
+
+extern const ProtoList t_ProtoList;
+
+//
+// headers for type `Protocol`
+//
+
+struct Protocol final : TLB_Complex {
+  enum { proto_http };
+  static constexpr int cons_len_exact = 16;
+  static constexpr unsigned short cons_tag[1] = { 0x4854 };
+  struct Record {
+    typedef Protocol type_class;
+  };
+  int get_size(const vm::CellSlice& cs) const override {
+    return 16;
+  }
+  bool skip(vm::CellSlice& cs) const override {
+    return cs.advance(16);
+  }
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool fetch_enum_to(vm::CellSlice& cs, char& value) const;
+  bool store_enum_from(vm::CellBuilder& cb, int value) const;
+  bool unpack(vm::CellSlice& cs, Record& data) const;
+  bool unpack_proto_http(vm::CellSlice& cs) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record& data) const;
+  bool cell_unpack_proto_http(Ref<vm::Cell> cell_ref) const;
+  bool pack(vm::CellBuilder& cb, const Record& data) const;
+  bool pack_proto_http(vm::CellBuilder& cb) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record& data) const;
+  bool cell_pack_proto_http(Ref<vm::Cell>& cell_ref) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "Protocol";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return 0;
+  }
+};
+
+extern const Protocol t_Protocol;
+
+//
+// headers for type `DNSRecord`
+//
+
+struct DNSRecord final : TLB_Complex {
+  enum { dns_text, dns_smc_address, dns_adnl_address, dns_next_resolver };
+  static constexpr int cons_len_exact = 16;
+  static constexpr unsigned short cons_tag[4] = { 0x1eda, 0x9fd3, 0xad01, 0xba93 };
+  struct Record_dns_text {
+    typedef DNSRecord type_class;
+    Ref<CellSlice> x;  	// Text
+    Record_dns_text() = default;
+    Record_dns_text(Ref<CellSlice> _x) : x(std::move(_x)) {}
+  };
+  struct Record_dns_next_resolver {
+    typedef DNSRecord type_class;
+    Ref<CellSlice> resolver;  	// resolver : MsgAddressInt
+    Record_dns_next_resolver() = default;
+    Record_dns_next_resolver(Ref<CellSlice> _resolver) : resolver(std::move(_resolver)) {}
+  };
+  struct Record_dns_adnl_address;
+  struct Record_dns_smc_address;
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record_dns_text& data) const;
+  bool unpack_dns_text(vm::CellSlice& cs, Ref<CellSlice>& x) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_dns_text& data) const;
+  bool cell_unpack_dns_text(Ref<vm::Cell> cell_ref, Ref<CellSlice>& x) const;
+  bool pack(vm::CellBuilder& cb, const Record_dns_text& data) const;
+  bool pack_dns_text(vm::CellBuilder& cb, Ref<CellSlice> x) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_dns_text& data) const;
+  bool cell_pack_dns_text(Ref<vm::Cell>& cell_ref, Ref<CellSlice> x) const;
+  bool unpack(vm::CellSlice& cs, Record_dns_next_resolver& data) const;
+  bool unpack_dns_next_resolver(vm::CellSlice& cs, Ref<CellSlice>& resolver) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_dns_next_resolver& data) const;
+  bool cell_unpack_dns_next_resolver(Ref<vm::Cell> cell_ref, Ref<CellSlice>& resolver) const;
+  bool pack(vm::CellBuilder& cb, const Record_dns_next_resolver& data) const;
+  bool pack_dns_next_resolver(vm::CellBuilder& cb, Ref<CellSlice> resolver) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_dns_next_resolver& data) const;
+  bool cell_pack_dns_next_resolver(Ref<vm::Cell>& cell_ref, Ref<CellSlice> resolver) const;
+  bool unpack(vm::CellSlice& cs, Record_dns_adnl_address& data) const;
+  bool unpack_dns_adnl_address(vm::CellSlice& cs, td::BitArray<256>& adnl_addr, int& flags, Ref<CellSlice>& proto_list) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_dns_adnl_address& data) const;
+  bool cell_unpack_dns_adnl_address(Ref<vm::Cell> cell_ref, td::BitArray<256>& adnl_addr, int& flags, Ref<CellSlice>& proto_list) const;
+  bool pack(vm::CellBuilder& cb, const Record_dns_adnl_address& data) const;
+  bool pack_dns_adnl_address(vm::CellBuilder& cb, td::BitArray<256> adnl_addr, int flags, Ref<CellSlice> proto_list) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_dns_adnl_address& data) const;
+  bool cell_pack_dns_adnl_address(Ref<vm::Cell>& cell_ref, td::BitArray<256> adnl_addr, int flags, Ref<CellSlice> proto_list) const;
+  bool unpack(vm::CellSlice& cs, Record_dns_smc_address& data) const;
+  bool unpack_dns_smc_address(vm::CellSlice& cs, Ref<CellSlice>& smc_addr, int& flags, Ref<CellSlice>& cap_list) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_dns_smc_address& data) const;
+  bool cell_unpack_dns_smc_address(Ref<vm::Cell> cell_ref, Ref<CellSlice>& smc_addr, int& flags, Ref<CellSlice>& cap_list) const;
+  bool pack(vm::CellBuilder& cb, const Record_dns_smc_address& data) const;
+  bool pack_dns_smc_address(vm::CellBuilder& cb, Ref<CellSlice> smc_addr, int flags, Ref<CellSlice> cap_list) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_dns_smc_address& data) const;
+  bool cell_pack_dns_smc_address(Ref<vm::Cell>& cell_ref, Ref<CellSlice> smc_addr, int flags, Ref<CellSlice> cap_list) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "DNSRecord";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return cs.bselect(4, 0xe02);
+  }
+};
+
+struct DNSRecord::Record_dns_adnl_address {
+  typedef DNSRecord type_class;
+  td::BitArray<256> adnl_addr;  	// adnl_addr : bits256
+  int flags;  	// flags : ## 8
+  Ref<CellSlice> proto_list;  	// proto_list : flags.0?ProtoList
+  Record_dns_adnl_address() = default;
+  Record_dns_adnl_address(const td::BitArray<256>& _adnl_addr, int _flags, Ref<CellSlice> _proto_list) : adnl_addr(_adnl_addr), flags(_flags), proto_list(std::move(_proto_list)) {}
+};
+
+struct DNSRecord::Record_dns_smc_address {
+  typedef DNSRecord type_class;
+  Ref<CellSlice> smc_addr;  	// smc_addr : MsgAddressInt
+  int flags;  	// flags : ## 8
+  Ref<CellSlice> cap_list;  	// cap_list : flags.0?SmcCapList
+  Record_dns_smc_address() = default;
+  Record_dns_smc_address(Ref<CellSlice> _smc_addr, int _flags, Ref<CellSlice> _cap_list) : smc_addr(std::move(_smc_addr)), flags(_flags), cap_list(std::move(_cap_list)) {}
+};
+
+extern const DNSRecord t_DNSRecord;
+
+//
+// headers for type `SmcCapList`
+//
+
+struct SmcCapList final : TLB_Complex {
+  enum { cap_list_nil, cap_list_next };
+  static constexpr int cons_len_exact = 1;
+  struct Record_cap_list_nil {
+    typedef SmcCapList type_class;
+  };
+  struct Record_cap_list_next {
+    typedef SmcCapList type_class;
+    Ref<CellSlice> head;  	// head : SmcCapability
+    Ref<CellSlice> tail;  	// tail : SmcCapList
+    Record_cap_list_next() = default;
+    Record_cap_list_next(Ref<CellSlice> _head, Ref<CellSlice> _tail) : head(std::move(_head)), tail(std::move(_tail)) {}
+  };
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record_cap_list_nil& data) const;
+  bool unpack_cap_list_nil(vm::CellSlice& cs) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_cap_list_nil& data) const;
+  bool cell_unpack_cap_list_nil(Ref<vm::Cell> cell_ref) const;
+  bool pack(vm::CellBuilder& cb, const Record_cap_list_nil& data) const;
+  bool pack_cap_list_nil(vm::CellBuilder& cb) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_cap_list_nil& data) const;
+  bool cell_pack_cap_list_nil(Ref<vm::Cell>& cell_ref) const;
+  bool unpack(vm::CellSlice& cs, Record_cap_list_next& data) const;
+  bool unpack_cap_list_next(vm::CellSlice& cs, Ref<CellSlice>& head, Ref<CellSlice>& tail) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_cap_list_next& data) const;
+  bool cell_unpack_cap_list_next(Ref<vm::Cell> cell_ref, Ref<CellSlice>& head, Ref<CellSlice>& tail) const;
+  bool pack(vm::CellBuilder& cb, const Record_cap_list_next& data) const;
+  bool pack_cap_list_next(vm::CellBuilder& cb, Ref<CellSlice> head, Ref<CellSlice> tail) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_cap_list_next& data) const;
+  bool cell_pack_cap_list_next(Ref<vm::Cell>& cell_ref, Ref<CellSlice> head, Ref<CellSlice> tail) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "SmcCapList";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return (int)cs.prefetch_ulong(1);
+  }
+};
+
+extern const SmcCapList t_SmcCapList;
+
+//
+// headers for type `SmcCapability`
+//
+
+struct SmcCapability final : TLB_Complex {
+  enum { cap_is_wallet, cap_method_seqno, cap_method_pubkey, cap_name };
+  static constexpr char cons_len[4] = { 16, 16, 16, 8 };
+  static constexpr unsigned short cons_tag[4] = { 0x2177, 0x5371, 0x71f4, 0xff };
+  struct Record_cap_method_seqno {
+    typedef SmcCapability type_class;
+  };
+  struct Record_cap_method_pubkey {
+    typedef SmcCapability type_class;
+  };
+  struct Record_cap_is_wallet {
+    typedef SmcCapability type_class;
+  };
+  struct Record_cap_name {
+    typedef SmcCapability type_class;
+    Ref<CellSlice> name;  	// name : Text
+    Record_cap_name() = default;
+    Record_cap_name(Ref<CellSlice> _name) : name(std::move(_name)) {}
+  };
+  bool skip(vm::CellSlice& cs) const override;
+  bool validate_skip(int* ops, vm::CellSlice& cs, bool weak = false) const override;
+  bool unpack(vm::CellSlice& cs, Record_cap_method_seqno& data) const;
+  bool unpack_cap_method_seqno(vm::CellSlice& cs) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_cap_method_seqno& data) const;
+  bool cell_unpack_cap_method_seqno(Ref<vm::Cell> cell_ref) const;
+  bool pack(vm::CellBuilder& cb, const Record_cap_method_seqno& data) const;
+  bool pack_cap_method_seqno(vm::CellBuilder& cb) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_cap_method_seqno& data) const;
+  bool cell_pack_cap_method_seqno(Ref<vm::Cell>& cell_ref) const;
+  bool unpack(vm::CellSlice& cs, Record_cap_method_pubkey& data) const;
+  bool unpack_cap_method_pubkey(vm::CellSlice& cs) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_cap_method_pubkey& data) const;
+  bool cell_unpack_cap_method_pubkey(Ref<vm::Cell> cell_ref) const;
+  bool pack(vm::CellBuilder& cb, const Record_cap_method_pubkey& data) const;
+  bool pack_cap_method_pubkey(vm::CellBuilder& cb) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_cap_method_pubkey& data) const;
+  bool cell_pack_cap_method_pubkey(Ref<vm::Cell>& cell_ref) const;
+  bool unpack(vm::CellSlice& cs, Record_cap_is_wallet& data) const;
+  bool unpack_cap_is_wallet(vm::CellSlice& cs) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_cap_is_wallet& data) const;
+  bool cell_unpack_cap_is_wallet(Ref<vm::Cell> cell_ref) const;
+  bool pack(vm::CellBuilder& cb, const Record_cap_is_wallet& data) const;
+  bool pack_cap_is_wallet(vm::CellBuilder& cb) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_cap_is_wallet& data) const;
+  bool cell_pack_cap_is_wallet(Ref<vm::Cell>& cell_ref) const;
+  bool unpack(vm::CellSlice& cs, Record_cap_name& data) const;
+  bool unpack_cap_name(vm::CellSlice& cs, Ref<CellSlice>& name) const;
+  bool cell_unpack(Ref<vm::Cell> cell_ref, Record_cap_name& data) const;
+  bool cell_unpack_cap_name(Ref<vm::Cell> cell_ref, Ref<CellSlice>& name) const;
+  bool pack(vm::CellBuilder& cb, const Record_cap_name& data) const;
+  bool pack_cap_name(vm::CellBuilder& cb, Ref<CellSlice> name) const;
+  bool cell_pack(Ref<vm::Cell>& cell_ref, const Record_cap_name& data) const;
+  bool cell_pack_cap_name(Ref<vm::Cell>& cell_ref, Ref<CellSlice> name) const;
+  bool print_skip(PrettyPrinter& pp, vm::CellSlice& cs) const override;
+  std::ostream& print_type(std::ostream& os) const override {
+    return os << "SmcCapability";
+  }
+  int check_tag(const vm::CellSlice& cs) const override;
+  int get_tag(const vm::CellSlice& cs) const override {
+    return cs.bselect(3, 0x8e);
+  }
+};
+
+extern const SmcCapability t_SmcCapability;
 
 // declarations of constant types used
 
@@ -7291,10 +9052,10 @@ extern const RefT t_Ref_StateInit;
 extern const Either t_Either_StateInit_Ref_StateInit;
 // Maybe (Either StateInit ^StateInit)
 extern const Maybe t_Maybe_Either_StateInit_Ref_StateInit;
-// #<= 96
-extern const NatLeq t_natleq_96;
 // Message Any
 extern const Message t_Message_Any;
+// #<= 96
+extern const NatLeq t_natleq_96;
 // ^(Message Any)
 extern const RefT t_Ref_Message_Any;
 // ^Transaction
@@ -7305,6 +9066,8 @@ extern const RefT t_Ref_MsgEnvelope;
 extern const HashmapAugE t_HashmapAugE_256_InMsg_ImportFees;
 // ^InMsg
 extern const RefT t_Ref_InMsg;
+// uint63
+extern const UInt t_uint63;
 // HashmapAugE 256 OutMsg CurrencyCollection
 extern const HashmapAugE t_HashmapAugE_256_OutMsg_CurrencyCollection;
 // HashmapAugE 352 EnqueuedMsg uint64
@@ -7328,7 +9091,7 @@ extern const Maybe t_Maybe_Ref_Message_Any;
 // HashmapE 15 ^(Message Any)
 extern const HashmapE t_HashmapE_15_Ref_Message_Any;
 // ^[$_ in_msg:(Maybe ^(Message Any)) out_msgs:(HashmapE 15 ^(Message Any)) ]
-extern const RefT t_Ref_TYPE_1613;
+extern const RefT t_Ref_TYPE_1614;
 // HASH_UPDATE Account
 extern const HASH_UPDATE t_HASH_UPDATE_Account;
 // ^(HASH_UPDATE Account)
@@ -7346,7 +9109,7 @@ extern const Maybe t_Maybe_VarUInteger_3;
 // Maybe int32
 extern const Maybe t_Maybe_int32;
 // ^[$_ gas_used:(VarUInteger 7) gas_limit:(VarUInteger 7) gas_credit:(Maybe (VarUInteger 3)) mode:int8 exit_code:int32 exit_arg:(Maybe int32) vm_steps:uint32 vm_init_state_hash:bits256 vm_final_state_hash:bits256 ]
-extern const RefT t_Ref_TYPE_1624;
+extern const RefT t_Ref_TYPE_1625;
 // uint16
 extern const UInt t_uint16;
 // Maybe TrStoragePhase
@@ -7367,6 +9130,8 @@ extern const NatWidth t_natwidth_8;
 extern const MessageRelaxed t_MessageRelaxed_Any;
 // ^(MessageRelaxed Any)
 extern const RefT t_Ref_MessageRelaxed_Any;
+// ## 7
+extern const NatWidth t_natwidth_7;
 // #<= 60
 extern const NatLeq t_natleq_60;
 // ^OutMsgQueueInfo
@@ -7378,7 +9143,7 @@ extern const HashmapE t_HashmapE_256_LibDescr;
 // Maybe BlkMasterInfo
 extern const Maybe t_Maybe_BlkMasterInfo;
 // ^[$_ overload_history:uint64 underload_history:uint64 total_balance:CurrencyCollection total_validator_fees:CurrencyCollection libraries:(HashmapE 256 LibDescr) master_ref:(Maybe BlkMasterInfo) ]
-extern const RefT t_Ref_TYPE_1637;
+extern const RefT t_Ref_TYPE_1639;
 // ^McStateExtra
 extern const RefT t_Ref_McStateExtra;
 // Maybe ^McStateExtra
@@ -7416,11 +9181,13 @@ extern const RefT t_Ref_McBlockExtra;
 // Maybe ^McBlockExtra
 extern const Maybe t_Maybe_Ref_McBlockExtra;
 // ^[$_ from_prev_blk:CurrencyCollection to_next_blk:CurrencyCollection imported:CurrencyCollection exported:CurrencyCollection ]
-extern const RefT t_Ref_TYPE_1647;
+extern const RefT t_Ref_TYPE_1650;
 // ^[$_ fees_imported:CurrencyCollection recovered:CurrencyCollection created:CurrencyCollection minted:CurrencyCollection ]
-extern const RefT t_Ref_TYPE_1648;
+extern const RefT t_Ref_TYPE_1651;
 // ## 3
 extern const NatWidth t_natwidth_3;
+// ^[$_ fees_collected:CurrencyCollection funds_created:CurrencyCollection ]
+extern const RefT t_Ref_TYPE_1655;
 // BinTree ShardDescr
 extern const BinTree t_BinTree_ShardDescr;
 // ^(BinTree ShardDescr)
@@ -7437,12 +9204,14 @@ extern const RefT t_Ref_Hashmap_32_Ref_Cell;
 extern const HashmapAugE t_HashmapAugE_32_KeyExtBlkRef_KeyMaxLt;
 // HashmapE 256 CreatorStats
 extern const HashmapE t_HashmapE_256_CreatorStats;
+// HashmapAugE 256 CreatorStats uint32
+extern const HashmapAugE t_HashmapAugE_256_CreatorStats_uint32;
 // ## 16
 extern const NatWidth t_natwidth_16;
 // Maybe ExtBlkRef
 extern const Maybe t_Maybe_ExtBlkRef;
 // ^[$_ flags:(## 16) {<= flags 1} validator_info:ValidatorInfo prev_blocks:OldMcBlocksInfo after_key_block:Bool last_key_block:(Maybe ExtBlkRef) block_create_stats:flags.0?BlockCreateStats ]
-extern const RefT t_Ref_TYPE_1665;
+extern const RefT t_Ref_TYPE_1669;
 // ^SignedCertificate
 extern const RefT t_Ref_SignedCertificate;
 // HashmapE 16 CryptoSignaturePair
@@ -7450,13 +9219,27 @@ extern const HashmapE t_HashmapE_16_CryptoSignaturePair;
 // Maybe ^InMsg
 extern const Maybe t_Maybe_Ref_InMsg;
 // ^[$_ prev_blk_signatures:(HashmapE 16 CryptoSignaturePair) recover_create_msg:(Maybe ^InMsg) mint_msg:(Maybe ^InMsg) ]
-extern const RefT t_Ref_TYPE_1673;
+extern const RefT t_Ref_TYPE_1677;
 // Hashmap 16 ValidatorDescr
 extern const Hashmap t_Hashmap_16_ValidatorDescr;
 // HashmapE 16 ValidatorDescr
 extern const HashmapE t_HashmapE_16_ValidatorDescr;
 // Hashmap 32 True
 extern const Hashmap t_Hashmap_32_True;
+// uint8
+extern const UInt t_uint8;
+// ^ConfigProposalSetup
+extern const RefT t_Ref_ConfigProposalSetup;
+// uint256
+extern const UInt t_uint256;
+// Maybe uint256
+extern const Maybe t_Maybe_uint256;
+// ^ConfigProposal
+extern const RefT t_Ref_ConfigProposal;
+// HashmapE 16 True
+extern const HashmapE t_HashmapE_16_True;
+// int64
+extern const Int t_int64;
 // ## 12
 extern const NatWidth t_natwidth_12;
 // ## 32
@@ -7481,6 +9264,45 @@ extern const Maybe t_Maybe_Ref_BlockSignatures;
 extern const RefT t_Ref_TopBlockDescr;
 // HashmapE 96 ^TopBlockDescr
 extern const HashmapE t_HashmapE_96_Ref_TopBlockDescr;
+// ^ComplaintDescr
+extern const RefT t_Ref_ComplaintDescr;
+// ^ValidatorComplaint
+extern const RefT t_Ref_ValidatorComplaint;
+// int257
+extern const Int t_int257;
+// ## 10
+extern const NatWidth t_natwidth_10;
+// #<= 4
+extern const NatLeq t_natleq_4;
+// ^VmStackValue
+extern const RefT t_Ref_VmStackValue;
+// ## 24
+extern const NatWidth t_natwidth_24;
+// HashmapE 4 VmStackValue
+extern const HashmapE t_HashmapE_4_VmStackValue;
+// ^[$_ max_limit:int64 cur_limit:int64 credit:int64 ]
+extern const RefT t_Ref_TYPE_1715;
+// HashmapE 256 ^Cell
+extern const HashmapE t_HashmapE_256_Ref_Cell;
+// uint13
+extern const UInt t_uint13;
+// Maybe uint13
+extern const Maybe t_Maybe_uint13;
+// Maybe VmStack
+extern const Maybe t_Maybe_VmStack;
+// int16
+extern const Int t_int16;
+// Maybe int16
+extern const Maybe t_Maybe_int16;
+// ^VmCont
+extern const RefT t_Ref_VmCont;
+// ^DNSRecord
+extern const RefT t_Ref_DNSRecord;
+// HashmapE 16 ^DNSRecord
+extern const HashmapE t_HashmapE_16_Ref_DNSRecord;
+
+// declaration of type name registration function
+extern bool register_simple_types(std::function<bool(const char*, const TLB*)> func);
 
 } // namespace gen
 

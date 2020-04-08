@@ -115,6 +115,7 @@ LOCAL_SRC_FILES     := \
 ./ton/adnl/adnl-message.cpp \
 ./ton/adnl/adnl-network-manager.cpp \
 ./ton/adnl/adnl-node.cpp \
+./ton/adnl/adnl-node-id.cpp \
 ./ton/adnl/adnl-packet.cpp \
 ./ton/adnl/adnl-peer.cpp \
 ./ton/adnl/adnl-pong.cpp \
@@ -127,8 +128,11 @@ LOCAL_SRC_FILES     := \
 ./ton/auto/tl/lite_api.cpp \
 ./ton/auto/tl/ton_api.cpp \
 ./ton/auto/tl/tonlib_api.cpp \
+./ton/auto/tl/ton_api_json.cpp \
+./ton/auto/tl/tonlib_api_json.cpp \
 ./ton/common/errorlog.cpp \
 ./ton/crypto/Ed25519.cpp \
+./ton/crypto/block/adjust-block.cpp \
 ./ton/crypto/block/Binlog.cpp \
 ./ton/crypto/block/block-auto.cpp \
 ./ton/crypto/block/block-db.cpp \
@@ -178,11 +182,14 @@ LOCAL_SRC_FILES     := \
 ./ton/crypto/tl/tlbc.cpp \
 ./ton/crypto/tl/tlblib.cpp \
 ./ton/crypto/smc-envelope/GenericAccount.cpp \
+./ton/crypto/smc-envelope/HighloadWallet.cpp \
+./ton/crypto/smc-envelope/HighloadWalletV2.cpp \
+./ton/crypto/smc-envelope/ManualDns.cpp \
 ./ton/crypto/smc-envelope/MultisigWallet.cpp \
-./ton/crypto/smc-envelope/TestGiver.cpp \
-./ton/crypto/smc-envelope/TestWallet.cpp \
 ./ton/crypto/smc-envelope/SmartContract.cpp \
 ./ton/crypto/smc-envelope/SmartContractCode.cpp \
+./ton/crypto/smc-envelope/TestGiver.cpp \
+./ton/crypto/smc-envelope/TestWallet.cpp \
 ./ton/crypto/smc-envelope/Wallet.cpp \
 ./ton/crypto/smc-envelope/WalletV3.cpp \
 ./ton/crypto/vm/arithops.cpp \
@@ -195,12 +202,15 @@ LOCAL_SRC_FILES     := \
 ./ton/crypto/vm/debugops.cpp \
 ./ton/crypto/vm/dict.cpp \
 ./ton/crypto/vm/dictops.cpp \
+./ton/crypto/vm/memo.cpp \
 ./ton/crypto/vm/dispatch.cpp \
 ./ton/crypto/vm/opctable.cpp \
 ./ton/crypto/vm/stack.cpp \
 ./ton/crypto/vm/stackops.cpp \
 ./ton/crypto/vm/tonops.cpp \
 ./ton/crypto/vm/tupleops.cpp \
+./ton/crypto/vm/utils.cpp \
+./ton/crypto/vm/vm.cpp \
 ./ton/crypto/vm/cells/Cell.cpp \
 ./ton/crypto/vm/cells/CellBuilder.cpp \
 ./ton/crypto/vm/cells/CellHash.cpp \
@@ -282,6 +292,7 @@ LOCAL_SRC_FILES     := \
 ./ton/td/utils/port/StdStreams.cpp \
 ./ton/td/utils/port/UdpSocketFd.cpp \
 ./ton/td/utils/port/path.cpp \
+./ton/td/utils/port/rlimit.cpp \
 ./ton/td/utils/port/signals.cpp \
 ./ton/td/utils/port/sleep.cpp \
 ./ton/td/utils/port/stacktrace.cpp \
@@ -307,6 +318,7 @@ LOCAL_SRC_FILES     := \
 ./ton/tl-utils/tl-utils.cpp \
 ./ton/tonlib/Client.cpp \
 ./ton/tonlib/ClientActor.cpp \
+./ton/tonlib/ClientJson.cpp \
 ./ton/tonlib/Config.cpp \
 ./ton/tonlib/ExtClient.cpp \
 ./ton/tonlib/ExtClientLazy.cpp \
@@ -318,6 +330,7 @@ LOCAL_SRC_FILES     := \
 ./ton/tonlib/LastConfig.cpp \
 ./ton/tonlib/Logging.cpp \
 ./ton/tonlib/TonlibClient.cpp \
+./ton/tonlib/tonlib_client_json.cpp \
 ./ton/tonlib/utils.cpp \
 ./ton/tonlib/keys/bip39.cpp \
 ./ton/tonlib/keys/DecryptedKey.cpp \
