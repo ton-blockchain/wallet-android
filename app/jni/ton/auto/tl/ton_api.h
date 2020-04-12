@@ -390,7 +390,7 @@ class validatorSession_candidate;
 
 class validatorSession_candidateId;
 
-class validatorSession_config;
+class validatorSession_Config;
 
 class validatorSession_Message;
 
@@ -7212,6 +7212,36 @@ class validator_groupEx final : public validator_Group {
   void store(td::TlStorerToString &s, const char *field_name) const final;
 };
 
+class validator_groupNew final : public validator_Group {
+ public:
+  std::int32_t workchain_;
+  std::int64_t shard_;
+  std::int32_t vertical_seqno_;
+  std::int32_t last_key_block_seqno_;
+  std::int32_t catchain_seqno_;
+  td::Bits256 config_hash_;
+  std::vector<object_ptr<validator_groupMember>> members_;
+
+  validator_groupNew();
+
+  validator_groupNew(std::int32_t workchain_, std::int64_t shard_, std::int32_t vertical_seqno_, std::int32_t last_key_block_seqno_, std::int32_t catchain_seqno_, td::Bits256 const &config_hash_, std::vector<object_ptr<validator_groupMember>> &&members_);
+
+  static const std::int32_t ID = -1740398259;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<validator_Group> fetch(td::TlParser &p);
+
+  explicit validator_groupNew(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+};
+
 class validator_config_global final : public Object {
  public:
   object_ptr<tonNode_blockIdExt> zero_state_;
@@ -7373,7 +7403,13 @@ class validatorSession_candidateId final : public Object {
   void store(td::TlStorerToString &s, const char *field_name) const final;
 };
 
-class validatorSession_config final : public Object {
+class validatorSession_Config: public Object {
+ public:
+
+  static object_ptr<validatorSession_Config> fetch(td::TlParser &p);
+};
+
+class validatorSession_config final : public validatorSession_Config {
  public:
   double catchain_idle_timeout_;
   std::int32_t catchain_max_deps_;
@@ -7393,9 +7429,41 @@ class validatorSession_config final : public Object {
     return ID;
   }
 
-  static object_ptr<validatorSession_config> fetch(td::TlParser &p);
+  static object_ptr<validatorSession_Config> fetch(td::TlParser &p);
 
   explicit validatorSession_config(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+};
+
+class validatorSession_configNew final : public validatorSession_Config {
+ public:
+  double catchain_idle_timeout_;
+  std::int32_t catchain_max_deps_;
+  std::int32_t round_candidates_;
+  double next_candidate_delay_;
+  std::int32_t round_attempt_duration_;
+  std::int32_t max_round_attempts_;
+  std::int32_t max_block_size_;
+  std::int32_t max_collated_data_size_;
+  bool new_catchain_ids_;
+
+  validatorSession_configNew();
+
+  validatorSession_configNew(double catchain_idle_timeout_, std::int32_t catchain_max_deps_, std::int32_t round_candidates_, double next_candidate_delay_, std::int32_t round_attempt_duration_, std::int32_t max_round_attempts_, std::int32_t max_block_size_, std::int32_t max_collated_data_size_, bool new_catchain_ids_);
+
+  static const std::int32_t ID = -139482724;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<validatorSession_Config> fetch(td::TlParser &p);
+
+  explicit validatorSession_configNew(td::TlParser &p);
 
   void store(td::TlStorerCalcLength &s) const final;
 
@@ -9362,6 +9430,118 @@ class tonNode_downloadBlocks final : public Function {
   static ReturnType fetch_result(td::TlParser &p);
 };
 
+class tonNode_downloadKeyBlockProof final : public Function {
+ public:
+  object_ptr<tonNode_blockIdExt> block_;
+
+  tonNode_downloadKeyBlockProof();
+
+  explicit tonNode_downloadKeyBlockProof(object_ptr<tonNode_blockIdExt> &&block_);
+
+  static const std::int32_t ID = -333232070;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<tonNode_data>;
+
+  static object_ptr<tonNode_downloadKeyBlockProof> fetch(td::TlParser &p);
+
+  explicit tonNode_downloadKeyBlockProof(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(td::TlParser &p);
+};
+
+class tonNode_downloadKeyBlockProofLink final : public Function {
+ public:
+  object_ptr<tonNode_blockIdExt> block_;
+
+  tonNode_downloadKeyBlockProofLink();
+
+  explicit tonNode_downloadKeyBlockProofLink(object_ptr<tonNode_blockIdExt> &&block_);
+
+  static const std::int32_t ID = 316943058;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<tonNode_data>;
+
+  static object_ptr<tonNode_downloadKeyBlockProofLink> fetch(td::TlParser &p);
+
+  explicit tonNode_downloadKeyBlockProofLink(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(td::TlParser &p);
+};
+
+class tonNode_downloadKeyBlockProofLinks final : public Function {
+ public:
+  std::vector<object_ptr<tonNode_blockIdExt>> blocks_;
+
+  tonNode_downloadKeyBlockProofLinks();
+
+  explicit tonNode_downloadKeyBlockProofLinks(std::vector<object_ptr<tonNode_blockIdExt>> &&blocks_);
+
+  static const std::int32_t ID = 1975747920;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<tonNode_dataList>;
+
+  static object_ptr<tonNode_downloadKeyBlockProofLinks> fetch(td::TlParser &p);
+
+  explicit tonNode_downloadKeyBlockProofLinks(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(td::TlParser &p);
+};
+
+class tonNode_downloadKeyBlockProofs final : public Function {
+ public:
+  std::vector<object_ptr<tonNode_blockIdExt>> blocks_;
+
+  tonNode_downloadKeyBlockProofs();
+
+  explicit tonNode_downloadKeyBlockProofs(std::vector<object_ptr<tonNode_blockIdExt>> &&blocks_);
+
+  static const std::int32_t ID = -1020797382;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<tonNode_dataList>;
+
+  static object_ptr<tonNode_downloadKeyBlockProofs> fetch(td::TlParser &p);
+
+  explicit tonNode_downloadKeyBlockProofs(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(td::TlParser &p);
+};
+
 class tonNode_downloadNextBlockFull final : public Function {
  public:
   object_ptr<tonNode_blockIdExt> prev_block_;
@@ -9781,6 +9961,64 @@ class tonNode_prepareBlocks final : public Function {
   static object_ptr<tonNode_prepareBlocks> fetch(td::TlParser &p);
 
   explicit tonNode_prepareBlocks(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(td::TlParser &p);
+};
+
+class tonNode_prepareKeyBlockProof final : public Function {
+ public:
+  object_ptr<tonNode_blockIdExt> block_;
+  bool allow_partial_;
+
+  tonNode_prepareKeyBlockProof();
+
+  tonNode_prepareKeyBlockProof(object_ptr<tonNode_blockIdExt> &&block_, bool allow_partial_);
+
+  static const std::int32_t ID = 2000047160;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<tonNode_PreparedProof>;
+
+  static object_ptr<tonNode_prepareKeyBlockProof> fetch(td::TlParser &p);
+
+  explicit tonNode_prepareKeyBlockProof(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(td::TlParser &p);
+};
+
+class tonNode_prepareKeyBlockProofs final : public Function {
+ public:
+  std::vector<object_ptr<tonNode_blockIdExt>> blocks_;
+  bool allow_partial_;
+
+  tonNode_prepareKeyBlockProofs();
+
+  tonNode_prepareKeyBlockProofs(std::vector<object_ptr<tonNode_blockIdExt>> &&blocks_, bool allow_partial_);
+
+  static const std::int32_t ID = -1939014684;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<tonNode_PreparedProof>;
+
+  static object_ptr<tonNode_prepareKeyBlockProofs> fetch(td::TlParser &p);
+
+  explicit tonNode_prepareKeyBlockProofs(td::TlParser &p);
 
   void store(td::TlStorerCalcLength &s) const final;
 

@@ -65,10 +65,10 @@ struct NewOutMsg {
   NewOutMsg(ton::LogicalTime _lt, Ref<vm::Cell> _msg, Ref<vm::Cell> _trans)
       : lt(_lt), msg(std::move(_msg)), trans(std::move(_trans)) {
   }
-  bool operator<(const NewOutMsg& other) const & {
+  bool operator<(const NewOutMsg& other) const& {
     return lt < other.lt || (lt == other.lt && msg->get_hash() < other.msg->get_hash());
   }
-  bool operator>(const NewOutMsg& other) const & {
+  bool operator>(const NewOutMsg& other) const& {
     return lt > other.lt || (lt == other.lt && other.msg->get_hash() < msg->get_hash());
   }
 };
@@ -151,8 +151,6 @@ struct ActionPhaseConfig {
 struct CreditPhase {
   td::RefInt256 due_fees_collected;
   block::CurrencyCollection credit;
-  // td::RefInt256 credit;
-  // Ref<vm::Cell> credit_extra;
 };
 
 struct ComputePhase {
@@ -233,8 +231,6 @@ struct Account {
   ton::UnixTime last_paid;
   vm::CellStorageStat storage_stat;
   block::CurrencyCollection balance;
-  // td::RefInt256 balance;
-  // Ref<vm::Cell> extra_balance;
   td::RefInt256 due_payment;
   Ref<vm::Cell> orig_total_state;  // ^Account
   Ref<vm::Cell> total_state;       // ^Account
@@ -325,8 +321,6 @@ struct Transaction {
   Ref<vm::Cell> root;
   Ref<vm::Cell> new_total_state;
   Ref<vm::CellSlice> new_inner_state;
-  // Ref<vm::Cell> extra_balance;
-  // Ref<vm::Cell> msg_extra;
   Ref<vm::Cell> new_code, new_data, new_library;
   Ref<vm::Cell> in_msg, in_msg_state;
   Ref<vm::CellSlice> in_msg_body;
@@ -344,7 +338,7 @@ struct Transaction {
               Ref<vm::Cell> _inmsg = {});
   bool unpack_input_msg(bool ihr_delivered, const ActionPhaseConfig* cfg);
   bool check_in_msg_state_hash();
-  bool prepare_storage_phase(const StoragePhaseConfig& cfg, bool force_collect = true);
+  bool prepare_storage_phase(const StoragePhaseConfig& cfg, bool force_collect = true, bool adjust_msg_value = false);
   bool prepare_credit_phase();
   bool compute_gas_limits(ComputePhase& cp, const ComputePhaseConfig& cfg);
   Ref<vm::Stack> prepare_vm_stack(ComputePhase& cp);

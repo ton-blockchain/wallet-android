@@ -98,15 +98,13 @@ BigNum BigNum::from_binary(Slice str) {
 }
 
 BigNum BigNum::from_le_binary(Slice str) {
-#ifdef OPENSSL_IS_BORINGSSL
-return BigNum(make_unique<Impl>(BN_le2bn(str.ubegin(), narrow_cast<int>(str.size()), nullptr)));
-#else
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+#if defined(OPENSSL_IS_BORINGSSL)
+  return BigNum(make_unique<Impl>(BN_le2bn(str.ubegin(), narrow_cast<int>(str.size()), nullptr)));
+#elif OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
   return BigNum(make_unique<Impl>(BN_lebin2bn(str.ubegin(), narrow_cast<int>(str.size()), nullptr)));
 #else
   LOG(FATAL) << "Unsupported from_le_binary";
   return BigNum();
-#endif
 #endif
 }
 
@@ -225,7 +223,7 @@ string BigNum::to_binary(int exact_size) const {
 }
 
 string BigNum::to_le_binary(int exact_size) const {
-#ifdef OPENSSL_IS_BORINGSSL
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER) || defined(OPENSSL_IS_BORINGSSL)
   int num_size = get_num_bytes();
   if (exact_size == -1) {
     exact_size = num_size;
@@ -233,23 +231,15 @@ string BigNum::to_le_binary(int exact_size) const {
     CHECK(exact_size >= num_size);
   }
   string res(exact_size, '\0');
+#if defined(OPENSSL_IS_BORINGSSL)
   BN_bn2le_padded(MutableSlice(res).ubegin(), exact_size, impl_->big_num);
-  return res;
 #else
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
-  int num_size = get_num_bytes();
-  if (exact_size == -1) {
-    exact_size = num_size;
-  } else {
-    CHECK(exact_size >= num_size);
-  }
-  string res(exact_size, '\0');
   BN_bn2lebinpad(impl_->big_num, MutableSlice(res).ubegin(), exact_size);
+#endif
   return res;
 #else
   LOG(FATAL) << "Unsupported to_le_binary";
   return "";
-#endif
 #endif
 }
 

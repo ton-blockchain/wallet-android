@@ -552,6 +552,8 @@ object_ptr<Object> Object::fetch(td::TlParser &p) {
       return validator_group::fetch(p);
     case validator_groupEx::ID:
       return validator_groupEx::fetch(p);
+    case validator_groupNew::ID:
+      return validator_groupNew::fetch(p);
     case validator_config_global::ID:
       return validator_config_global::fetch(p);
     case validator_config_local::ID:
@@ -566,6 +568,8 @@ object_ptr<Object> Object::fetch(td::TlParser &p) {
       return validatorSession_candidateId::fetch(p);
     case validatorSession_config::ID:
       return validatorSession_config::fetch(p);
+    case validatorSession_configNew::ID:
+      return validatorSession_configNew::fetch(p);
     case validatorSession_message_startSession::ID:
       return validatorSession_message_startSession::fetch(p);
     case validatorSession_message_finishSession::ID:
@@ -716,6 +720,14 @@ object_ptr<Function> Function::fetch(td::TlParser &p) {
       return tonNode_downloadBlockProofs::fetch(p);
     case tonNode_downloadBlocks::ID:
       return tonNode_downloadBlocks::fetch(p);
+    case tonNode_downloadKeyBlockProof::ID:
+      return tonNode_downloadKeyBlockProof::fetch(p);
+    case tonNode_downloadKeyBlockProofLink::ID:
+      return tonNode_downloadKeyBlockProofLink::fetch(p);
+    case tonNode_downloadKeyBlockProofLinks::ID:
+      return tonNode_downloadKeyBlockProofLinks::fetch(p);
+    case tonNode_downloadKeyBlockProofs::ID:
+      return tonNode_downloadKeyBlockProofs::fetch(p);
     case tonNode_downloadNextBlockFull::ID:
       return tonNode_downloadNextBlockFull::fetch(p);
     case tonNode_downloadPersistentState::ID:
@@ -746,6 +758,10 @@ object_ptr<Function> Function::fetch(td::TlParser &p) {
       return tonNode_prepareBlockProofs::fetch(p);
     case tonNode_prepareBlocks::ID:
       return tonNode_prepareBlocks::fetch(p);
+    case tonNode_prepareKeyBlockProof::ID:
+      return tonNode_prepareKeyBlockProof::fetch(p);
+    case tonNode_prepareKeyBlockProofs::ID:
+      return tonNode_prepareKeyBlockProofs::fetch(p);
     case tonNode_preparePersistentState::ID:
       return tonNode_preparePersistentState::fetch(p);
     case tonNode_prepareZeroState::ID:
@@ -13118,6 +13134,8 @@ object_ptr<validator_Group> validator_Group::fetch(td::TlParser &p) {
       return validator_group::fetch(p);
     case validator_groupEx::ID:
       return validator_groupEx::fetch(p);
+    case validator_groupNew::ID:
+      return validator_groupNew::fetch(p);
     default:
       FAIL(PSTRING() << "Unknown constructor found " << td::format::as_hex(constructor));
   }
@@ -13247,6 +13265,80 @@ void validator_groupEx::store(td::TlStorerToString &s, const char *field_name) c
     s.store_field("workchain", workchain_);
     s.store_field("shard", shard_);
     s.store_field("vertical_seqno", vertical_seqno_);
+    s.store_field("catchain_seqno", catchain_seqno_);
+    s.store_field("config_hash", config_hash_);
+    { const std::vector<object_ptr<validator_groupMember>> &v = members_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "vector[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("members", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { if (v[i] == nullptr) { s.store_field("", "null"); } else { v[i]->store(s, ""); } } s.store_class_end(); }
+    s.store_class_end();
+  }
+}
+
+validator_groupNew::validator_groupNew()
+  : workchain_()
+  , shard_()
+  , vertical_seqno_()
+  , last_key_block_seqno_()
+  , catchain_seqno_()
+  , config_hash_()
+  , members_()
+{}
+
+validator_groupNew::validator_groupNew(std::int32_t workchain_, std::int64_t shard_, std::int32_t vertical_seqno_, std::int32_t last_key_block_seqno_, std::int32_t catchain_seqno_, td::Bits256 const &config_hash_, std::vector<object_ptr<validator_groupMember>> &&members_)
+  : workchain_(workchain_)
+  , shard_(shard_)
+  , vertical_seqno_(vertical_seqno_)
+  , last_key_block_seqno_(last_key_block_seqno_)
+  , catchain_seqno_(catchain_seqno_)
+  , config_hash_(config_hash_)
+  , members_(std::move(members_))
+{}
+
+const std::int32_t validator_groupNew::ID;
+
+object_ptr<validator_Group> validator_groupNew::fetch(td::TlParser &p) {
+  return make_object<validator_groupNew>(p);
+}
+
+validator_groupNew::validator_groupNew(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : workchain_(TlFetchInt::parse(p))
+  , shard_(TlFetchLong::parse(p))
+  , vertical_seqno_(TlFetchInt::parse(p))
+  , last_key_block_seqno_(TlFetchInt::parse(p))
+  , catchain_seqno_(TlFetchInt::parse(p))
+  , config_hash_(TlFetchInt256::parse(p))
+  , members_(TlFetchVector<TlFetchObject<validator_groupMember>>::parse(p))
+#undef FAIL
+{}
+
+void validator_groupNew::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(workchain_, s);
+  TlStoreBinary::store(shard_, s);
+  TlStoreBinary::store(vertical_seqno_, s);
+  TlStoreBinary::store(last_key_block_seqno_, s);
+  TlStoreBinary::store(catchain_seqno_, s);
+  TlStoreBinary::store(config_hash_, s);
+  TlStoreVector<TlStoreObject>::store(members_, s);
+}
+
+void validator_groupNew::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(workchain_, s);
+  TlStoreBinary::store(shard_, s);
+  TlStoreBinary::store(vertical_seqno_, s);
+  TlStoreBinary::store(last_key_block_seqno_, s);
+  TlStoreBinary::store(catchain_seqno_, s);
+  TlStoreBinary::store(config_hash_, s);
+  TlStoreVector<TlStoreObject>::store(members_, s);
+}
+
+void validator_groupNew::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "validator_groupNew");
+    s.store_field("workchain", workchain_);
+    s.store_field("shard", shard_);
+    s.store_field("vertical_seqno", vertical_seqno_);
+    s.store_field("last_key_block_seqno", last_key_block_seqno_);
     s.store_field("catchain_seqno", catchain_seqno_);
     s.store_field("config_hash", config_hash_);
     { const std::vector<object_ptr<validator_groupMember>> &v = members_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "vector[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("members", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { if (v[i] == nullptr) { s.store_field("", "null"); } else { v[i]->store(s, ""); } } s.store_class_end(); }
@@ -13562,6 +13654,20 @@ void validatorSession_candidateId::store(td::TlStorerToString &s, const char *fi
   }
 }
 
+object_ptr<validatorSession_Config> validatorSession_Config::fetch(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return nullptr;
+  int constructor = p.fetch_int();
+  switch (constructor) {
+    case validatorSession_config::ID:
+      return validatorSession_config::fetch(p);
+    case validatorSession_configNew::ID:
+      return validatorSession_configNew::fetch(p);
+    default:
+      FAIL(PSTRING() << "Unknown constructor found " << td::format::as_hex(constructor));
+  }
+#undef FAIL
+}
+
 validatorSession_config::validatorSession_config()
   : catchain_idle_timeout_()
   , catchain_max_deps_()
@@ -13586,7 +13692,7 @@ validatorSession_config::validatorSession_config(double catchain_idle_timeout_, 
 
 const std::int32_t validatorSession_config::ID;
 
-object_ptr<validatorSession_config> validatorSession_config::fetch(td::TlParser &p) {
+object_ptr<validatorSession_Config> validatorSession_config::fetch(td::TlParser &p) {
   return make_object<validatorSession_config>(p);
 }
 
@@ -13638,6 +13744,92 @@ void validatorSession_config::store(td::TlStorerToString &s, const char *field_n
     s.store_field("max_round_attempts", max_round_attempts_);
     s.store_field("max_block_size", max_block_size_);
     s.store_field("max_collated_data_size", max_collated_data_size_);
+    s.store_class_end();
+  }
+}
+
+validatorSession_configNew::validatorSession_configNew()
+  : catchain_idle_timeout_()
+  , catchain_max_deps_()
+  , round_candidates_()
+  , next_candidate_delay_()
+  , round_attempt_duration_()
+  , max_round_attempts_()
+  , max_block_size_()
+  , max_collated_data_size_()
+  , new_catchain_ids_()
+{}
+
+validatorSession_configNew::validatorSession_configNew(double catchain_idle_timeout_, std::int32_t catchain_max_deps_, std::int32_t round_candidates_, double next_candidate_delay_, std::int32_t round_attempt_duration_, std::int32_t max_round_attempts_, std::int32_t max_block_size_, std::int32_t max_collated_data_size_, bool new_catchain_ids_)
+  : catchain_idle_timeout_(catchain_idle_timeout_)
+  , catchain_max_deps_(catchain_max_deps_)
+  , round_candidates_(round_candidates_)
+  , next_candidate_delay_(next_candidate_delay_)
+  , round_attempt_duration_(round_attempt_duration_)
+  , max_round_attempts_(max_round_attempts_)
+  , max_block_size_(max_block_size_)
+  , max_collated_data_size_(max_collated_data_size_)
+  , new_catchain_ids_(new_catchain_ids_)
+{}
+
+const std::int32_t validatorSession_configNew::ID;
+
+object_ptr<validatorSession_Config> validatorSession_configNew::fetch(td::TlParser &p) {
+  return make_object<validatorSession_configNew>(p);
+}
+
+validatorSession_configNew::validatorSession_configNew(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : catchain_idle_timeout_(TlFetchDouble::parse(p))
+  , catchain_max_deps_(TlFetchInt::parse(p))
+  , round_candidates_(TlFetchInt::parse(p))
+  , next_candidate_delay_(TlFetchDouble::parse(p))
+  , round_attempt_duration_(TlFetchInt::parse(p))
+  , max_round_attempts_(TlFetchInt::parse(p))
+  , max_block_size_(TlFetchInt::parse(p))
+  , max_collated_data_size_(TlFetchInt::parse(p))
+  , new_catchain_ids_(TlFetchBool::parse(p))
+#undef FAIL
+{}
+
+void validatorSession_configNew::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(catchain_idle_timeout_, s);
+  TlStoreBinary::store(catchain_max_deps_, s);
+  TlStoreBinary::store(round_candidates_, s);
+  TlStoreBinary::store(next_candidate_delay_, s);
+  TlStoreBinary::store(round_attempt_duration_, s);
+  TlStoreBinary::store(max_round_attempts_, s);
+  TlStoreBinary::store(max_block_size_, s);
+  TlStoreBinary::store(max_collated_data_size_, s);
+  TlStoreBool::store(new_catchain_ids_, s);
+}
+
+void validatorSession_configNew::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(catchain_idle_timeout_, s);
+  TlStoreBinary::store(catchain_max_deps_, s);
+  TlStoreBinary::store(round_candidates_, s);
+  TlStoreBinary::store(next_candidate_delay_, s);
+  TlStoreBinary::store(round_attempt_duration_, s);
+  TlStoreBinary::store(max_round_attempts_, s);
+  TlStoreBinary::store(max_block_size_, s);
+  TlStoreBinary::store(max_collated_data_size_, s);
+  TlStoreBool::store(new_catchain_ids_, s);
+}
+
+void validatorSession_configNew::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "validatorSession_configNew");
+    s.store_field("catchain_idle_timeout", catchain_idle_timeout_);
+    s.store_field("catchain_max_deps", catchain_max_deps_);
+    s.store_field("round_candidates", round_candidates_);
+    s.store_field("next_candidate_delay", next_candidate_delay_);
+    s.store_field("round_attempt_duration", round_attempt_duration_);
+    s.store_field("max_round_attempts", max_round_attempts_);
+    s.store_field("max_block_size", max_block_size_);
+    s.store_field("max_collated_data_size", max_collated_data_size_);
+    s.store_field("new_catchain_ids", new_catchain_ids_);
     s.store_class_end();
   }
 }
@@ -17114,6 +17306,190 @@ tonNode_downloadBlocks::ReturnType tonNode_downloadBlocks::fetch_result(td::TlPa
 #undef FAIL
 }
 
+tonNode_downloadKeyBlockProof::tonNode_downloadKeyBlockProof()
+  : block_()
+{}
+
+tonNode_downloadKeyBlockProof::tonNode_downloadKeyBlockProof(object_ptr<tonNode_blockIdExt> &&block_)
+  : block_(std::move(block_))
+{}
+
+const std::int32_t tonNode_downloadKeyBlockProof::ID;
+
+object_ptr<tonNode_downloadKeyBlockProof> tonNode_downloadKeyBlockProof::fetch(td::TlParser &p) {
+  return make_object<tonNode_downloadKeyBlockProof>(p);
+}
+
+tonNode_downloadKeyBlockProof::tonNode_downloadKeyBlockProof(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : block_(TlFetchObject<tonNode_blockIdExt>::parse(p))
+#undef FAIL
+{}
+
+void tonNode_downloadKeyBlockProof::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  s.store_binary(-333232070);
+  TlStoreObject::store(block_, s);
+}
+
+void tonNode_downloadKeyBlockProof::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  s.store_binary(-333232070);
+  TlStoreObject::store(block_, s);
+}
+
+void tonNode_downloadKeyBlockProof::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "tonNode_downloadKeyBlockProof");
+    if (block_ == nullptr) { s.store_field("block", "null"); } else { block_->store(s, "block"); }
+    s.store_class_end();
+  }
+}
+
+tonNode_downloadKeyBlockProof::ReturnType tonNode_downloadKeyBlockProof::fetch_result(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return ReturnType()
+  return TlFetchBoxed<TlFetchObject<tonNode_data>, 1443505284>::parse(p);
+#undef FAIL
+}
+
+tonNode_downloadKeyBlockProofLink::tonNode_downloadKeyBlockProofLink()
+  : block_()
+{}
+
+tonNode_downloadKeyBlockProofLink::tonNode_downloadKeyBlockProofLink(object_ptr<tonNode_blockIdExt> &&block_)
+  : block_(std::move(block_))
+{}
+
+const std::int32_t tonNode_downloadKeyBlockProofLink::ID;
+
+object_ptr<tonNode_downloadKeyBlockProofLink> tonNode_downloadKeyBlockProofLink::fetch(td::TlParser &p) {
+  return make_object<tonNode_downloadKeyBlockProofLink>(p);
+}
+
+tonNode_downloadKeyBlockProofLink::tonNode_downloadKeyBlockProofLink(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : block_(TlFetchObject<tonNode_blockIdExt>::parse(p))
+#undef FAIL
+{}
+
+void tonNode_downloadKeyBlockProofLink::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  s.store_binary(316943058);
+  TlStoreObject::store(block_, s);
+}
+
+void tonNode_downloadKeyBlockProofLink::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  s.store_binary(316943058);
+  TlStoreObject::store(block_, s);
+}
+
+void tonNode_downloadKeyBlockProofLink::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "tonNode_downloadKeyBlockProofLink");
+    if (block_ == nullptr) { s.store_field("block", "null"); } else { block_->store(s, "block"); }
+    s.store_class_end();
+  }
+}
+
+tonNode_downloadKeyBlockProofLink::ReturnType tonNode_downloadKeyBlockProofLink::fetch_result(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return ReturnType()
+  return TlFetchBoxed<TlFetchObject<tonNode_data>, 1443505284>::parse(p);
+#undef FAIL
+}
+
+tonNode_downloadKeyBlockProofLinks::tonNode_downloadKeyBlockProofLinks()
+  : blocks_()
+{}
+
+tonNode_downloadKeyBlockProofLinks::tonNode_downloadKeyBlockProofLinks(std::vector<object_ptr<tonNode_blockIdExt>> &&blocks_)
+  : blocks_(std::move(blocks_))
+{}
+
+const std::int32_t tonNode_downloadKeyBlockProofLinks::ID;
+
+object_ptr<tonNode_downloadKeyBlockProofLinks> tonNode_downloadKeyBlockProofLinks::fetch(td::TlParser &p) {
+  return make_object<tonNode_downloadKeyBlockProofLinks>(p);
+}
+
+tonNode_downloadKeyBlockProofLinks::tonNode_downloadKeyBlockProofLinks(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : blocks_(TlFetchVector<TlFetchObject<tonNode_blockIdExt>>::parse(p))
+#undef FAIL
+{}
+
+void tonNode_downloadKeyBlockProofLinks::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  s.store_binary(1975747920);
+  TlStoreVector<TlStoreObject>::store(blocks_, s);
+}
+
+void tonNode_downloadKeyBlockProofLinks::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  s.store_binary(1975747920);
+  TlStoreVector<TlStoreObject>::store(blocks_, s);
+}
+
+void tonNode_downloadKeyBlockProofLinks::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "tonNode_downloadKeyBlockProofLinks");
+    { const std::vector<object_ptr<tonNode_blockIdExt>> &v = blocks_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "vector[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("blocks", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { if (v[i] == nullptr) { s.store_field("", "null"); } else { v[i]->store(s, ""); } } s.store_class_end(); }
+    s.store_class_end();
+  }
+}
+
+tonNode_downloadKeyBlockProofLinks::ReturnType tonNode_downloadKeyBlockProofLinks::fetch_result(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return ReturnType()
+  return TlFetchBoxed<TlFetchObject<tonNode_dataList>, 351548179>::parse(p);
+#undef FAIL
+}
+
+tonNode_downloadKeyBlockProofs::tonNode_downloadKeyBlockProofs()
+  : blocks_()
+{}
+
+tonNode_downloadKeyBlockProofs::tonNode_downloadKeyBlockProofs(std::vector<object_ptr<tonNode_blockIdExt>> &&blocks_)
+  : blocks_(std::move(blocks_))
+{}
+
+const std::int32_t tonNode_downloadKeyBlockProofs::ID;
+
+object_ptr<tonNode_downloadKeyBlockProofs> tonNode_downloadKeyBlockProofs::fetch(td::TlParser &p) {
+  return make_object<tonNode_downloadKeyBlockProofs>(p);
+}
+
+tonNode_downloadKeyBlockProofs::tonNode_downloadKeyBlockProofs(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : blocks_(TlFetchVector<TlFetchObject<tonNode_blockIdExt>>::parse(p))
+#undef FAIL
+{}
+
+void tonNode_downloadKeyBlockProofs::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  s.store_binary(-1020797382);
+  TlStoreVector<TlStoreObject>::store(blocks_, s);
+}
+
+void tonNode_downloadKeyBlockProofs::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  s.store_binary(-1020797382);
+  TlStoreVector<TlStoreObject>::store(blocks_, s);
+}
+
+void tonNode_downloadKeyBlockProofs::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "tonNode_downloadKeyBlockProofs");
+    { const std::vector<object_ptr<tonNode_blockIdExt>> &v = blocks_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "vector[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("blocks", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { if (v[i] == nullptr) { s.store_field("", "null"); } else { v[i]->store(s, ""); } } s.store_class_end(); }
+    s.store_class_end();
+  }
+}
+
+tonNode_downloadKeyBlockProofs::ReturnType tonNode_downloadKeyBlockProofs::fetch_result(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return ReturnType()
+  return TlFetchBoxed<TlFetchObject<tonNode_dataList>, 351548179>::parse(p);
+#undef FAIL
+}
+
 tonNode_downloadNextBlockFull::tonNode_downloadNextBlockFull()
   : prev_block_()
 {}
@@ -17866,6 +18242,110 @@ void tonNode_prepareBlocks::store(td::TlStorerToString &s, const char *field_nam
 tonNode_prepareBlocks::ReturnType tonNode_prepareBlocks::fetch_result(td::TlParser &p) {
 #define FAIL(error) p.set_error(error); return ReturnType()
   return TlFetchObject<tonNode_Prepared>::parse(p);
+#undef FAIL
+}
+
+tonNode_prepareKeyBlockProof::tonNode_prepareKeyBlockProof()
+  : block_()
+  , allow_partial_()
+{}
+
+tonNode_prepareKeyBlockProof::tonNode_prepareKeyBlockProof(object_ptr<tonNode_blockIdExt> &&block_, bool allow_partial_)
+  : block_(std::move(block_))
+  , allow_partial_(allow_partial_)
+{}
+
+const std::int32_t tonNode_prepareKeyBlockProof::ID;
+
+object_ptr<tonNode_prepareKeyBlockProof> tonNode_prepareKeyBlockProof::fetch(td::TlParser &p) {
+  return make_object<tonNode_prepareKeyBlockProof>(p);
+}
+
+tonNode_prepareKeyBlockProof::tonNode_prepareKeyBlockProof(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : block_(TlFetchObject<tonNode_blockIdExt>::parse(p))
+  , allow_partial_(TlFetchBool::parse(p))
+#undef FAIL
+{}
+
+void tonNode_prepareKeyBlockProof::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  s.store_binary(2000047160);
+  TlStoreObject::store(block_, s);
+  TlStoreBool::store(allow_partial_, s);
+}
+
+void tonNode_prepareKeyBlockProof::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  s.store_binary(2000047160);
+  TlStoreObject::store(block_, s);
+  TlStoreBool::store(allow_partial_, s);
+}
+
+void tonNode_prepareKeyBlockProof::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "tonNode_prepareKeyBlockProof");
+    if (block_ == nullptr) { s.store_field("block", "null"); } else { block_->store(s, "block"); }
+    s.store_field("allow_partial", allow_partial_);
+    s.store_class_end();
+  }
+}
+
+tonNode_prepareKeyBlockProof::ReturnType tonNode_prepareKeyBlockProof::fetch_result(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return ReturnType()
+  return TlFetchObject<tonNode_PreparedProof>::parse(p);
+#undef FAIL
+}
+
+tonNode_prepareKeyBlockProofs::tonNode_prepareKeyBlockProofs()
+  : blocks_()
+  , allow_partial_()
+{}
+
+tonNode_prepareKeyBlockProofs::tonNode_prepareKeyBlockProofs(std::vector<object_ptr<tonNode_blockIdExt>> &&blocks_, bool allow_partial_)
+  : blocks_(std::move(blocks_))
+  , allow_partial_(allow_partial_)
+{}
+
+const std::int32_t tonNode_prepareKeyBlockProofs::ID;
+
+object_ptr<tonNode_prepareKeyBlockProofs> tonNode_prepareKeyBlockProofs::fetch(td::TlParser &p) {
+  return make_object<tonNode_prepareKeyBlockProofs>(p);
+}
+
+tonNode_prepareKeyBlockProofs::tonNode_prepareKeyBlockProofs(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : blocks_(TlFetchVector<TlFetchObject<tonNode_blockIdExt>>::parse(p))
+  , allow_partial_(TlFetchBool::parse(p))
+#undef FAIL
+{}
+
+void tonNode_prepareKeyBlockProofs::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  s.store_binary(-1939014684);
+  TlStoreVector<TlStoreObject>::store(blocks_, s);
+  TlStoreBool::store(allow_partial_, s);
+}
+
+void tonNode_prepareKeyBlockProofs::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  s.store_binary(-1939014684);
+  TlStoreVector<TlStoreObject>::store(blocks_, s);
+  TlStoreBool::store(allow_partial_, s);
+}
+
+void tonNode_prepareKeyBlockProofs::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "tonNode_prepareKeyBlockProofs");
+    { const std::vector<object_ptr<tonNode_blockIdExt>> &v = blocks_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "vector[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("blocks", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { if (v[i] == nullptr) { s.store_field("", "null"); } else { v[i]->store(s, ""); } } s.store_class_end(); }
+    s.store_field("allow_partial", allow_partial_);
+    s.store_class_end();
+  }
+}
+
+tonNode_prepareKeyBlockProofs::ReturnType tonNode_prepareKeyBlockProofs::fetch_result(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return ReturnType()
+  return TlFetchObject<tonNode_PreparedProof>::parse(p);
 #undef FAIL
 }
 
