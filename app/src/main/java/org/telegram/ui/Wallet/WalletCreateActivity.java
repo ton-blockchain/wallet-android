@@ -2,7 +2,7 @@
  * This is the source code of Wallet for Android v. 1.0.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
- * Copyright Nikolai Kudashov, 2019.
+ * Copyright Nikolai Kudashov, 2019-2020.
  */
 
 package org.telegram.ui.Wallet;
@@ -438,7 +438,7 @@ public class WalletCreateActivity extends BaseFragment {
             super.onDraw(canvas);
             if (number != null) {
                 numericPaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhiteHintText));
-                canvas.drawText(number, (maxEditNumberWidth - numberWidth) / 2, AndroidUtilities.dp(20), numericPaint);
+                canvas.drawText(number, (maxEditNumberWidth - numberWidth) / 2.0f, AndroidUtilities.dp(20), numericPaint);
             }
         }
     }
@@ -539,7 +539,11 @@ public class WalletCreateActivity extends BaseFragment {
                     UserConfig userConfig = getUserConfig();
                     userConfig.clearTonConfig();
                     userConfig.saveConfig(false);
-                    finishFragment();
+                    if (parentLayout.fragmentsStack.size() > 1) {
+                        finishFragment();
+                    } else {
+                        presentFragment(new WalletCreateActivity(WalletCreateActivity.TYPE_CREATE), true);
+                    }
                 }
             }
         });
@@ -1440,14 +1444,14 @@ public class WalletCreateActivity extends BaseFragment {
                 progressDialog.setCanCacnel(false);
                 progressDialog.show();
                 UserConfig userConfig = getUserConfig();
-                if (userConfig.walletConfigType == TonController.CONFIG_TYPE_URL && TextUtils.isEmpty(userConfig.walletConfigFromUrl)) {
-                    WalletConfigLoader.loadConfig(userConfig.walletConfigUrl, result -> {
+                if (userConfig.getWalletConfigType() == TonController.CONFIG_TYPE_URL && TextUtils.isEmpty(userConfig.getWalletConfigFromUrl())) {
+                    WalletConfigLoader.loadConfig(userConfig.getWalletConfigUrl(), result -> {
                         if (TextUtils.isEmpty(result)) {
                             progressDialog.dismiss();
                             AlertsCreator.showSimpleAlert(WalletCreateActivity.this, LocaleController.getString("WalletError", R.string.WalletError), LocaleController.getString("WalletCreateBlockchainConfigLoadError", R.string.WalletCreateBlockchainConfigLoadError));
                             return;
                         }
-                        userConfig.walletConfigFromUrl = result;
+                        userConfig.setWalletConfigFromUrl(userConfig.getCurrentNetworkType(), result);
                         userConfig.saveConfig(false);
                         doCreate(useBiometric);
                     });

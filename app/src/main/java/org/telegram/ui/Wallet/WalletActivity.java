@@ -2,7 +2,7 @@
  * This is the source code of Wallet for Android v. 1.0.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
- * Copyright Nikolai Kudashov, 2019.
+ * Copyright Nikolai Kudashov, 2019-2020.
  */
 
 package org.telegram.ui.Wallet;
@@ -281,6 +281,28 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
                 accountState = getTonController().getCachedAccountState();
                 if (!fillTransactions(t, reload) && !reload) {
                     transactionsEndReached = true;
+                    boolean finished = false;
+                    for (int a = sections.size() - 1; a >= 0; a--) {
+                        String key = sections.get(a);
+                        ArrayList<WalletTransaction> arrayList = sectionArrays.get(key);
+                        if (arrayList != null) {
+                            for (int b = arrayList.size() - 1; b >= 0; b--) {
+                                WalletTransaction tr = arrayList.get(b);
+                                if (tr.isOut) {
+                                    finished = true;
+                                    break;
+                                }
+                                if (tr.isEmpty) {
+                                    tr.isInit = true;
+                                    finished = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (finished) {
+                            break;
+                        }
+                    }
                 }
                 if (!t.isEmpty() && (lastTransaction == null || !reload)) {
                     lastTransaction = t.get(t.size() - 1);
@@ -540,7 +562,7 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
                     askForDecryptCredentials();
                     return;
                 }
-                walletActionSheet = new WalletActionSheet(this, walletAddress, cell.getAddress(), cell.getComment(), cell.getAmount(), cell.getDate(), cell.getStorageFee(), cell.getTransactionFee());
+                walletActionSheet = new WalletActionSheet(this, walletAddress, cell.getAddress(), cell.getComment(), cell.getAmount(), cell.getDate(), cell.getStorageFee(), cell.getTransactionFee(), transaction);
                 walletActionSheet.setDelegate(new WalletActionSheet.WalletActionSheetDelegate() {
                     @Override
                     public void openSendToAddress(String address) {
@@ -784,9 +806,9 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
             accountState = getTonController().getCachedAccountState();
             fillTransactions(getTonController().getCachedTransactions(), false);
         }
-        walletAddress = getTonController().getWalletAddress(getUserConfig().tonPublicKey);
-        getTonController().getAccountState(state -> {
+        getTonController().getAccountState(true, state -> {
             if (state != null) {
+                walletAddress = getUserConfig().tonAccountAddress;
                 boolean needUpdateTransactions = true;
                 if (accountState != null) {
                     TonApi.InternalTransactionId oldTransaction = TonController.getLastTransactionId(accountState);
@@ -824,6 +846,9 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
     }
 
     private void onFinishGettingAccountState() {
+        if (accountState == null) {
+            return;
+        }
         lastUpdateTime = TonController.getLastSyncTime(accountState);
         updateTime(true);
         loadingAccountState = false;
@@ -1224,9 +1249,9 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
                 case 0: {
                     WalletBalanceCell balanceCell = (WalletBalanceCell) holder.itemView;
                     if (getTonController().isWalletLoaded()) {
-                        balanceCell.setBalance(TonController.getBalance(accountState));
+                        balanceCell.setBalance(TonController.getBalance(accountState), TonController.getUnlockedBalance(accountState), TonController.isRWallet(accountState), getUserConfig().getCurrentNetworkType() == UserConfig.NETWORK_TYPE_TEST);
                     } else {
-                        balanceCell.setBalance(-1);
+                        balanceCell.setBalance(-1, -1, false, getUserConfig().getCurrentNetworkType() == UserConfig.NETWORK_TYPE_TEST);
                     }
                     break;
                 }

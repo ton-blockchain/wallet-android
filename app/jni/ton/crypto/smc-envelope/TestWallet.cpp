@@ -30,7 +30,7 @@ td::Ref<vm::Cell> TestWallet::get_init_state(const td::Ed25519::PublicKey& publi
   return GenericAccount::get_init_state(std::move(code), std::move(data));
 }
 
-td::Ref<vm::Cell> TestWallet::get_init_message(const td::Ed25519::PrivateKey& private_key) noexcept {
+td::Ref<vm::Cell> TestWallet::get_init_message_new(const td::Ed25519::PrivateKey& private_key) noexcept {
   std::string seq_no(4, 0);
   auto signature =
       private_key.sign(vm::CellBuilder().store_bytes(seq_no).finalize()->get_hash().as_slice()).move_as_ok();
@@ -46,18 +46,11 @@ td::Ref<vm::Cell> TestWallet::make_a_gift_message_static(const td::Ed25519::Priv
 
   for (auto& gift : gifts) {
     td::int32 send_mode = 3;
-    auto gramms = gift.gramms;
-    if (gramms == -1) {
-      gramms = 0;
+    if (gift.gramms == -1) {
       send_mode += 128;
     }
-    vm::CellBuilder cbi;
-    GenericAccount::store_int_message(cbi, gift.destination, gramms);
-    store_gift_message(cbi, gift);
-    auto message_inner = cbi.finalize();
-    cb.store_long(send_mode, 8).store_ref(std::move(message_inner));
+    cb.store_long(send_mode, 8).store_ref(create_int_message(gift));
   }
-
   auto message_outer = cb.finalize();
   auto signature = private_key.sign(message_outer->get_hash().as_slice()).move_as_ok();
   return vm::CellBuilder().store_bytes(signature).append_cellslice(vm::load_cell_slice(message_outer)).finalize();

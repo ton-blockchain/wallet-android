@@ -2,12 +2,14 @@
  * This is the source code of Wallet for Android v. 1.0.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
- * Copyright Nikolai Kudashov, 2019.
+ * Copyright Nikolai Kudashov, 2019-2020.
  */
 
 package org.telegram.ui.Wallet;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
@@ -15,6 +17,8 @@ import android.graphics.drawable.Drawable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.DynamicDrawableSpan;
+import android.text.style.ImageSpan;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.FrameLayout;
@@ -66,7 +70,6 @@ public class WalletBalanceCell extends FrameLayout {
         yourBalanceTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         yourBalanceTextView.setTextColor(Theme.getColor(Theme.key_wallet_whiteText));
         defaultTypeFace = yourBalanceTextView.getTypeface();
-        yourBalanceTextView.setText(LocaleController.getString("WalletYourBalance", R.string.WalletYourBalance));
         addView(yourBalanceTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, 90, 0, 0));
 
         receiveDrawable = context.getResources().getDrawable(R.drawable.wallet_receive).mutate();
@@ -138,9 +141,9 @@ public class WalletBalanceCell extends FrameLayout {
         gemDrawable.start();
     }
 
-    public void setBalance(long value) {
-        if (value >= 0) {
-            SpannableStringBuilder stringBuilder = new SpannableStringBuilder(TonController.formatCurrency(value));
+    public void setBalance(long balance, long unlockedBalance, boolean rWallet, boolean test) {
+        if (balance >= 0) {
+            SpannableStringBuilder stringBuilder = new SpannableStringBuilder(TonController.formatCurrency(rWallet ? unlockedBalance : balance));
             int index = TextUtils.indexOf(stringBuilder, '.');
             if (index >= 0) {
                 stringBuilder.setSpan(new TypefaceSpan(defaultTypeFace, AndroidUtilities.dp(27)), index + 1, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -148,12 +151,37 @@ public class WalletBalanceCell extends FrameLayout {
             valueTextView.setText(stringBuilder);
             valueTextView.setTranslationX(0);
             yourBalanceTextView.setVisibility(VISIBLE);
+            if (rWallet && unlockedBalance != balance) {
+                String str = LocaleController.formatString("WalletLockedBalance", R.string.WalletLockedBalance, TonController.formatCurrency(balance - unlockedBalance));
+                SpannableStringBuilder builder = new SpannableStringBuilder(str);
+                int idx = str.indexOf('*');
+                if (idx >= 0) {
+                    builder.setSpan(new ImageSpan(getContext(), R.drawable.gem_s, DynamicDrawableSpan.ALIGN_BOTTOM) {
+                        @Override
+                        public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
+                            Drawable b = getDrawable();
+                            canvas.save();
+                            int transY = (bottom - top) / 2 - b.getBounds().height() / 2;
+                            canvas.translate(x, transY);
+                            b.draw(canvas);
+                            canvas.restore();
+                        }
+                    }, idx, idx + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+                yourBalanceTextView.setText(builder);
+            } else {
+                if (test) {
+                    yourBalanceTextView.setText(LocaleController.getString("WalletYourTestBalance", R.string.WalletYourTestBalance));
+                } else {
+                    yourBalanceTextView.setText(LocaleController.getString("WalletYourBalance", R.string.WalletYourBalance));
+                }
+            }
         } else {
             valueTextView.setText("");
             valueTextView.setTranslationX(-AndroidUtilities.dp(4));
             yourBalanceTextView.setVisibility(GONE);
         }
-        int visibility = value <= 0 ? GONE : VISIBLE;
+        int visibility = balance <= 0 ? GONE : VISIBLE;
         if (sendButton.getVisibility() != visibility) {
             sendButton.setVisibility(visibility);
         }

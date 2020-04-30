@@ -2,7 +2,7 @@
  * This is the source code of Wallet for Android v. 1.0.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
- * Copyright Nikolai Kudashov, 2019.
+ * Copyright Nikolai Kudashov, 2019-2020.
  */
 
 package org.telegram.ui.Wallet;
@@ -62,34 +62,34 @@ public class WalletTransactionCell extends LinearLayout {
         super(context);
         setOrientation(VERTICAL);
 
-        LinearLayout linearLayout = new LinearLayout(context);
-        linearLayout.setOrientation(HORIZONTAL);
-        addView(linearLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 18, 0, 18, 0));
+        LinearLayout valueLinearLayout = new LinearLayout(context);
+        valueLinearLayout.setOrientation(HORIZONTAL);
+        addView(valueLinearLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 18, 0, 18, 0));
 
         valueTextView = new TextView(context);
         valueTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         defaultTypeFace = valueTextView.getTypeface();
         valueTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        linearLayout.addView(valueTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 0, 8, 0, 0));
+        valueLinearLayout.addView(valueTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 0, 8, 0, 0));
 
         gemImageView = new ImageView(context);
         gemImageView.setImageResource(R.drawable.gem_s);
-        linearLayout.addView(gemImageView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 3, 11, 0, 0));
+        valueLinearLayout.addView(gemImageView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 3, 11, 0, 0));
 
         fromTextView = new TextView(context);
         fromTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
         fromTextView.setTextColor(Theme.getColor(Theme.key_wallet_blackText));
-        linearLayout.addView(fromTextView, LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 1.0f, 7, 8, 0, 0));
+        valueLinearLayout.addView(fromTextView, LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 1.0f, 7, 8, 0, 0));
 
         clockImage = new ImageView(context);
         clockImage.setImageResource(R.drawable.msg_clock);
         clockImage.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_wallet_dateText), PorterDuff.Mode.MULTIPLY));
-        linearLayout.addView(clockImage, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.RIGHT | Gravity.TOP, 0, 14, 4, 0));
+        valueLinearLayout.addView(clockImage, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.RIGHT | Gravity.TOP, 0, 14, 4, 0));
 
         dateTextView = new TextView(context);
         dateTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         dateTextView.setTextColor(Theme.getColor(Theme.key_wallet_dateText));
-        linearLayout.addView(dateTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.RIGHT | Gravity.TOP, 0, 8, 0, 0));
+        valueLinearLayout.addView(dateTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.RIGHT | Gravity.TOP, 0, 8, 0, 0));
 
         addressLinearLayout = new LinearLayout(context);
         addressLinearLayout.setOrientation(HORIZONTAL);
@@ -131,13 +131,13 @@ public class WalletTransactionCell extends LinearLayout {
                 if (encryptedImageView.getVisibility() != INVISIBLE) {
                     encryptedImageView.setVisibility(INVISIBLE);
                 }
-                return new String(msgData.text, 0, msgData.text.length, "UTF-8");
+                return new String(msgData.text, 0, msgData.text.length, AndroidUtilities.UTF_8);
             } else if (messageData instanceof TonApi.MsgDataDecryptedText) {
                 TonApi.MsgDataDecryptedText msgData = (TonApi.MsgDataDecryptedText) messageData;
                 if (encryptedImageView.getVisibility() != VISIBLE) {
                     encryptedImageView.setVisibility(VISIBLE);
                 }
-                return new String(msgData.text, 0, msgData.text.length, "UTF-8");
+                return new String(msgData.text, 0, msgData.text.length, AndroidUtilities.UTF_8);
             } else if (messageData instanceof TonApi.MsgDataEncryptedText) {
                 String text = walletTransaction.getDecryptedMessage(messageData);
                 if (text == null) {
@@ -184,6 +184,14 @@ public class WalletTransactionCell extends LinearLayout {
                 }
             }
         }
+
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) fromTextView.getLayoutParams();
+        layoutParams.leftMargin = AndroidUtilities.dp(7);
+        layoutParams.bottomMargin = 0;
+
+        valueTextView.setVisibility(VISIBLE);
+        gemImageView.setVisibility(VISIBLE);
+        addressLinearLayout.setVisibility(VISIBLE);
         clockImage.setVisibility(GONE);
         CharSequence text;
         isEmpty = false;
@@ -203,10 +211,21 @@ public class WalletTransactionCell extends LinearLayout {
                 builder = new StringBuilder(transaction.outMsgs[0].destination.accountAddress);
                 fromTextView.setText(LocaleController.getString("WalletTo", R.string.WalletTo));
             } else {
-                //builder = new StringBuilder(LocaleController.getString("WalletProcessingFee", R.string.WalletProcessingFee));
-                builder = new StringBuilder("");
-                isEmpty = true;
-                fromTextView.setText("");
+                if (walletTransaction.isEmpty) {
+                    if (walletTransaction.isInit) {
+                        fromTextView.setText(LocaleController.getString("WalletInitTransaction", R.string.WalletInitTransaction));
+                    } else {
+                        fromTextView.setText(LocaleController.getString("WalletEmptyTransaction", R.string.WalletEmptyTransaction));
+                    }
+                    addressLinearLayout.setVisibility(GONE);
+                    valueTextView.setVisibility(GONE);
+                    gemImageView.setVisibility(GONE);
+                    layoutParams.leftMargin = 0;
+                    layoutParams.bottomMargin = AndroidUtilities.dp(4);
+                } else {
+                    isEmpty = true;
+                }
+                builder = null;
             }
             valueTextView.setTextColor(Theme.getColor(Theme.key_wallet_redText));
             text = String.format("%s", TonController.formatCurrency(value));
@@ -223,8 +242,10 @@ public class WalletTransactionCell extends LinearLayout {
         dateTextView.setText(LocaleController.getInstance().formatterDay.format(transaction.utime * 1000));
         if (!isEmpty && builder != null) {
             builder.insert(builder.length() / 2, '\n');
+            addressValueTextView.setText(builder);
+        } else {
+            addressValueTextView.setText("");
         }
-        addressValueTextView.setText(builder);
 
         if (isPending) {
             currentStorageFee = 0;
@@ -248,7 +269,7 @@ public class WalletTransactionCell extends LinearLayout {
             commentTextView.setVisibility(GONE);
         }
 
-        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) addressLinearLayout.getLayoutParams();
+        layoutParams = (LinearLayout.LayoutParams) addressLinearLayout.getLayoutParams();
         if (commentTextView.getVisibility() == VISIBLE || feeTextView.getVisibility() == VISIBLE) {
             layoutParams.bottomMargin = AndroidUtilities.dp(1);
         } else {

@@ -59,8 +59,38 @@ public class TonApi {
     /**
      *
      */
+    public static class AccountList extends Object {
+        public FullAccountState[] accounts;
+
+        /**
+         *
+         */
+        public AccountList() {
+        }
+
+        public AccountList(FullAccountState[] accounts) {
+            this.accounts = accounts;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 2017374805;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     *
+     */
     public static class AccountRevisionList extends Object {
-        public int[] revisions;
+        public FullAccountState[] revisions;
 
         /**
          *
@@ -68,14 +98,14 @@ public class TonApi {
         public AccountRevisionList() {
         }
 
-        public AccountRevisionList(int[] revisions) {
+        public AccountRevisionList(FullAccountState[] revisions) {
             this.revisions = revisions;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 120583012;
+        public static final int CONSTRUCTOR = 527197386;
 
         /**
          * @return this.CONSTRUCTOR
@@ -313,6 +343,70 @@ public class TonApi {
         }
     }
 
+    public static class RwalletAccountState extends AccountState {
+        public long walletId;
+        public int seqno;
+        public long unlockedBalance;
+        public RwalletConfig config;
+
+        /**
+         *
+         */
+        public RwalletAccountState() {
+        }
+
+        public RwalletAccountState(long walletId, int seqno, long unlockedBalance, RwalletConfig config) {
+            this.walletId = walletId;
+            this.seqno = seqno;
+            this.unlockedBalance = unlockedBalance;
+            this.config = config;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -739540008;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public static class PchanAccountState extends AccountState {
+        public PchanConfig config;
+        public PchanState state;
+        public String description;
+
+        /**
+         *
+         */
+        public PchanAccountState() {
+        }
+
+        public PchanAccountState(PchanConfig config, PchanState state, String description) {
+            this.config = config;
+            this.state = state;
+            this.description = description;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1612869496;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
     public static class UninitedAccountState extends AccountState {
         public byte[] frozenHash;
 
@@ -411,6 +505,60 @@ public class TonApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = 1193750561;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public static class ActionPchan extends Action {
+        public PchanAction action;
+
+        /**
+         *
+         */
+        public ActionPchan() {
+        }
+
+        public ActionPchan(PchanAction action) {
+            this.action = action;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1490172447;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public static class ActionRwallet extends Action {
+        public RwalletActionInit action;
+
+        /**
+         *
+         */
+        public ActionRwallet() {
+        }
+
+        public ActionRwallet(RwalletActionInit action) {
+            this.action = action;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -117295163;
 
         /**
          * @return this.CONSTRUCTOR
@@ -739,11 +887,13 @@ public class TonApi {
      *
      */
     public static class FullAccountState extends Object {
+        public AccountAddress address;
         public long balance;
         public InternalTransactionId lastTransactionId;
         public TonBlockIdExt blockId;
         public long syncUtime;
         public AccountState accountState;
+        public int revision;
 
         /**
          *
@@ -751,18 +901,20 @@ public class TonApi {
         public FullAccountState() {
         }
 
-        public FullAccountState(long balance, InternalTransactionId lastTransactionId, TonBlockIdExt blockId, long syncUtime, AccountState accountState) {
+        public FullAccountState(AccountAddress address, long balance, InternalTransactionId lastTransactionId, TonBlockIdExt blockId, long syncUtime, AccountState accountState, int revision) {
+            this.address = address;
             this.balance = balance;
             this.lastTransactionId = lastTransactionId;
             this.blockId = blockId;
             this.syncUtime = syncUtime;
             this.accountState = accountState;
+            this.revision = revision;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -686286006;
+        public static final int CONSTRUCTOR = 1456618057;
 
         /**
          * @return this.CONSTRUCTOR
@@ -968,6 +1120,37 @@ public class TonApi {
         }
     }
 
+    public static class RwalletInitialAccountState extends InitialAccountState {
+        public String initPublicKey;
+        public String publicKey;
+        public long walletId;
+
+        /**
+         *
+         */
+        public RwalletInitialAccountState() {
+        }
+
+        public RwalletInitialAccountState(String initPublicKey, String publicKey, long walletId) {
+            this.initPublicKey = initPublicKey;
+            this.publicKey = publicKey;
+            this.walletId = walletId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1169755156;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
     public static class DnsInitialAccountState extends InitialAccountState {
         public String publicKey;
         public long walletId;
@@ -987,6 +1170,33 @@ public class TonApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = 1842062527;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public static class PchanInitialAccountState extends InitialAccountState {
+        public PchanConfig config;
+
+        /**
+         *
+         */
+        public PchanInitialAccountState() {
+        }
+
+        public PchanInitialAccountState(PchanConfig config) {
+            this.config = config;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1304552124;
 
         /**
          * @return this.CONSTRUCTOR
@@ -1908,6 +2118,7 @@ public class TonApi {
 
     public static class MsgDataRaw extends MsgData {
         public byte[] body;
+        public byte[] initState;
 
         /**
          *
@@ -1915,14 +2126,15 @@ public class TonApi {
         public MsgDataRaw() {
         }
 
-        public MsgDataRaw(byte[] body) {
+        public MsgDataRaw(byte[] body, byte[] initState) {
             this.body = body;
+            this.initState = initState;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 38878511;
+        public static final int CONSTRUCTOR = -1928962698;
 
         /**
          * @return this.CONSTRUCTOR
@@ -2179,6 +2391,7 @@ public class TonApi {
      */
     public static class OptionsConfigInfo extends Object {
         public long defaultWalletId;
+        public String defaultRwalletInitPublicKey;
 
         /**
          *
@@ -2186,14 +2399,15 @@ public class TonApi {
         public OptionsConfigInfo() {
         }
 
-        public OptionsConfigInfo(long defaultWalletId) {
+        public OptionsConfigInfo(long defaultWalletId, String defaultRwalletInitPublicKey) {
             this.defaultWalletId = defaultWalletId;
+            this.defaultRwalletInitPublicKey = defaultRwalletInitPublicKey;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 451217371;
+        public static final int CONSTRUCTOR = 129457942;
 
         /**
          * @return this.CONSTRUCTOR
@@ -2224,6 +2438,283 @@ public class TonApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -64676736;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public abstract static class PchanAction extends Object {
+    }
+
+    public static class PchanActionInit extends PchanAction {
+        public long incA;
+        public long incB;
+        public long minA;
+        public long minB;
+
+        /**
+         *
+         */
+        public PchanActionInit() {
+        }
+
+        public PchanActionInit(long incA, long incB, long minA, long minB) {
+            this.incA = incA;
+            this.incB = incB;
+            this.minA = minA;
+            this.minB = minB;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 439088778;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public static class PchanActionClose extends PchanAction {
+        public long extraA;
+        public long extraB;
+        public PchanPromise promise;
+
+        /**
+         *
+         */
+        public PchanActionClose() {
+        }
+
+        public PchanActionClose(long extraA, long extraB, PchanPromise promise) {
+            this.extraA = extraA;
+            this.extraB = extraB;
+            this.promise = promise;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1671187222;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public static class PchanActionTimeout extends PchanAction {
+
+        /**
+         *
+         */
+        public PchanActionTimeout() {
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1998487795;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     *
+     */
+    public static class PchanConfig extends Object {
+        public String alicePublicKey;
+        public AccountAddress aliceAddress;
+        public String bobPublicKey;
+        public AccountAddress bobAddress;
+        public int initTimeout;
+        public int closeTimeout;
+        public long channelId;
+
+        /**
+         *
+         */
+        public PchanConfig() {
+        }
+
+        public PchanConfig(String alicePublicKey, AccountAddress aliceAddress, String bobPublicKey, AccountAddress bobAddress, int initTimeout, int closeTimeout, long channelId) {
+            this.alicePublicKey = alicePublicKey;
+            this.aliceAddress = aliceAddress;
+            this.bobPublicKey = bobPublicKey;
+            this.bobAddress = bobAddress;
+            this.initTimeout = initTimeout;
+            this.closeTimeout = closeTimeout;
+            this.channelId = channelId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -2071530442;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     *
+     */
+    public static class PchanPromise extends Object {
+        public byte[] signature;
+        public long promiseA;
+        public long promiseB;
+        public long channelId;
+
+        /**
+         *
+         */
+        public PchanPromise() {
+        }
+
+        public PchanPromise(byte[] signature, long promiseA, long promiseB, long channelId) {
+            this.signature = signature;
+            this.promiseA = promiseA;
+            this.promiseB = promiseB;
+            this.channelId = channelId;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1576102819;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public abstract static class PchanState extends Object {
+    }
+
+    public static class PchanStateInit extends PchanState {
+        public boolean signedA;
+        public boolean signedB;
+        public long minA;
+        public long minB;
+        public long expireAt;
+        public long A;
+        public long B;
+
+        /**
+         *
+         */
+        public PchanStateInit() {
+        }
+
+        public PchanStateInit(boolean signedA, boolean signedB, long minA, long minB, long expireAt, long A, long B) {
+            this.signedA = signedA;
+            this.signedB = signedB;
+            this.minA = minA;
+            this.minB = minB;
+            this.expireAt = expireAt;
+            this.A = A;
+            this.B = B;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1188426504;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public static class PchanStateClose extends PchanState {
+        public boolean signedA;
+        public boolean signedB;
+        public long minA;
+        public long minB;
+        public long expireAt;
+        public long A;
+        public long B;
+
+        /**
+         *
+         */
+        public PchanStateClose() {
+        }
+
+        public PchanStateClose(boolean signedA, boolean signedB, long minA, long minB, long expireAt, long A, long B) {
+            this.signedA = signedA;
+            this.signedB = signedB;
+            this.minA = minA;
+            this.minB = minB;
+            this.expireAt = expireAt;
+            this.A = A;
+            this.B = B;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 887226867;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public static class PchanStatePayout extends PchanState {
+        public long A;
+        public long B;
+
+        /**
+         *
+         */
+        public PchanStatePayout() {
+        }
+
+        public PchanStatePayout(long A, long B) {
+            this.A = A;
+            this.B = B;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 664671303;
 
         /**
          * @return this.CONSTRUCTOR
@@ -2273,6 +2764,8 @@ public class TonApi {
         public long id;
         public long validUntil;
         public byte[] bodyHash;
+        public byte[] body;
+        public byte[] initState;
 
         /**
          *
@@ -2280,16 +2773,18 @@ public class TonApi {
         public QueryInfo() {
         }
 
-        public QueryInfo(long id, long validUntil, byte[] bodyHash) {
+        public QueryInfo(long id, long validUntil, byte[] bodyHash, byte[] body, byte[] initState) {
             this.id = id;
             this.validUntil = validUntil;
             this.bodyHash = bodyHash;
+            this.body = body;
+            this.initState = initState;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 1588635915;
+        public static final int CONSTRUCTOR = 1451875440;
 
         /**
          * @return this.CONSTRUCTOR
@@ -2452,6 +2947,100 @@ public class TonApi {
          * Identifier uniquely determining type of the object.
          */
         public static final int CONSTRUCTOR = -2063931155;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     *
+     */
+    public static class RwalletActionInit extends Object {
+        public RwalletConfig config;
+
+        /**
+         *
+         */
+        public RwalletActionInit() {
+        }
+
+        public RwalletActionInit(RwalletConfig config) {
+            this.config = config;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 624147819;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     *
+     */
+    public static class RwalletConfig extends Object {
+        public long startAt;
+        public RwalletLimit[] limits;
+
+        /**
+         *
+         */
+        public RwalletConfig() {
+        }
+
+        public RwalletConfig(long startAt, RwalletLimit[] limits) {
+            this.startAt = startAt;
+            this.limits = limits;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -85490534;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     *
+     */
+    public static class RwalletLimit extends Object {
+        public int seconds;
+        public long value;
+
+        /**
+         *
+         */
+        public RwalletLimit() {
+        }
+
+        public RwalletLimit(int seconds, long value) {
+            this.seconds = seconds;
+            this.value = value;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1222571646;
 
         /**
          * @return this.CONSTRUCTOR
@@ -2991,7 +3580,7 @@ public class TonApi {
         public byte[] newLocalPassword;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Key Key} </p>
          */
@@ -3025,7 +3614,7 @@ public class TonApi {
     public static class Close extends Function {
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -3057,7 +3646,7 @@ public class TonApi {
         public byte[] randomExtraSeed;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Key Key} </p>
          */
@@ -3094,26 +3683,28 @@ public class TonApi {
         public AccountAddress address;
         public int timeout;
         public Action action;
+        public InitialAccountState initialAccountState;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link QueryInfo QueryInfo} </p>
          */
         public CreateQuery() {
         }
 
-        public CreateQuery(InputKey privateKey, AccountAddress address, int timeout, Action action) {
+        public CreateQuery(InputKey privateKey, AccountAddress address, int timeout, Action action, InitialAccountState initialAccountState) {
             this.privateKey = privateKey;
             this.address = address;
             this.timeout = timeout;
             this.action = action;
+            this.initialAccountState = initialAccountState;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -1316835098;
+        public static final int CONSTRUCTOR = -242540347;
 
         /**
          * @return this.CONSTRUCTOR
@@ -3134,7 +3725,7 @@ public class TonApi {
         public byte[] secret;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Data Data} </p>
          */
@@ -3168,7 +3759,7 @@ public class TonApi {
     public static class DeleteAllKeys extends Function {
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -3198,7 +3789,7 @@ public class TonApi {
         public Key key;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -3235,7 +3826,7 @@ public class TonApi {
         public int ttl;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link DnsResolved DnsResolved} </p>
          */
@@ -3273,7 +3864,7 @@ public class TonApi {
         public byte[] secret;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Data Data} </p>
          */
@@ -3309,7 +3900,7 @@ public class TonApi {
         public byte[] keyPassword;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link ExportedEncryptedKey ExportedEncryptedKey} </p>
          */
@@ -3344,7 +3935,7 @@ public class TonApi {
         public InputKey inputKey;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link ExportedKey ExportedKey} </p>
          */
@@ -3379,7 +3970,7 @@ public class TonApi {
         public byte[] keyPassword;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link ExportedPemKey ExportedPemKey} </p>
          */
@@ -3414,7 +4005,7 @@ public class TonApi {
         public InputKey inputKey;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link ExportedUnencryptedKey ExportedUnencryptedKey} </p>
          */
@@ -3447,24 +4038,26 @@ public class TonApi {
     public static class GetAccountAddress extends Function {
         public InitialAccountState initialAccountState;
         public int revision;
+        public int workchainId;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link AccountAddress AccountAddress} </p>
          */
         public GetAccountAddress() {
         }
 
-        public GetAccountAddress(InitialAccountState initialAccountState, int revision) {
+        public GetAccountAddress(InitialAccountState initialAccountState, int revision, int workchainId) {
             this.initialAccountState = initialAccountState;
             this.revision = revision;
+            this.workchainId = workchainId;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = -1159101819;
+        public static final int CONSTRUCTOR = 512468424;
 
         /**
          * @return this.CONSTRUCTOR
@@ -3484,7 +4077,7 @@ public class TonApi {
         public AccountAddress accountAddress;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link FullAccountState FullAccountState} </p>
          */
@@ -3518,7 +4111,7 @@ public class TonApi {
         public String prefix;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Bip39Hints Bip39Hints} </p>
          */
@@ -3679,25 +4272,63 @@ public class TonApi {
      *
      * <p> Returns {@link AccountRevisionList AccountRevisionList} </p>
      */
-    public static class GuessAccountRevision extends Function {
-        public InitialAccountState initialAccountState;
+    public static class GuessAccount extends Function {
+        public String publicKey;
+        public String rwalletInitPublicKey;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
+         *
+         * <p> Returns {@link AccountRevisionList AccountRevisionList} </p>
+         */
+        public GuessAccount() {
+        }
+
+        public GuessAccount(String publicKey, String rwalletInitPublicKey) {
+            this.publicKey = publicKey;
+            this.rwalletInitPublicKey = rwalletInitPublicKey;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1737659296;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     *
+     *
+     * <p> Returns {@link AccountRevisionList AccountRevisionList} </p>
+     */
+    public static class GuessAccountRevision extends Function {
+        public InitialAccountState initialAccountState;
+        public int workchainId;
+
+        /**
+         * Default constructor for a function, which
          *
          * <p> Returns {@link AccountRevisionList AccountRevisionList} </p>
          */
         public GuessAccountRevision() {
         }
 
-        public GuessAccountRevision(InitialAccountState initialAccountState) {
+        public GuessAccountRevision(InitialAccountState initialAccountState, int workchainId) {
             this.initialAccountState = initialAccountState;
+            this.workchainId = workchainId;
         }
 
         /**
          * Identifier uniquely determining type of the object.
          */
-        public static final int CONSTRUCTOR = 1463344293;
+        public static final int CONSTRUCTOR = 1857589922;
 
         /**
          * @return this.CONSTRUCTOR
@@ -3719,7 +4350,7 @@ public class TonApi {
         public ExportedEncryptedKey exportedEncryptedKey;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Key Key} </p>
          */
@@ -3757,7 +4388,7 @@ public class TonApi {
         public ExportedKey exportedKey;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Key Key} </p>
          */
@@ -3795,7 +4426,7 @@ public class TonApi {
         public ExportedPemKey exportedKey;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Key Key} </p>
          */
@@ -3832,7 +4463,7 @@ public class TonApi {
         public ExportedUnencryptedKey exportedUnencryptedKey;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Key Key} </p>
          */
@@ -3867,7 +4498,7 @@ public class TonApi {
         public Options options;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link OptionsInfo OptionsInfo} </p>
          */
@@ -3903,7 +4534,7 @@ public class TonApi {
         public int iterations;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Data Data} </p>
          */
@@ -3938,7 +4569,7 @@ public class TonApi {
     public static class LiteServerGetInfo extends Function {
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link LiteServerInfo LiteServerInfo} </p>
          */
@@ -3969,7 +4600,7 @@ public class TonApi {
         public MsgDataEncryptedArray data;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link MsgDataDecryptedArray MsgDataDecryptedArray} </p>
          */
@@ -4005,7 +4636,7 @@ public class TonApi {
         public MsgDataEncrypted data;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link MsgData MsgData} </p>
          */
@@ -4041,7 +4672,7 @@ public class TonApi {
         public Error error;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -4077,7 +4708,7 @@ public class TonApi {
         public byte[] bytes;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -4112,7 +4743,7 @@ public class TonApi {
         public Config config;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link OptionsConfigInfo OptionsConfigInfo} </p>
          */
@@ -4146,7 +4777,7 @@ public class TonApi {
         public Config config;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link OptionsConfigInfo OptionsConfigInfo} </p>
          */
@@ -4180,7 +4811,7 @@ public class TonApi {
         public UnpackedAccountAddress accountAddress;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link AccountAddress AccountAddress} </p>
          */
@@ -4208,6 +4839,146 @@ public class TonApi {
     /**
      *
      *
+     * <p> Returns {@link Data Data} </p>
+     */
+    public static class PchanPackPromise extends Function {
+        public PchanPromise promise;
+
+        /**
+         * Default constructor for a function, which
+         *
+         * <p> Returns {@link Data Data} </p>
+         */
+        public PchanPackPromise() {
+        }
+
+        public PchanPackPromise(PchanPromise promise) {
+            this.promise = promise;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -851703103;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     *
+     *
+     * <p> Returns {@link PchanPromise PchanPromise} </p>
+     */
+    public static class PchanSignPromise extends Function {
+        public InputKey inputKey;
+        public PchanPromise promise;
+
+        /**
+         * Default constructor for a function, which
+         *
+         * <p> Returns {@link PchanPromise PchanPromise} </p>
+         */
+        public PchanSignPromise() {
+        }
+
+        public PchanSignPromise(InputKey inputKey, PchanPromise promise) {
+            this.inputKey = inputKey;
+            this.promise = promise;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 1814322974;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     *
+     *
+     * <p> Returns {@link PchanPromise PchanPromise} </p>
+     */
+    public static class PchanUnpackPromise extends Function {
+        public byte[] data;
+
+        /**
+         * Default constructor for a function, which
+         *
+         * <p> Returns {@link PchanPromise PchanPromise} </p>
+         */
+        public PchanUnpackPromise() {
+        }
+
+        public PchanUnpackPromise(byte[] data) {
+            this.data = data;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = -1250106157;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     *
+     *
+     * <p> Returns {@link Ok Ok} </p>
+     */
+    public static class PchanValidatePromise extends Function {
+        public byte[] publicKey;
+        public PchanPromise promise;
+
+        /**
+         * Default constructor for a function, which
+         *
+         * <p> Returns {@link Ok Ok} </p>
+         */
+        public PchanValidatePromise() {
+        }
+
+        public PchanValidatePromise(byte[] publicKey, PchanPromise promise) {
+            this.publicKey = publicKey;
+            this.promise = promise;
+        }
+
+        /**
+         * Identifier uniquely determining type of the object.
+         */
+        public static final int CONSTRUCTOR = 258262242;
+
+        /**
+         * @return this.CONSTRUCTOR
+         */
+        @Override
+        public int getConstructor() {
+            return CONSTRUCTOR;
+        }
+    }
+
+    /**
+     *
+     *
      * <p> Returns {@link QueryFees QueryFees} </p>
      */
     public static class QueryEstimateFees extends Function {
@@ -4215,7 +4986,7 @@ public class TonApi {
         public boolean ignoreChksig;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link QueryFees QueryFees} </p>
          */
@@ -4250,7 +5021,7 @@ public class TonApi {
         public long id;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -4284,7 +5055,7 @@ public class TonApi {
         public long id;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link QueryInfo QueryInfo} </p>
          */
@@ -4318,7 +5089,7 @@ public class TonApi {
         public long id;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -4354,7 +5125,7 @@ public class TonApi {
         public byte[] data;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -4393,7 +5164,7 @@ public class TonApi {
         public byte[] body;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link QueryInfo QueryInfo} </p>
          */
@@ -4430,7 +5201,7 @@ public class TonApi {
         public AccountAddress accountAddress;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link RawFullAccountState RawFullAccountState} </p>
          */
@@ -4466,7 +5237,7 @@ public class TonApi {
         public InternalTransactionId fromTransactionId;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link RawTransactions RawTransactions} </p>
          */
@@ -4502,7 +5273,7 @@ public class TonApi {
         public byte[] body;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -4536,7 +5307,7 @@ public class TonApi {
         public String dir;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link Ok Ok} </p>
          */
@@ -4708,7 +5479,7 @@ public class TonApi {
         public long id;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link TvmCell TvmCell} </p>
          */
@@ -4742,7 +5513,7 @@ public class TonApi {
         public long id;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link TvmCell TvmCell} </p>
          */
@@ -4776,7 +5547,7 @@ public class TonApi {
         public long id;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link TvmCell TvmCell} </p>
          */
@@ -4810,7 +5581,7 @@ public class TonApi {
         public AccountAddress accountAddress;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link SmcInfo SmcInfo} </p>
          */
@@ -4846,7 +5617,7 @@ public class TonApi {
         public TvmStackEntry[] stack;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link SmcRunResult SmcRunResult} </p>
          */
@@ -4881,7 +5652,7 @@ public class TonApi {
     public static class Sync extends Function {
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link TonBlockIdExt TonBlockIdExt} </p>
          */
@@ -4911,7 +5682,7 @@ public class TonApi {
         public String accountAddress;
 
         /**
-         * Default constructor for a function, which 
+         * Default constructor for a function, which
          *
          * <p> Returns {@link UnpackedAccountAddress UnpackedAccountAddress} </p>
          */

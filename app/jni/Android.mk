@@ -186,6 +186,7 @@ LOCAL_SRC_FILES     := \
 ./ton/crypto/smc-envelope/HighloadWalletV2.cpp \
 ./ton/crypto/smc-envelope/ManualDns.cpp \
 ./ton/crypto/smc-envelope/MultisigWallet.cpp \
+./ton/crypto/smc-envelope/PaymentChannel.cpp \
 ./ton/crypto/smc-envelope/SmartContract.cpp \
 ./ton/crypto/smc-envelope/SmartContractCode.cpp \
 ./ton/crypto/smc-envelope/TestGiver.cpp \

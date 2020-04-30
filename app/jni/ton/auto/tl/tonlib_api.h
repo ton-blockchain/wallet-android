@@ -46,6 +46,8 @@ std::string to_string(const object_ptr<T> &value) {
 
 class accountAddress;
 
+class accountList;
+
 class accountRevisionList;
 
 class AccountState;
@@ -128,6 +130,14 @@ class options_configInfo;
 
 class options_info;
 
+class pchan_Action;
+
+class pchan_config;
+
+class pchan_promise;
+
+class pchan_State;
+
 class query_fees;
 
 class query_info;
@@ -139,6 +149,12 @@ class raw_message;
 class raw_transaction;
 
 class raw_transactions;
+
+class rwallet_actionInit;
+
+class rwallet_config;
+
+class rwallet_limit;
 
 class smc_info;
 
@@ -214,17 +230,41 @@ class accountAddress final : public Object {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
+class accountList final : public Object {
+ public:
+  static jclass Class;
+  std::vector<object_ptr<fullAccountState>> accounts_;
+  static jfieldID accounts_fieldID;
+
+  accountList();
+
+  explicit accountList(std::vector<object_ptr<fullAccountState>> &&accounts_);
+
+  static const std::int32_t ID = 2017374805;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<accountList> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
 class accountRevisionList final : public Object {
  public:
   static jclass Class;
-  std::vector<std::int32_t> revisions_;
+  std::vector<object_ptr<fullAccountState>> revisions_;
   static jfieldID revisions_fieldID;
 
   accountRevisionList();
 
-  explicit accountRevisionList(std::vector<std::int32_t> &&revisions_);
+  explicit accountRevisionList(std::vector<object_ptr<fullAccountState>> &&revisions_);
 
-  static const std::int32_t ID = 120583012;
+  static const std::int32_t ID = 527197386;
   std::int32_t get_id() const final {
     return ID;
   }
@@ -447,6 +487,64 @@ class dns_accountState final : public AccountState {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
+class rwallet_accountState final : public AccountState {
+ public:
+  static jclass Class;
+  std::int64_t wallet_id_;
+  static jfieldID wallet_id_fieldID;
+  std::int32_t seqno_;
+  static jfieldID seqno_fieldID;
+  std::int64_t unlocked_balance_;
+  static jfieldID unlocked_balance_fieldID;
+  object_ptr<rwallet_config> config_;
+  static jfieldID config_fieldID;
+
+  rwallet_accountState();
+
+  rwallet_accountState(std::int64_t wallet_id_, std::int32_t seqno_, std::int64_t unlocked_balance_, object_ptr<rwallet_config> &&config_);
+
+  static const std::int32_t ID = -739540008;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<AccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class pchan_accountState final : public AccountState {
+ public:
+  static jclass Class;
+  object_ptr<pchan_config> config_;
+  static jfieldID config_fieldID;
+  object_ptr<pchan_State> state_;
+  static jfieldID state_fieldID;
+  std::string description_;
+  static jfieldID description_fieldID;
+
+  pchan_accountState();
+
+  pchan_accountState(object_ptr<pchan_config> &&config_, object_ptr<pchan_State> &&state_, std::string const &description_);
+
+  static const std::int32_t ID = 1612869496;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<AccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
 class uninited_accountState final : public AccountState {
  public:
   static jclass Class;
@@ -537,6 +635,54 @@ class actionDns final : public Action {
   explicit actionDns(std::vector<object_ptr<dns_Action>> &&actions_);
 
   static const std::int32_t ID = 1193750561;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<Action> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class actionPchan final : public Action {
+ public:
+  static jclass Class;
+  object_ptr<pchan_Action> action_;
+  static jfieldID action_fieldID;
+
+  actionPchan();
+
+  explicit actionPchan(object_ptr<pchan_Action> &&action_);
+
+  static const std::int32_t ID = -1490172447;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<Action> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class actionRwallet final : public Action {
+ public:
+  static jclass Class;
+  object_ptr<rwallet_actionInit> action_;
+  static jfieldID action_fieldID;
+
+  actionRwallet();
+
+  explicit actionRwallet(object_ptr<rwallet_actionInit> &&action_);
+
+  static const std::int32_t ID = -117295163;
   std::int32_t get_id() const final {
     return ID;
   }
@@ -807,6 +953,8 @@ class fees final : public Object {
 class fullAccountState final : public Object {
  public:
   static jclass Class;
+  object_ptr<accountAddress> address_;
+  static jfieldID address_fieldID;
   std::int64_t balance_;
   static jfieldID balance_fieldID;
   object_ptr<internal_transactionId> last_transaction_id_;
@@ -817,12 +965,14 @@ class fullAccountState final : public Object {
   static jfieldID sync_utime_fieldID;
   object_ptr<AccountState> account_state_;
   static jfieldID account_state_fieldID;
+  std::int32_t revision_;
+  static jfieldID revision_fieldID;
 
   fullAccountState();
 
-  fullAccountState(std::int64_t balance_, object_ptr<internal_transactionId> &&last_transaction_id_, object_ptr<ton_blockIdExt> &&block_id_, std::int64_t sync_utime_, object_ptr<AccountState> &&account_state_);
+  fullAccountState(object_ptr<accountAddress> &&address_, std::int64_t balance_, object_ptr<internal_transactionId> &&last_transaction_id_, object_ptr<ton_blockIdExt> &&block_id_, std::int64_t sync_utime_, object_ptr<AccountState> &&account_state_, std::int32_t revision_);
 
-  static const std::int32_t ID = -686286006;
+  static const std::int32_t ID = 1456618057;
   std::int32_t get_id() const final {
     return ID;
   }
@@ -1017,6 +1167,34 @@ class wallet_highload_v2_initialAccountState final : public InitialAccountState 
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
+class rwallet_initialAccountState final : public InitialAccountState {
+ public:
+  static jclass Class;
+  std::string init_public_key_;
+  static jfieldID init_public_key_fieldID;
+  std::string public_key_;
+  static jfieldID public_key_fieldID;
+  std::int64_t wallet_id_;
+  static jfieldID wallet_id_fieldID;
+
+  rwallet_initialAccountState();
+
+  rwallet_initialAccountState(std::string const &init_public_key_, std::string const &public_key_, std::int64_t wallet_id_);
+
+  static const std::int32_t ID = 1169755156;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<InitialAccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
 class dns_initialAccountState final : public InitialAccountState {
  public:
   static jclass Class;
@@ -1030,6 +1208,30 @@ class dns_initialAccountState final : public InitialAccountState {
   dns_initialAccountState(std::string const &public_key_, std::int64_t wallet_id_);
 
   static const std::int32_t ID = 1842062527;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<InitialAccountState> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class pchan_initialAccountState final : public InitialAccountState {
+ public:
+  static jclass Class;
+  object_ptr<pchan_config> config_;
+  static jfieldID config_fieldID;
+
+  pchan_initialAccountState();
+
+  explicit pchan_initialAccountState(object_ptr<pchan_config> &&config_);
+
+  static const std::int32_t ID = -1304552124;
   std::int32_t get_id() const final {
     return ID;
   }
@@ -1848,12 +2050,14 @@ class msg_dataRaw final : public msg_Data {
   static jclass Class;
   std::string body_;
   static jfieldID body_fieldID;
+  std::string init_state_;
+  static jfieldID init_state_fieldID;
 
   msg_dataRaw();
 
-  explicit msg_dataRaw(std::string const &body_);
+  msg_dataRaw(std::string const &body_, std::string const &init_state_);
 
-  static const std::int32_t ID = 38878511;
+  static const std::int32_t ID = -1928962698;
   std::int32_t get_id() const final {
     return ID;
   }
@@ -2074,12 +2278,14 @@ class options_configInfo final : public Object {
   static jclass Class;
   std::int64_t default_wallet_id_;
   static jfieldID default_wallet_id_fieldID;
+  std::string default_rwallet_init_public_key_;
+  static jfieldID default_rwallet_init_public_key_fieldID;
 
   options_configInfo();
 
-  explicit options_configInfo(std::int64_t default_wallet_id_);
+  options_configInfo(std::int64_t default_wallet_id_, std::string const &default_rwallet_init_public_key_);
 
-  static const std::int32_t ID = 451217371;
+  static const std::int32_t ID = 129457942;
   std::int32_t get_id() const final {
     return ID;
   }
@@ -2109,6 +2315,266 @@ class options_info final : public Object {
   }
 
   static object_ptr<options_info> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class pchan_Action: public Object {
+ public:
+  static jclass Class;
+
+  static object_ptr<pchan_Action> fetch(JNIEnv *env, jobject &p);
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class pchan_actionInit final : public pchan_Action {
+ public:
+  static jclass Class;
+  std::int64_t inc_A_;
+  static jfieldID inc_A_fieldID;
+  std::int64_t inc_B_;
+  static jfieldID inc_B_fieldID;
+  std::int64_t min_A_;
+  static jfieldID min_A_fieldID;
+  std::int64_t min_B_;
+  static jfieldID min_B_fieldID;
+
+  pchan_actionInit();
+
+  pchan_actionInit(std::int64_t inc_A_, std::int64_t inc_B_, std::int64_t min_A_, std::int64_t min_B_);
+
+  static const std::int32_t ID = 439088778;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<pchan_Action> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class pchan_actionClose final : public pchan_Action {
+ public:
+  static jclass Class;
+  std::int64_t extra_A_;
+  static jfieldID extra_A_fieldID;
+  std::int64_t extra_B_;
+  static jfieldID extra_B_fieldID;
+  object_ptr<pchan_promise> promise_;
+  static jfieldID promise_fieldID;
+
+  pchan_actionClose();
+
+  pchan_actionClose(std::int64_t extra_A_, std::int64_t extra_B_, object_ptr<pchan_promise> &&promise_);
+
+  static const std::int32_t ID = 1671187222;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<pchan_Action> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class pchan_actionTimeout final : public pchan_Action {
+ public:
+  static jclass Class;
+
+  pchan_actionTimeout();
+
+  static const std::int32_t ID = 1998487795;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<pchan_Action> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class pchan_config final : public Object {
+ public:
+  static jclass Class;
+  std::string alice_public_key_;
+  static jfieldID alice_public_key_fieldID;
+  object_ptr<accountAddress> alice_address_;
+  static jfieldID alice_address_fieldID;
+  std::string bob_public_key_;
+  static jfieldID bob_public_key_fieldID;
+  object_ptr<accountAddress> bob_address_;
+  static jfieldID bob_address_fieldID;
+  std::int32_t init_timeout_;
+  static jfieldID init_timeout_fieldID;
+  std::int32_t close_timeout_;
+  static jfieldID close_timeout_fieldID;
+  std::int64_t channel_id_;
+  static jfieldID channel_id_fieldID;
+
+  pchan_config();
+
+  pchan_config(std::string const &alice_public_key_, object_ptr<accountAddress> &&alice_address_, std::string const &bob_public_key_, object_ptr<accountAddress> &&bob_address_, std::int32_t init_timeout_, std::int32_t close_timeout_, std::int64_t channel_id_);
+
+  static const std::int32_t ID = -2071530442;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<pchan_config> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class pchan_promise final : public Object {
+ public:
+  static jclass Class;
+  std::string signature_;
+  static jfieldID signature_fieldID;
+  std::int64_t promise_A_;
+  static jfieldID promise_A_fieldID;
+  std::int64_t promise_B_;
+  static jfieldID promise_B_fieldID;
+  std::int64_t channel_id_;
+  static jfieldID channel_id_fieldID;
+
+  pchan_promise();
+
+  pchan_promise(std::string const &signature_, std::int64_t promise_A_, std::int64_t promise_B_, std::int64_t channel_id_);
+
+  static const std::int32_t ID = -1576102819;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<pchan_promise> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class pchan_State: public Object {
+ public:
+  static jclass Class;
+
+  static object_ptr<pchan_State> fetch(JNIEnv *env, jobject &p);
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class pchan_stateInit final : public pchan_State {
+ public:
+  static jclass Class;
+  bool signed_A_;
+  static jfieldID signed_A_fieldID;
+  bool signed_B_;
+  static jfieldID signed_B_fieldID;
+  std::int64_t min_A_;
+  static jfieldID min_A_fieldID;
+  std::int64_t min_B_;
+  static jfieldID min_B_fieldID;
+  std::int64_t expire_at_;
+  static jfieldID expire_at_fieldID;
+  std::int64_t A_;
+  static jfieldID A_fieldID;
+  std::int64_t B_;
+  static jfieldID B_fieldID;
+
+  pchan_stateInit();
+
+  pchan_stateInit(bool signed_A_, bool signed_B_, std::int64_t min_A_, std::int64_t min_B_, std::int64_t expire_at_, std::int64_t A_, std::int64_t B_);
+
+  static const std::int32_t ID = -1188426504;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<pchan_State> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class pchan_stateClose final : public pchan_State {
+ public:
+  static jclass Class;
+  bool signed_A_;
+  static jfieldID signed_A_fieldID;
+  bool signed_B_;
+  static jfieldID signed_B_fieldID;
+  std::int64_t min_A_;
+  static jfieldID min_A_fieldID;
+  std::int64_t min_B_;
+  static jfieldID min_B_fieldID;
+  std::int64_t expire_at_;
+  static jfieldID expire_at_fieldID;
+  std::int64_t A_;
+  static jfieldID A_fieldID;
+  std::int64_t B_;
+  static jfieldID B_fieldID;
+
+  pchan_stateClose();
+
+  pchan_stateClose(bool signed_A_, bool signed_B_, std::int64_t min_A_, std::int64_t min_B_, std::int64_t expire_at_, std::int64_t A_, std::int64_t B_);
+
+  static const std::int32_t ID = 887226867;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<pchan_State> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class pchan_statePayout final : public pchan_State {
+ public:
+  static jclass Class;
+  std::int64_t A_;
+  static jfieldID A_fieldID;
+  std::int64_t B_;
+  static jfieldID B_fieldID;
+
+  pchan_statePayout();
+
+  pchan_statePayout(std::int64_t A_, std::int64_t B_);
+
+  static const std::int32_t ID = 664671303;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<pchan_State> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 
@@ -2152,12 +2618,16 @@ class query_info final : public Object {
   static jfieldID valid_until_fieldID;
   std::string body_hash_;
   static jfieldID body_hash_fieldID;
+  std::string body_;
+  static jfieldID body_fieldID;
+  std::string init_state_;
+  static jfieldID init_state_fieldID;
 
   query_info();
 
-  query_info(std::int64_t id_, std::int64_t valid_until_, std::string const &body_hash_);
+  query_info(std::int64_t id_, std::int64_t valid_until_, std::string const &body_hash_, std::string const &body_, std::string const &init_state_);
 
-  static const std::int32_t ID = 1588635915;
+  static const std::int32_t ID = 1451875440;
   std::int32_t get_id() const final {
     return ID;
   }
@@ -2301,6 +2771,82 @@ class raw_transactions final : public Object {
   }
 
   static object_ptr<raw_transactions> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class rwallet_actionInit final : public Object {
+ public:
+  static jclass Class;
+  object_ptr<rwallet_config> config_;
+  static jfieldID config_fieldID;
+
+  rwallet_actionInit();
+
+  explicit rwallet_actionInit(object_ptr<rwallet_config> &&config_);
+
+  static const std::int32_t ID = 624147819;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<rwallet_actionInit> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class rwallet_config final : public Object {
+ public:
+  static jclass Class;
+  std::int64_t start_at_;
+  static jfieldID start_at_fieldID;
+  std::vector<object_ptr<rwallet_limit>> limits_;
+  static jfieldID limits_fieldID;
+
+  rwallet_config();
+
+  rwallet_config(std::int64_t start_at_, std::vector<object_ptr<rwallet_limit>> &&limits_);
+
+  static const std::int32_t ID = -85490534;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<rwallet_config> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class rwallet_limit final : public Object {
+ public:
+  static jclass Class;
+  std::int32_t seconds_;
+  static jfieldID seconds_fieldID;
+  std::int64_t value_;
+  static jfieldID value_fieldID;
+
+  rwallet_limit();
+
+  rwallet_limit(std::int32_t seconds_, std::int64_t value_);
+
+  static const std::int32_t ID = 1222571646;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<rwallet_limit> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 
@@ -2846,12 +3392,14 @@ class createQuery final : public Function {
   static jfieldID timeout_fieldID;
   object_ptr<Action> action_;
   static jfieldID action_fieldID;
+  object_ptr<InitialAccountState> initial_account_state_;
+  static jfieldID initial_account_state_fieldID;
 
   createQuery();
 
-  createQuery(object_ptr<InputKey> &&private_key_, object_ptr<accountAddress> &&address_, std::int32_t timeout_, object_ptr<Action> &&action_);
+  createQuery(object_ptr<InputKey> &&private_key_, object_ptr<accountAddress> &&address_, std::int32_t timeout_, object_ptr<Action> &&action_, object_ptr<InitialAccountState> &&initial_account_state_);
 
-  static const std::int32_t ID = -1316835098;
+  static const std::int32_t ID = -242540347;
   std::int32_t get_id() const final {
     return ID;
   }
@@ -3138,12 +3686,14 @@ class getAccountAddress final : public Function {
   static jfieldID initial_account_state_fieldID;
   std::int32_t revision_;
   static jfieldID revision_fieldID;
+  std::int32_t workchain_id_;
+  static jfieldID workchain_id_fieldID;
 
   getAccountAddress();
 
-  getAccountAddress(object_ptr<InitialAccountState> &&initial_account_state_, std::int32_t revision_);
+  getAccountAddress(object_ptr<InitialAccountState> &&initial_account_state_, std::int32_t revision_, std::int32_t workchain_id_);
 
-  static const std::int32_t ID = -1159101819;
+  static const std::int32_t ID = 512468424;
   std::int32_t get_id() const final {
     return ID;
   }
@@ -3317,17 +3867,49 @@ class getLogVerbosityLevel final : public Function {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
+class guessAccount final : public Function {
+ public:
+  static jclass Class;
+  std::string public_key_;
+  static jfieldID public_key_fieldID;
+  std::string rwallet_init_public_key_;
+  static jfieldID rwallet_init_public_key_fieldID;
+
+  guessAccount();
+
+  guessAccount(std::string const &public_key_, std::string const &rwallet_init_public_key_);
+
+  static const std::int32_t ID = -1737659296;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<accountRevisionList>;
+
+  static object_ptr<guessAccount> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(JNIEnv *env, jobject &p);
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
 class guessAccountRevision final : public Function {
  public:
   static jclass Class;
   object_ptr<InitialAccountState> initial_account_state_;
   static jfieldID initial_account_state_fieldID;
+  std::int32_t workchain_id_;
+  static jfieldID workchain_id_fieldID;
 
   guessAccountRevision();
 
-  explicit guessAccountRevision(object_ptr<InitialAccountState> &&initial_account_state_);
+  guessAccountRevision(object_ptr<InitialAccountState> &&initial_account_state_, std::int32_t workchain_id_);
 
-  static const std::int32_t ID = 1463344293;
+  static const std::int32_t ID = 1857589922;
   std::int32_t get_id() const final {
     return ID;
   }
@@ -3749,6 +4331,122 @@ class packAccountAddress final : public Function {
   using ReturnType = object_ptr<accountAddress>;
 
   static object_ptr<packAccountAddress> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(JNIEnv *env, jobject &p);
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class pchan_packPromise final : public Function {
+ public:
+  static jclass Class;
+  object_ptr<pchan_promise> promise_;
+  static jfieldID promise_fieldID;
+
+  pchan_packPromise();
+
+  explicit pchan_packPromise(object_ptr<pchan_promise> &&promise_);
+
+  static const std::int32_t ID = -851703103;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<data>;
+
+  static object_ptr<pchan_packPromise> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(JNIEnv *env, jobject &p);
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class pchan_signPromise final : public Function {
+ public:
+  static jclass Class;
+  object_ptr<InputKey> input_key_;
+  static jfieldID input_key_fieldID;
+  object_ptr<pchan_promise> promise_;
+  static jfieldID promise_fieldID;
+
+  pchan_signPromise();
+
+  pchan_signPromise(object_ptr<InputKey> &&input_key_, object_ptr<pchan_promise> &&promise_);
+
+  static const std::int32_t ID = 1814322974;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<pchan_promise>;
+
+  static object_ptr<pchan_signPromise> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(JNIEnv *env, jobject &p);
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class pchan_unpackPromise final : public Function {
+ public:
+  static jclass Class;
+  td::SecureString data_;
+  static jfieldID data_fieldID;
+
+  pchan_unpackPromise();
+
+  explicit pchan_unpackPromise(td::SecureString &&data_);
+
+  static const std::int32_t ID = -1250106157;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<pchan_promise>;
+
+  static object_ptr<pchan_unpackPromise> fetch(JNIEnv *env, jobject &p);
+
+  void store(JNIEnv *env, jobject &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(JNIEnv *env, jobject &p);
+
+  static void init_jni_vars(JNIEnv *env, const char *package_name);
+};
+
+class pchan_validatePromise final : public Function {
+ public:
+  static jclass Class;
+  std::string public_key_;
+  static jfieldID public_key_fieldID;
+  object_ptr<pchan_promise> promise_;
+  static jfieldID promise_fieldID;
+
+  pchan_validatePromise();
+
+  pchan_validatePromise(std::string const &public_key_, object_ptr<pchan_promise> &&promise_);
+
+  static const std::int32_t ID = 258262242;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<ok>;
+
+  static object_ptr<pchan_validatePromise> fetch(JNIEnv *env, jobject &p);
 
   void store(JNIEnv *env, jobject &s) const final;
 

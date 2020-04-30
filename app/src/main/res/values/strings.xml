@@ -48,7 +48,7 @@
     <string name="WalletClose">CLOSE</string>
     <string name="WalletSecretWords">24 Secret Words</string>
     <string name="WalletSecretWordsTitle">Secret Words</string>
-    <string name="WalletSecretWordsInfo">Write down these 24 words in the correct order and store them in a secret place.\n\nUse these secret words to restore access to your wallet if you lose your passcode or Telegram account.</string>
+    <string name="WalletSecretWordsInfo">Write down these 24 words in the correct order and store them in a secret place.\n\nUse these secret words to restore access to your wallet if you lose your passcode or device.</string>
     <string name="WalletDone">Done</string>
     <string name="WalletSecretWordsAlertTitle">Sure done?</string>
     <string name="WalletSecretWordsAlertText">You didn’t have enough time to write these words down.</string>
@@ -87,6 +87,8 @@
     <string name="WalletSendDone">Done!</string>
     <string name="WalletSendDoneText">%1$s Grams have been sent to</string>
     <string name="WalletYourBalance">Your balance</string>
+    <string name="WalletYourTestBalance">Your test balance</string>
+    <string name="WalletLockedBalance">%1$s * locked</string>
     <string name="WalletReceive">Receive</string>
     <string name="WalletSend">Send</string>
     <string name="WalletCreated">Wallet Created</string>
@@ -128,13 +130,13 @@
     <string name="WalletExportConfirmContinue">Please confirm your credentials to continue.</string>
     <string name="WalletExportConfirmCredentials">Please confirm your credentials to export your wallet.</string>
     <string name="WalletExport">Export Wallet</string>
-    <string name="WalletDelete">Delete Wallet</string>
+    <string name="WalletDelete">Log Out</string>
     <string name="WalletSettings">Wallet Settings</string>
     <string name="WalletServerSettings">Server Settings</string>
     <string name="WalletChangePasscode">Change Passcode</string>
-    <string name="WalletDeleteTitle">Delete wallet</string>
+    <string name="WalletDeleteTitle">Log out</string>
     <string name="WalletKeystoreInvalidated">Unfortunately, your wallet is no longer available because of a change in your device\'s lockscreen parameters. Please use your secret words to restore the wallet.</string>
-    <string name="WalletPermissionNoCamera">Telegram needs access to your camera so that you can scan QR codes.</string>
+    <string name="WalletPermissionNoCamera">Wallet needs access to your camera so that you can scan QR codes.</string>
     <string name="WalletSecurityAlertTitle">Security</string>
     <string name="WalletSecurityAlertTextBiometric">For better security, we recommend you to set up lockscreen biometric authentication.</string>
     <string name="WalletSecurityAlertTextLockscreenBiometric">For better security, we recommend you to set up a lockscreen password and biometric authentication.</string>
@@ -164,8 +166,8 @@
     <string name="WalletSendSameWalletText">Sending Grams from a wallet to the same wallet doesn\'t make sense, you will simply waste a portion of the value on blockchain fees.</string>
     <string name="WalletSendSameWalletProceed">Proceed</string>
     <string name="WalletTonLinkNoWalletText">This link can be used to send money on the TON Blockchain. To do this, you need to set up a Gram wallet first.</string>
+    <string name="WalletSwitchedToMainnet">The Gram Wallet has switched from the testing to the main network.\n\nIn case you want to perform more testing you can switch back to the Test Gram network in Settings and reconnect your wallet using 24 secret words.</string>
     <string name="WalletTonLinkNoWalletCreateWallet">Create Wallet</string>
-    <string name="WalletTelegramLogout">Are you sure you want to log out?\n\nLogging out will cancel all your **secret chats** and **unlink your Gram wallet** from the app.\n\nYou will be able to restore your wallet using 24 secret words – or import another wallet.</string>
     <string name="WalletPendingTransactions">Pending</string>
     <string name="WalletDate">Date</string>
     <string name="WalletFee">Blockchain fee: ~%1$s Grams</string>
@@ -188,10 +190,16 @@
     <string name="WalletCreateBlockchainConfigLoadError">App was unable to load blockchain config. Please make sure that you have an active Internet connection.</string>
     <string name="WalletSendSyncInProgress">Please wait while the wallet finishes syncing with the TON Blockchain.</string>
     <string name="GramWalletInfo">The gram wallet allows you to make fast and secure blockchain-based payments without intermediaries.</string>
-    <string name="WalletDeleteInfo">This will disconnect the wallet from this app. You will be able to restore your wallet using 24 secret words – or import another wallet.\n\nWallets are located in the TON Blockchain, which is not controlled by Telegram. If you want a wallet to be deleted, simply transfer all the grams from it and leave it empty.</string>
+    <string name="WalletDeleteInfo">This will disconnect the wallet from this app. You will be able to restore your wallet using 24 secret words – or import another wallet.\n\nGram Wallets are located in the decentralized TON Blockchain. If you want a wallet to be deleted, simply transfer all the grams from it and leave it empty.</string>
     <string name="WalletEncryptedMessage">Encrypted message</string>
     <string name="WalletDecryptConfirmCredentials">Please confirm your credentials to decrypt transactions messages.</string>
     <string name="WalletCantEncryptComment">**Note:** Your comment \"%1$s\" will **not be encrypted**.</string>
+    <string name="WalletTestNetworkSwitch">Are you sure you want to switch to the Test Gram network? It exists only for testing purposes.\n\nIf you proceed, you will need to reconnect your wallet using 24 secret words.</string>
+    <string name="WalletMainNetworkSwitch">Are you sure you want to switch to the Main Gram network?\n\nIf you proceed, you will need to reconnect your wallet using 24 secret words.</string>
+    <string name="WalletMainNetwork">Main Network</string>
+    <string name="WalletTestNetwork">Test Network</string>
+    <string name="WalletEmptyTransaction">Empty transaction</string>
+    <string name="WalletInitTransaction">Wallet initialization</string>
     <string name="WalletTosUrl"> </string>
     <string name="CreateMyWalletTerms"> </string>
     <!--plural-->

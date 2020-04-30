@@ -33,7 +33,7 @@ td::Ref<vm::Cell> Wallet::get_init_state(const td::Ed25519::PublicKey& public_ke
   return GenericAccount::get_init_state(std::move(code), std::move(data));
 }
 
-td::Ref<vm::Cell> Wallet::get_init_message(const td::Ed25519::PrivateKey& private_key) noexcept {
+td::Ref<vm::Cell> Wallet::get_init_message_new(const td::Ed25519::PrivateKey& private_key) noexcept {
   td::uint32 seqno = 0;
   td::uint32 valid_until = std::numeric_limits<td::uint32>::max();
   auto signature =
@@ -52,16 +52,10 @@ td::Ref<vm::Cell> Wallet::make_a_gift_message(const td::Ed25519::PrivateKey& pri
 
   for (auto& gift : gifts) {
     td::int32 send_mode = 3;
-    auto gramms = gift.gramms;
-    if (gramms == -1) {
-      gramms = 0;
+    if (gift.gramms == -1) {
       send_mode += 128;
     }
-    vm::CellBuilder cbi;
-    GenericAccount::store_int_message(cbi, gift.destination, gramms);
-    store_gift_message(cbi, gift);
-    auto message_inner = cbi.finalize();
-    cb.store_long(send_mode, 8).store_ref(std::move(message_inner));
+    cb.store_long(send_mode, 8).store_ref(create_int_message(gift));
   }
 
   auto message_outer = cb.finalize();

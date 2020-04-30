@@ -2,7 +2,7 @@
  * This is the source code of Wallet for Android v. 1.0.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
- * Copyright Nikolai Kudashov, 2019.
+ * Copyright Nikolai Kudashov, 2019-2020.
  */
 
 package org.telegram.ui;
@@ -155,6 +155,15 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
     private BaseFragment getCurrentWalletFragment(String transferWalletUrl) {
         BaseFragment fragment;
         UserConfig userConfig = UserConfig.getInstance(currentAccount);
+        /*if (!TextUtils.isEmpty(userConfig.tonEncryptedData) && TextUtils.isEmpty(userConfig.tonAccountAddress) && userConfig.tonWalletVersion == 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(LocaleController.getString("Wallet", R.string.Wallet));
+            builder.setMessage(LocaleController.getString("WalletSwitchedToMainnet", R.string.WalletSwitchedToMainnet));
+            builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), null);
+            builder.show();
+            userConfig.clearTonConfig();
+            userConfig.saveConfig(true);
+        }*/
         if (TextUtils.isEmpty(userConfig.tonEncryptedData)) {
             if (!TextUtils.isEmpty(transferWalletUrl)) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);

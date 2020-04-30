@@ -2,7 +2,7 @@
  * This is the source code of Wallet for Android v. 1.0.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
- * Copyright Nikolai Kudashov, 2019.
+ * Copyright Nikolai Kudashov, 2019-2020.
  */
 
 package org.telegram.ui.Wallet;
@@ -53,7 +53,6 @@ import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.TonController;
-import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.Utilities;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.AlertDialog;
@@ -70,6 +69,7 @@ import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.TypefaceSpan;
 
 import java.net.URLEncoder;
+import java.util.Locale;
 
 import androidx.core.widget.NestedScrollView;
 import drinkless.org.ton.TonApi;
@@ -113,6 +113,7 @@ public class WalletActionSheet extends BottomSheet {
     private boolean hasWalletInBack = true;
     private boolean wasFirstAttach;
     private long currentBalance = -1;
+    private WalletTransaction currentTransaction;
 
     private boolean sendUnencrypted;
 
@@ -165,7 +166,7 @@ public class WalletActionSheet extends BottomSheet {
             } else {
                 keep += start;
                 try {
-                    return new String(source.toString().getBytes(), start, keep, "UTF-8");
+                    return new String(source.toString().getBytes(), start, keep, AndroidUtilities.UTF_8);
                 } catch (Exception ignore) {
                     return "";
                 }
@@ -178,7 +179,7 @@ public class WalletActionSheet extends BottomSheet {
     }
 
     @SuppressWarnings("FieldCanBeLocal")
-    private class TitleCell extends FrameLayout {
+    private static class TitleCell extends FrameLayout {
 
         private TextView titleView;
 
@@ -223,6 +224,9 @@ public class WalletActionSheet extends BottomSheet {
             valueTextView.setGravity(Gravity.CENTER_HORIZONTAL);
             valueTextView.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
             valueTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            if (currentTransaction != null && currentTransaction.isEmpty) {
+                valueTextView.setVisibility(GONE);
+            }
             addView(valueTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, 18, 0, 0));
 
             yourBalanceTextView = new TextView(context);
@@ -230,12 +234,13 @@ public class WalletActionSheet extends BottomSheet {
             yourBalanceTextView.setTextColor(Theme.getColor(Theme.key_dialogTextGray2));
             yourBalanceTextView.setLineSpacing(AndroidUtilities.dp(4), 1);
             yourBalanceTextView.setGravity(Gravity.CENTER_HORIZONTAL);
-            addView(yourBalanceTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, 59, 0, 0));
+            addView(yourBalanceTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, currentTransaction != null && currentTransaction.isEmpty ? 30 : 59, 0, 0));
         }
 
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-            super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(100), MeasureSpec.EXACTLY));
+            int h = AndroidUtilities.dp(currentTransaction != null && currentTransaction.isEmpty ? 80 : 100);
+            super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(h, MeasureSpec.EXACTLY));
         }
 
         public void setBalance(long value, long storageFee, long transactionFee) {
@@ -359,15 +364,12 @@ public class WalletActionSheet extends BottomSheet {
     public WalletActionSheet(BaseFragment fragment, int type, String address) {
         super(fragment.getParentActivity(), true);
         walletAddress = address;
-        if (walletAddress == null) {
-            walletAddress = TonController.getInstance(currentAccount).getWalletAddress(UserConfig.getInstance(currentAccount).tonPublicKey);
-        }
         currentType = type;
         parentFragment = fragment;
         init(fragment.getParentActivity());
     }
 
-    public WalletActionSheet(BaseFragment fragment, String address, String recipient, String comment, long amount, long date, long storageFee, long transactionFee) {
+    public WalletActionSheet(BaseFragment fragment, String address, String recipient, String comment, long amount, long date, long storageFee, long transactionFee, WalletTransaction transaction) {
         super(fragment.getParentActivity(), false);
         walletAddress = address;
         recipientString = recipient;
@@ -377,6 +379,7 @@ public class WalletActionSheet extends BottomSheet {
         currentType = TYPE_TRANSACTION;
         currentStorageFee = storageFee;
         currentTransactionFee = transactionFee;
+        currentTransaction = transaction;
         parentFragment = fragment;
         init(fragment.getParentActivity());
     }
@@ -423,7 +426,7 @@ public class WalletActionSheet extends BottomSheet {
                 ignoreLayout = true;
 
                 int padding;
-                int contentSize = AndroidUtilities.dp(80);
+                int contentSize = AndroidUtilities.dp(currentTransaction != null && currentTransaction.isEmpty ? 20 : 80);
 
                 int count = listAdapter.getItemCount();
                 for (int a = 0; a < count; a++) {
@@ -533,7 +536,7 @@ public class WalletActionSheet extends BottomSheet {
         };
         scrollView.setClipToPadding(false);
         scrollView.setVerticalScrollBarEnabled(false);
-        frameLayout.addView(scrollView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 80));
+        frameLayout.addView(scrollView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT, 0, 0, 0, currentTransaction != null && currentTransaction.isEmpty ? 20 : 80));
         linearLayout = new LinearLayout(context);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         scrollView.addView(linearLayout, LayoutHelper.createScroll(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.LEFT | Gravity.TOP));
@@ -597,62 +600,64 @@ public class WalletActionSheet extends BottomSheet {
         shadow.setAlpha(0.0f);
         containerView.addView(shadow, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 1, Gravity.BOTTOM | Gravity.LEFT, 0, 0, 0, 80));
 
-        TextView buttonTextView = new TextView(context);
-        buttonTextView.setPadding(AndroidUtilities.dp(34), 0, AndroidUtilities.dp(34), 0);
-        buttonTextView.setGravity(Gravity.CENTER);
-        buttonTextView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
-        buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        if (currentType == TYPE_TRANSACTION) {
-            buttonTextView.setText(LocaleController.getString("WalletTransactionSendGrams", R.string.WalletTransactionSendGrams));
-        } else if (currentType == TYPE_SEND) {
-            buttonTextView.setText(LocaleController.getString("WalletSendGrams", R.string.WalletSendGrams));
-        } else {
-            buttonTextView.setText(LocaleController.getString("WalletCreateInvoiceTitle", R.string.WalletCreateInvoiceTitle));
-        }
-        buttonTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        buttonTextView.setBackground(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(4), Theme.getColor(Theme.key_featuredStickers_addButton), Theme.getColor(Theme.key_featuredStickers_addButtonPressed)));
-        frameLayout.addView(buttonTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 42, Gravity.LEFT | Gravity.BOTTOM, 16, 16, 16, 16));
-        buttonTextView.setOnClickListener(v -> {
+        if (currentType != TYPE_TRANSACTION || !TextUtils.isEmpty(recipientString)) {
+            TextView buttonTextView = new TextView(context);
+            buttonTextView.setPadding(AndroidUtilities.dp(34), 0, AndroidUtilities.dp(34), 0);
+            buttonTextView.setGravity(Gravity.CENTER);
+            buttonTextView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
+            buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
             if (currentType == TYPE_TRANSACTION) {
-                delegate.openSendToAddress(recipientString.replace("\n", ""));
-                dismiss();
+                buttonTextView.setText(LocaleController.getString("WalletTransactionSendGrams", R.string.WalletTransactionSendGrams));
             } else if (currentType == TYPE_SEND) {
-                int codePoints = recipientString.codePointCount(0, recipientString.length());
-                if (codePoints != 48 || !TonController.getInstance(currentAccount).isValidWalletAddress(recipientString)) {
-                    onFieldError(recipientRow);
-                    return;
-                }
-                if (amountValue <= 0 || amountValue > currentBalance) {
-                    onFieldError(amountRow);
-                    return;
-                }
-                if (walletAddress.replace("\n", "").equals(recipientString.replace("\n", ""))) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                    builder.setTitle(LocaleController.getString("Wallet", R.string.Wallet));
-                    builder.setMessage(LocaleController.getString("WalletSendSameWalletText", R.string.WalletSendSameWalletText));
-                    builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
-                    builder.setPositiveButton(LocaleController.getString("WalletSendSameWalletProceed", R.string.WalletSendSameWalletProceed), (dialog, which) -> doSend());
-                    builder.show();
-                    return;
-                }
-                doSend();
-            } else if (currentType == TYPE_INVOICE) {
-                if (amountValue <= 0) {
-                    onFieldError(amountRow);
-                    return;
-                }
-                String url = "ton://transfer/" + walletAddress + "/?amount=" + amountValue;
-                if (!TextUtils.isEmpty(commentString)) {
-                    try {
-                        url += "&text=" + URLEncoder.encode(commentString, "UTF-8").replaceAll("\\+", "%20");
-                    } catch (Exception e) {
-                        FileLog.e(e);
-                    }
-                }
-                dismiss();
-                delegate.openInvoice(url, amountValue);
+                buttonTextView.setText(LocaleController.getString("WalletSendGrams", R.string.WalletSendGrams));
+            } else {
+                buttonTextView.setText(LocaleController.getString("WalletCreateInvoiceTitle", R.string.WalletCreateInvoiceTitle));
             }
-        });
+            buttonTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            buttonTextView.setBackground(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(4), Theme.getColor(Theme.key_featuredStickers_addButton), Theme.getColor(Theme.key_featuredStickers_addButtonPressed)));
+            frameLayout.addView(buttonTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 42, Gravity.LEFT | Gravity.BOTTOM, 16, 16, 16, 16));
+            buttonTextView.setOnClickListener(v -> {
+                if (currentType == TYPE_TRANSACTION) {
+                    delegate.openSendToAddress(recipientString.replace("\n", ""));
+                    dismiss();
+                } else if (currentType == TYPE_SEND) {
+                    int codePoints = recipientString.codePointCount(0, recipientString.length());
+                    if (codePoints != 48 || !TonController.getInstance(currentAccount).isValidWalletAddress(recipientString)) {
+                        onFieldError(recipientRow);
+                        return;
+                    }
+                    if (amountValue <= 0 || amountValue > currentBalance) {
+                        onFieldError(amountRow);
+                        return;
+                    }
+                    if (walletAddress.replace("\n", "").equals(recipientString.replace("\n", ""))) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                        builder.setTitle(LocaleController.getString("Wallet", R.string.Wallet));
+                        builder.setMessage(LocaleController.getString("WalletSendSameWalletText", R.string.WalletSendSameWalletText));
+                        builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+                        builder.setPositiveButton(LocaleController.getString("WalletSendSameWalletProceed", R.string.WalletSendSameWalletProceed), (dialog, which) -> doSend());
+                        builder.show();
+                        return;
+                    }
+                    doSend();
+                } else if (currentType == TYPE_INVOICE) {
+                    if (amountValue <= 0) {
+                        onFieldError(amountRow);
+                        return;
+                    }
+                    String url = "ton://transfer/" + walletAddress + "/?amount=" + amountValue;
+                    if (!TextUtils.isEmpty(commentString)) {
+                        try {
+                            url += "&text=" + URLEncoder.encode(commentString, "UTF-8").replaceAll("\\+", "%20");
+                        } catch (Exception e) {
+                            FileLog.e(e);
+                        }
+                    }
+                    dismiss();
+                    delegate.openInvoice(url, amountValue);
+                }
+            });
+        }
     }
 
     public void setRecipientString(String value, boolean hasWallet) {
@@ -916,8 +921,10 @@ public class WalletActionSheet extends BottomSheet {
             commentRow = rowCount++;
         } else if (currentType == TYPE_TRANSACTION) {
             balanceRow = rowCount++;
-            recipientHeaderRow = rowCount++;
-            recipientRow = rowCount++;
+            if (!TextUtils.isEmpty(recipientString)) {
+                recipientHeaderRow = rowCount++;
+                recipientRow = rowCount++;
+            }
             dateHeaderRow = rowCount++;
             dateRow = rowCount++;
             if (!TextUtils.isEmpty(commentString)) {
@@ -958,7 +965,7 @@ public class WalletActionSheet extends BottomSheet {
             PollEditTextCell textCell = (PollEditTextCell) cell;
             int left = MAX_COMMENT_LENGTH - commentString.getBytes().length;
             if (left <= MAX_COMMENT_LENGTH - MAX_COMMENT_LENGTH * 0.7f) {
-                textCell.setText2(String.format("%d", left));
+                textCell.setText2(String.format(Locale.getDefault(), "%d", left));
                 SimpleTextView textView = textCell.getTextView2();
                 String key = left < 0 ? Theme.key_windowBackgroundWhiteRedText5 : Theme.key_windowBackgroundWhiteGrayText3;
                 textView.setTextColor(Theme.getColor(key));
@@ -1036,7 +1043,8 @@ public class WalletActionSheet extends BottomSheet {
                     if (position == sendBalanceRow) {
                         TonApi.FullAccountState state = TonController.getInstance(currentAccount).getCachedAccountState();
                         if (state != null) {
-                            cell.setText(LocaleController.formatString("WalletSendBalance", R.string.WalletSendBalance, TonController.formatCurrency(currentBalance = TonController.getBalance(state))));
+                            long balance = TonController.isRWallet(state) ? TonController.getUnlockedBalance(state) : TonController.getBalance(state);
+                            cell.setText(LocaleController.formatString("WalletSendBalance", R.string.WalletSendBalance, TonController.formatCurrency(currentBalance = balance)));
                         }
                     }
                     break;
@@ -1052,7 +1060,13 @@ public class WalletActionSheet extends BottomSheet {
                         if (currentType == TYPE_INVOICE) {
                             cell.setText(LocaleController.getString("WalletCreateInvoiceTitle", R.string.WalletCreateInvoiceTitle));
                         } else if (currentType == TYPE_TRANSACTION) {
-                            cell.setText(LocaleController.getString("WalletTransaction", R.string.WalletTransaction));
+                            if (currentTransaction.isInit) {
+                                cell.setText(LocaleController.getString("WalletInitTransaction", R.string.WalletInitTransaction));
+                            } else if (currentTransaction.isEmpty) {
+                                cell.setText(LocaleController.getString("WalletEmptyTransaction", R.string.WalletEmptyTransaction));
+                            } else {
+                                cell.setText(LocaleController.getString("WalletTransaction", R.string.WalletTransaction));
+                            }
                         } else if (currentType == TYPE_SEND) {
                             cell.setText(LocaleController.getString("WalletSendGrams", R.string.WalletSendGrams));
                         }

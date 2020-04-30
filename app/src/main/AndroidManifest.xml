@@ -60,7 +60,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:scheme="ton" />
             </intent-filter>
-            <meta-data android:name="android.service.chooser.chooser_target_service" android:value=".TgChooserTargetService" />
         </activity>
 
         <receiver android:name="org.telegram.messenger.ShareBroadcastReceiver" android:enabled="true"/>

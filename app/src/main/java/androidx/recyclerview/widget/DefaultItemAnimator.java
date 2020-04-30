@@ -19,6 +19,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
 
@@ -78,7 +79,7 @@ public class DefaultItemAnimator extends SimpleItemAnimator {
         }
 
         ChangeInfo(RecyclerView.ViewHolder oldHolder, RecyclerView.ViewHolder newHolder,
-                int fromX, int fromY, int toX, int toY) {
+                   int fromX, int fromY, int toX, int toY) {
             this(oldHolder, newHolder);
             this.fromX = fromX;
             this.fromY = fromY;
@@ -259,7 +260,7 @@ public class DefaultItemAnimator extends SimpleItemAnimator {
 
     @Override
     public boolean animateMove(final RecyclerView.ViewHolder holder, int fromX, int fromY,
-            int toX, int toY) {
+                               int toX, int toY) {
         final View view = holder.itemView;
         fromX += (int) holder.itemView.getTranslationX();
         fromY += (int) holder.itemView.getTranslationY();
@@ -280,6 +281,10 @@ public class DefaultItemAnimator extends SimpleItemAnimator {
         return true;
     }
 
+    protected void onMoveAnimationUpdate(RecyclerView.ViewHolder holder) {
+
+    }
+
     void animateMoveImpl(final RecyclerView.ViewHolder holder, int fromX, int fromY, int toX, int toY) {
         final View view = holder.itemView;
         final int deltaX = toX - fromX;
@@ -295,6 +300,9 @@ public class DefaultItemAnimator extends SimpleItemAnimator {
         // need listener functionality in VPACompat for this. Ick.
         final ViewPropertyAnimator animation = view.animate();
         mMoveAnimations.add(holder);
+        if (Build.VERSION.SDK_INT >= 19) {
+            animation.setUpdateListener(animation1 -> onMoveAnimationUpdate(holder));
+        }
         animation.setDuration(getMoveDuration()).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animator) {
@@ -323,7 +331,7 @@ public class DefaultItemAnimator extends SimpleItemAnimator {
 
     @Override
     public boolean animateChange(RecyclerView.ViewHolder oldHolder, RecyclerView.ViewHolder newHolder,
-            int fromX, int fromY, int toX, int toY) {
+                                 int fromX, int fromY, int toX, int toY) {
         if (oldHolder == newHolder) {
             // Don't know how to run change animations when the same view holder is re-used.
             // run a move animation to handle position changes.
@@ -384,21 +392,21 @@ public class DefaultItemAnimator extends SimpleItemAnimator {
             mChangeAnimations.add(changeInfo.newHolder);
             newViewAnimation.translationX(0).translationY(0).setDuration(getChangeDuration())
                     .alpha(1).setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationStart(Animator animator) {
-                            dispatchChangeStarting(changeInfo.newHolder, false);
-                        }
-                        @Override
-                        public void onAnimationEnd(Animator animator) {
-                            newViewAnimation.setListener(null);
-                            newView.setAlpha(1);
-                            newView.setTranslationX(0);
-                            newView.setTranslationY(0);
-                            dispatchChangeFinished(changeInfo.newHolder, false);
-                            mChangeAnimations.remove(changeInfo.newHolder);
-                            dispatchFinishedWhenDone();
-                        }
-                    }).start();
+                @Override
+                public void onAnimationStart(Animator animator) {
+                    dispatchChangeStarting(changeInfo.newHolder, false);
+                }
+                @Override
+                public void onAnimationEnd(Animator animator) {
+                    newViewAnimation.setListener(null);
+                    newView.setAlpha(1);
+                    newView.setTranslationX(0);
+                    newView.setTranslationY(0);
+                    dispatchChangeFinished(changeInfo.newHolder, false);
+                    mChangeAnimations.remove(changeInfo.newHolder);
+                    dispatchFinishedWhenDone();
+                }
+            }).start();
         }
     }
 
@@ -672,7 +680,7 @@ public class DefaultItemAnimator extends SimpleItemAnimator {
      */
     @Override
     public boolean canReuseUpdatedViewHolder(@NonNull RecyclerView.ViewHolder viewHolder,
-            @NonNull List<Object> payloads) {
+                                             @NonNull List<Object> payloads) {
         return !payloads.isEmpty() || super.canReuseUpdatedViewHolder(viewHolder, payloads);
     }
 }

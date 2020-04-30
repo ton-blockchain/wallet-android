@@ -2,7 +2,7 @@
  * This is the source code of Wallet for Android v. 1.0.
  * It is licensed under GNU GPL v. 2 or later.
  * You should have received a copy of the license in this archive (see LICENSE).
- * Copyright Nikolai Kudashov, 2019.
+ * Copyright Nikolai Kudashov, 2019-2020.
  */
 
 package org.telegram.ui.Components;
@@ -49,16 +49,25 @@ public class EditTextBoldCursor extends EditText {
 
     private static Field mEditor;
     private static Field mShowCursorField;
-    private static Field mCursorDrawableField;
     private static Field mScrollYField;
     private static Method getVerticalOffsetMethod;
-    private static Field mCursorDrawableResField;
     private static Class editorClass;
+    private static Field mCursorDrawableResField;
 
     private Drawable mCursorDrawable;
     private Object editor;
 
     private GradientDrawable gradientDrawable;
+
+    private Runnable invalidateRunnable = new Runnable() {
+        @Override
+        public void run() {
+            invalidate();
+            if (attachedToWindow != null) {
+                AndroidUtilities.runOnUIThread(this, 500);
+            }
+        }
+    };
 
     private Paint linePaint;
     private TextPaint errorPaint;
@@ -99,6 +108,7 @@ public class EditTextBoldCursor extends EditText {
     private FloatingActionMode floatingActionMode;
     private ViewTreeObserver.OnPreDrawListener floatingToolbarPreDrawListener;
     private View windowView;
+    private View attachedToWindow;
 
     @TargetApi(23)
     private class ActionModeCallback2Wrapper extends ActionMode.Callback2 {
@@ -168,41 +178,35 @@ public class EditTextBoldCursor extends EditText {
 
         }
         try {
-            if (mCursorDrawableResField == null) {
-                mCursorDrawableResField = TextView.class.getDeclaredField("mCursorDrawableRes");
-                mCursorDrawableResField.setAccessible(true);
-            }
-        } catch (Throwable ignore) {
-
-        }
-        try {
             if (editorClass == null) {
                 mEditor = TextView.class.getDeclaredField("mEditor");
                 mEditor.setAccessible(true);
                 editorClass = Class.forName("android.widget.Editor");
                 mShowCursorField = editorClass.getDeclaredField("mShowCursor");
                 mShowCursorField.setAccessible(true);
-                if (Build.VERSION.SDK_INT >= 28) {
-                    mCursorDrawableField = editorClass.getDeclaredField("mDrawableForCursor");
-                    mCursorDrawableField.setAccessible(true);
-                } else {
-                    mCursorDrawableField = editorClass.getDeclaredField("mCursorDrawable");
-                    mCursorDrawableField.setAccessible(true);
-                }
                 getVerticalOffsetMethod = TextView.class.getDeclaredMethod("getVerticalOffset", boolean.class);
                 getVerticalOffsetMethod.setAccessible(true);
                 mShowCursorField = editorClass.getDeclaredField("mShowCursor");
                 mShowCursorField.setAccessible(true);
-                getVerticalOffsetMethod = TextView.class.getDeclaredMethod("getVerticalOffset", boolean.class);
-                getVerticalOffsetMethod.setAccessible(true);
             }
         } catch (Throwable e) {
             FileLog.e(e);
         }
         try {
             gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[] {0xff54a1db, 0xff54a1db});
+            if (Build.VERSION.SDK_INT >= 29) {
+                setTextCursorDrawable(gradientDrawable);
+            }
             editor = mEditor.get(this);
-            if (mCursorDrawableField != null) {
+        } catch (Throwable ignore) {
+
+        }
+        try {
+            if (mCursorDrawableResField == null) {
+                mCursorDrawableResField = TextView.class.getDeclaredField("mCursorDrawableRes");
+                mCursorDrawableResField.setAccessible(true);
+            }
+            if (mCursorDrawableResField != null) {
                 mCursorDrawableResField.set(this, R.drawable.field_carret_empty);
             }
         } catch (Throwable ignore) {
@@ -333,6 +337,14 @@ public class EditTextBoldCursor extends EditText {
 
     public void setSupportRtlHint(boolean value) {
         supportRtlHint = value;
+    }
+
+    @Override
+    protected void onScrollChanged(int horiz, int vert, int oldHoriz, int oldVert) {
+        super.onScrollChanged(horiz, vert, oldHoriz, oldVert);
+        if (horiz != oldHoriz) {
+            getParent().requestDisallowInterceptTouchEvent(true);
+        }
     }
 
     @Override
@@ -516,40 +528,38 @@ public class EditTextBoldCursor extends EditText {
         }
         try {
             if (allowDrawCursor && mShowCursorField != null) {
-                if (mCursorDrawable == null) {
-                    if (Build.VERSION.SDK_INT >= 28) {
-                        mCursorDrawable = (Drawable) mCursorDrawableField.get(editor);
-                    } else {
-                        mCursorDrawable = ((Drawable[]) mCursorDrawableField.get(editor))[0];
-                    }
-                }
-                if (mCursorDrawable != null) {
-                    long mShowCursor = mShowCursorField.getLong(editor);
-                    boolean showCursor = (SystemClock.uptimeMillis() - mShowCursor) % (2 * 500) < 500 && isFocused();
-                    if (showCursor) {
-                        canvas.save();
-                        int voffsetCursor = 0;
+                long mShowCursor = mShowCursorField.getLong(editor);
+                boolean showCursor = (SystemClock.uptimeMillis() - mShowCursor) % (2 * 500) < 500 && isFocused();
+                if (showCursor) {
+                    canvas.save();
+                    int voffsetCursor = 0;
+                    if (getVerticalOffsetMethod != null) {
                         if ((getGravity() & Gravity.VERTICAL_GRAVITY_MASK) != Gravity.TOP) {
                             voffsetCursor = (int) getVerticalOffsetMethod.invoke(this, true);
                         }
-                        canvas.translate(getPaddingLeft(), getExtendedPaddingTop() + voffsetCursor);
-                        Layout layout = getLayout();
-                        int line = layout.getLineForOffset(getSelectionStart());
-                        int lineCount = layout.getLineCount();
-                        Rect bounds = mCursorDrawable.getBounds();
-                        rect.left = bounds.left;
-                        rect.right = bounds.left + AndroidUtilities.dp(cursorWidth);
-                        rect.bottom = bounds.bottom;
-                        rect.top = bounds.top;
-                        if (lineSpacingExtra != 0 && line < lineCount - 1) {
-                            rect.bottom -= lineSpacingExtra;
+                    } else {
+                        if ((getGravity() & Gravity.VERTICAL_GRAVITY_MASK) != Gravity.TOP) {
+                            voffsetCursor = getTotalPaddingTop() - getExtendedPaddingTop();
                         }
-                        rect.top = rect.centerY() - cursorSize / 2;
-                        rect.bottom = rect.top + cursorSize;
-                        gradientDrawable.setBounds(rect);
-                        gradientDrawable.draw(canvas);
-                        canvas.restore();
                     }
+                    canvas.translate(getPaddingLeft(), getExtendedPaddingTop() + voffsetCursor);
+                    Layout layout = getLayout();
+                    int line = layout.getLineForOffset(getSelectionStart());
+                    int lineCount = layout.getLineCount();
+                    updateCursorPosition();
+                    Rect bounds = gradientDrawable.getBounds();
+                    rect.left = bounds.left;
+                    rect.right = bounds.left + AndroidUtilities.dp(cursorWidth);
+                    rect.bottom = bounds.bottom;
+                    rect.top = bounds.top;
+                    if (lineSpacingExtra != 0 && line < lineCount - 1) {
+                        rect.bottom -= lineSpacingExtra;
+                    }
+                    rect.top = rect.centerY() - cursorSize / 2;
+                    rect.bottom = rect.top + cursorSize;
+                    gradientDrawable.setBounds(rect);
+                    gradientDrawable.draw(canvas);
+                    canvas.restore();
                 }
             }
         } catch (Throwable ignore) {
@@ -581,6 +591,54 @@ public class EditTextBoldCursor extends EditText {
         windowView = view;
     }
 
+    private boolean updateCursorPosition() {
+        final Layout layout = getLayout();
+        final int offset = getSelectionStart();
+        final int line = layout.getLineForOffset(offset);
+        final int top = layout.getLineTop(line);
+        final int bottom = layout.getLineTop(line + 1);
+        updateCursorPosition(top, bottom, layout.getPrimaryHorizontal(offset));
+        return true;
+    }
+
+    private Rect mTempRect;
+    private int clampHorizontalPosition(final Drawable drawable, float horizontal) {
+        horizontal = Math.max(0.5f, horizontal - 0.5f);
+        if (mTempRect == null) {
+            mTempRect = new Rect();
+        }
+        int drawableWidth = 0;
+        if (drawable != null) {
+            drawable.getPadding(mTempRect);
+            drawableWidth = drawable.getIntrinsicWidth();
+        } else {
+            mTempRect.setEmpty();
+        }
+        int scrollX = getScrollX();
+        float horizontalDiff = horizontal - scrollX;
+        int viewClippedWidth = getWidth() - getCompoundPaddingLeft() - getCompoundPaddingRight();
+        final int left;
+        if (horizontalDiff >= (viewClippedWidth - 1f)) {
+            left = viewClippedWidth + scrollX - (drawableWidth - mTempRect.right);
+        } else if (Math.abs(horizontalDiff) <= 1f || (TextUtils.isEmpty(getText()) && (1024 * 1024 - scrollX) <= (viewClippedWidth + 1f) && horizontal <= 1f)) {
+            left = scrollX - mTempRect.left;
+        } else {
+            left = (int) horizontal - mTempRect.left;
+        }
+        return left;
+    }
+
+    private void updateCursorPosition(int top, int bottom, float horizontal) {
+        final int left = clampHorizontalPosition(gradientDrawable, horizontal);
+        final int width = AndroidUtilities.dp(cursorWidth);
+        gradientDrawable.setBounds(left, top - mTempRect.top, left + width, bottom + mTempRect.bottom);
+    }
+
+    @Override
+    public float getLineSpacingExtra() {
+        return super.getLineSpacingExtra();
+    }
+
     private void cleanupFloatingActionModeViews() {
         if (floatingToolbar != null) {
             floatingToolbar.dismiss();
@@ -593,16 +651,32 @@ public class EditTextBoldCursor extends EditText {
     }
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        attachedToWindow = getRootView();
+        AndroidUtilities.runOnUIThread(invalidateRunnable);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        attachedToWindow = null;
+        AndroidUtilities.cancelRunOnUIThread(invalidateRunnable);
+    }
+
+    @Override
     public ActionMode startActionMode(ActionMode.Callback callback) {
-        if (Build.VERSION.SDK_INT >= 23 && windowView != null) {
+        if (Build.VERSION.SDK_INT >= 23 && (windowView != null || attachedToWindow != null)) {
             if (floatingActionMode != null) {
                 floatingActionMode.finish();
             }
             cleanupFloatingActionModeViews();
-            floatingToolbar = new FloatingToolbar(getContext(), windowView, getActionModeStyle());
+            floatingToolbar = new FloatingToolbar(getContext(), windowView != null ? windowView : attachedToWindow, getActionModeStyle());
             floatingActionMode = new FloatingActionMode(getContext(), new ActionModeCallback2Wrapper(callback), this, floatingToolbar);
             floatingToolbarPreDrawListener = () -> {
-                floatingActionMode.updateViewLocationInWindow();
+                if (floatingActionMode != null) {
+                    floatingActionMode.updateViewLocationInWindow();
+                }
                 return true;
             };
             callback.onCreateActionMode(floatingActionMode, floatingActionMode.getMenu());
@@ -618,7 +692,7 @@ public class EditTextBoldCursor extends EditText {
 
     @Override
     public ActionMode startActionMode(ActionMode.Callback callback, int type) {
-        if (Build.VERSION.SDK_INT >= 23 && windowView != null) {
+        if (Build.VERSION.SDK_INT >= 23 && (windowView != null || attachedToWindow != null)) {
             return startActionMode(callback);
         } else {
             return super.startActionMode(callback, type);
@@ -631,6 +705,24 @@ public class EditTextBoldCursor extends EditText {
 
     protected int getActionModeStyle() {
         return FloatingToolbar.STYLE_THEME;
+    }
+
+    @Override
+    public void setSelection(int start, int stop) {
+        try {
+            super.setSelection(start, stop);
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+    }
+
+    @Override
+    public void setSelection(int index) {
+        try {
+            super.setSelection(index);
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
     }
 
     @Override
