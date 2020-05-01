@@ -982,7 +982,7 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
     }
 
     private void showInvoiceSheet(String url, long amount) {
-        if (getParentActivity() == null) {
+        if (getParentActivity() == null || walletAddress == null) {
             return;
         }
         Context context = getParentActivity();

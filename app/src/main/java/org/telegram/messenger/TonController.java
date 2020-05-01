@@ -61,6 +61,7 @@ import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.PSource;
 import javax.security.auth.x500.X500Principal;
 
+import androidx.annotation.UiThread;
 import androidx.core.content.FileProvider;
 import drinkless.org.ton.Client;
 import drinkless.org.ton.TonApi;
@@ -148,6 +149,8 @@ public class TonController extends BaseController {
     private ArrayList<WalletTransaction> pendingTransactions = new ArrayList<>();
     private TonApi.FullAccountState cachedAccountState;
     private long walletId;
+
+    private ArrayList<AccountStateCallback> stateCallbacks = new ArrayList<>();
 
     private byte[] creatingDataForLaterEncrypt;
     private String creatingEncryptedData;
@@ -912,13 +915,15 @@ public class TonController extends BaseController {
         keyDirectoty.mkdirs();
         currentSetConfig = config.config;
         currentSetConfigName = config.blockchainName;
-        TonApi.Options options = new TonApi.Options(config, new TonApi.KeyStoreTypeDirectory(keyDirectoty.getAbsolutePath()));
-        Object result = sendRequest(new TonApi.Init(options), true);
-        if (result instanceof TonApi.OptionsInfo) {
-            TonApi.OptionsInfo optionsInfo = (TonApi.OptionsInfo) result;
-            walletId = optionsInfo.configInfo.defaultWalletId;
-            initied = true;
-            return true;
+        if (!TextUtils.isEmpty(config.config)) {
+            TonApi.Options options = new TonApi.Options(config, new TonApi.KeyStoreTypeDirectory(keyDirectoty.getAbsolutePath()));
+            Object result = sendRequest(new TonApi.Init(options), true);
+            if (result instanceof TonApi.OptionsInfo) {
+                TonApi.OptionsInfo optionsInfo = (TonApi.OptionsInfo) result;
+                walletId = optionsInfo.configInfo.defaultWalletId;
+                initied = true;
+                return true;
+            }
         }
         return false;
     }
@@ -1357,7 +1362,15 @@ public class TonController extends BaseController {
         return syncProgress;
     }
 
+    @UiThread
     public void getAccountState(boolean isImport, AccountStateCallback callback) {
+        if (!stateCallbacks.isEmpty()) {
+            if (callback != null && !stateCallbacks.contains(callback)) {
+                stateCallbacks.add(callback);
+            }
+            return;
+        }
+        stateCallbacks.add(callback);
         UserConfig userConfig = getUserConfig();
         if (TextUtils.isEmpty(userConfig.tonAccountAddress)) {
             initTonLib();
@@ -1367,7 +1380,9 @@ public class TonController extends BaseController {
                         TonApi.AccountRevisionList accountRevisionList = (TonApi.AccountRevisionList) response;
                         userConfig.tonAccountAddress = accountRevisionList.revisions[0].address.accountAddress;
                         userConfig.saveConfig(true);
-                        getAccountStateInternal(callback);
+                        getAccountStateInternal();
+                    } else {
+                        broadcastStateResult(null);
                     }
                 });
                 return;
@@ -1381,17 +1396,29 @@ public class TonController extends BaseController {
                 }
             }
         }
-        getAccountStateInternal(callback);
+        getAccountStateInternal();
     }
 
-    private void getAccountStateInternal(AccountStateCallback callback) {
+    private void getAccountStateInternal() {
         initTonLib();
         sendRequest(new TonApi.GetAccountState(new TonApi.AccountAddress(getUserConfig().tonAccountAddress)), response -> {
             if (response instanceof TonApi.FullAccountState) {
-                TonApi.FullAccountState fullAccountState = (TonApi.FullAccountState) response;
-                AndroidUtilities.runOnUIThread(() -> callback.run(cachedAccountState = fullAccountState));
+                broadcastStateResult((TonApi.FullAccountState) response);
             } else {
-                AndroidUtilities.runOnUIThread(() -> callback.run(null));
+                broadcastStateResult(null);
+            }
+        });
+    }
+
+    private void broadcastStateResult(TonApi.FullAccountState state) {
+        AndroidUtilities.runOnUIThread(() -> {
+            if (state != null) {
+                cachedAccountState = state;
+            }
+            ArrayList<AccountStateCallback> callbacks = new ArrayList<>(stateCallbacks);
+            stateCallbacks.clear();
+            for (int a = 0, N = callbacks.size(); a < N; a++) {
+                callbacks.get(a).run(state);
             }
         });
     }
