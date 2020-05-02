@@ -107,8 +107,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
         actionBarLayout.setDelegate(this);
 
         if (actionBarLayout.fragmentsStack.isEmpty()) {
-            BaseFragment fragment = getCurrentWalletFragment(null);
-            actionBarLayout.addFragmentToStack(fragment);
+            actionBarLayout.addFragmentToStack(getCurrentWalletFragment());
         }
         drawerLayoutContainer.setAllowOpenDrawer(false, false);
 
@@ -152,7 +151,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
         }
     }
 
-    private BaseFragment getCurrentWalletFragment(String transferWalletUrl) {
+    private BaseFragment getCurrentWalletFragment() {
         BaseFragment fragment;
         UserConfig userConfig = UserConfig.getInstance(currentAccount);
         /*if (!TextUtils.isEmpty(userConfig.tonEncryptedData) && TextUtils.isEmpty(userConfig.tonAccountAddress) && userConfig.tonWalletVersion == 0) {
@@ -165,23 +164,11 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
             userConfig.saveConfig(true);
         }*/
         if (TextUtils.isEmpty(userConfig.tonEncryptedData)) {
-            if (!TextUtils.isEmpty(transferWalletUrl)) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(LocaleController.getString("Wallet", R.string.Wallet));
-                builder.setMessage(LocaleController.getString("WalletTonLinkNoWalletText", R.string.WalletTonLinkNoWalletText));
-                builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
-                builder.setPositiveButton(LocaleController.getString("WalletTonLinkNoWalletCreateWallet", R.string.WalletTonLinkNoWalletCreateWallet), (dialog, which) -> presentFragment(new WalletCreateActivity(WalletCreateActivity.TYPE_CREATE)));
-                builder.show();
-                fragment = null;
-            } else {
-                fragment = new WalletCreateActivity(WalletCreateActivity.TYPE_CREATE);
-            }
+            fragment = new WalletCreateActivity(WalletCreateActivity.TYPE_CREATE);
         } else if (!userConfig.tonCreationFinished) {
             WalletCreateActivity activity = new WalletCreateActivity(WalletCreateActivity.TYPE_KEY_GENERATED);
             activity.setResumeCreation();
             fragment = activity;
-        } else if (!TextUtils.isEmpty(transferWalletUrl)) {
-            fragment = new WalletActivity(transferWalletUrl);
         } else {
             fragment = new WalletActivity();
         }
@@ -192,14 +179,8 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
         return mainFragmentsStack.size();
     }
 
-    private boolean handleIntent(Intent intent, boolean isNew, boolean restore, boolean fromPassword) {
-        /*if (PhotoViewer.hasInstance() && PhotoViewer.getInstance().isVisible()) {
-            if (intent == null || !Intent.ACTION_MAIN.equals(intent.getAction())) {
-                PhotoViewer.getInstance().closePhoto(false, true);
-            }
-        }*/
+    private void handleIntent(Intent intent, boolean isNew, boolean restore, boolean fromPassword) {
         int flags = intent.getFlags();
-        boolean pushOpened = false;
         String transferWalletUrl = null;
 
         if ((flags & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0 && intent != null && intent.getAction() != null && !restore && Intent.ACTION_VIEW.equals(intent.getAction())) {
@@ -217,30 +198,53 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
             }
         }
 
-        if (transferWalletUrl != null) {
-            BaseFragment fragment = getCurrentWalletFragment(transferWalletUrl);
-            if (fragment != null) {
-                AndroidUtilities.runOnUIThread(() -> presentFragment(fragment));
+        if (!isNew) {
+            if (actionBarLayout.fragmentsStack.isEmpty()) {
+                actionBarLayout.addFragmentToStack(getCurrentWalletFragment());
             }
-            pushOpened = true;
         }
 
-        if (!pushOpened && !isNew) {
-            if (actionBarLayout.fragmentsStack.isEmpty()) {
-                BaseFragment fragment = getCurrentWalletFragment(null);
-                actionBarLayout.addFragmentToStack(fragment);
+        if (transferWalletUrl != null) {
+            UserConfig userConfig = UserConfig.getInstance(currentAccount);
+            if (TextUtils.isEmpty(userConfig.tonEncryptedData)) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(LocaleController.getString("Wallet", R.string.Wallet));
+                builder.setMessage(LocaleController.getString("WalletTonLinkNoWalletText", R.string.WalletTonLinkNoWalletText));
+                builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+                builder.setPositiveButton(LocaleController.getString("WalletTonLinkNoWalletCreateWallet", R.string.WalletTonLinkNoWalletCreateWallet), (dialog, which) -> presentFragment(new WalletCreateActivity(WalletCreateActivity.TYPE_CREATE)));
+                builder.show();
+            } else if (!actionBarLayout.fragmentsStack.isEmpty()) {
+                if (actionBarLayout.fragmentsStack.size() > 1) {
+                    ArrayList<BaseFragment> stack = new ArrayList<>(actionBarLayout.fragmentsStack);
+                    for (int a = 1, N = stack.size(); a < N; a++) {
+                        actionBarLayout.removeFragmentFromStack(stack.get(a));
+                    }
+                    isNew = false;
+                }
+                BaseFragment fragment = actionBarLayout.fragmentsStack.get(0);
+                if (fragment instanceof WalletActivity) {
+                    WalletActivity walletActivity = (WalletActivity) fragment;
+                    walletActivity.openTransfer(transferWalletUrl, null);
+                }
             }
+        }
+
+        if (!isNew) {
             actionBarLayout.showLastFragment();
         }
 
         intent.setAction(null);
-        return pushOpened;
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         handleIntent(intent, true, false, false);
+    }
+
+    @Override
+    public boolean onPreIme() {
+        return false;
     }
 
     private void onFinish() {
@@ -309,31 +313,20 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
         ApplicationLoader.mainInterfacePaused = true;
         actionBarLayout.onPause();
         AndroidUtilities.unregisterUpdates();
-        /*if (PhotoViewer.hasInstance() && PhotoViewer.getInstance().isVisible()) {
-            PhotoViewer.getInstance().onPause();
-        }*/
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        //Browser.bindCustomTabsService(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        //Browser.unbindCustomTabsService(this);
     }
 
     @Override
     protected void onDestroy() {
-        /*if (PhotoViewer.getPipInstance() != null) {
-            PhotoViewer.getPipInstance().destroyPhotoViewer();
-        }
-        if (PhotoViewer.hasInstance()) {
-            PhotoViewer.getInstance().destroyPhotoViewer();
-        }*/
         try {
             if (visibleDialog != null) {
                 visibleDialog.dismiss();
@@ -360,22 +353,12 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
         ApplicationLoader.mainInterfacePaused = false;
 
         actionBarLayout.onResume();
-
-        AndroidUtilities.checkForCrashes(this);
-        //AndroidUtilities.checkForUpdates(this);
-        /*if (PhotoViewer.hasInstance() && PhotoViewer.getInstance().isVisible()) {
-            PhotoViewer.getInstance().onResume();
-        }*/
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         AndroidUtilities.checkDisplaySize(this, newConfig);
         super.onConfigurationChanged(newConfig);
-        /*PhotoViewer photoViewer = PhotoViewer.getPipInstance();
-        if (photoViewer != null) {
-            photoViewer.onConfigurationChanged(newConfig);
-        }*/
     }
 
     @Override
@@ -400,9 +383,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
 
     @Override
     public void onBackPressed() {
-        /*if (PhotoViewer.hasInstance() && PhotoViewer.getInstance().isVisible()) {
-            PhotoViewer.getInstance().closePhoto(true, false);
-        } else */if (drawerLayoutContainer.isDrawerOpened()) {
+        if (drawerLayoutContainer.isDrawerOpened()) {
             drawerLayoutContainer.closeDrawer(false);
         } else {
             actionBarLayout.onBackPressed();
@@ -446,29 +427,8 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
     }
 
     @Override
-    public boolean onPreIme() {
-        /*if (PhotoViewer.hasInstance() && PhotoViewer.getInstance().isVisible()) {
-            PhotoViewer.getInstance().closePhoto(true, false);
-            return true;
-        }*/
-        return false;
-    }
-
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        /*int keyCode = event.getKeyCode();
-        if (!mainFragmentsStack.isEmpty() && (!PhotoViewer.hasInstance() || !PhotoViewer.getInstance().isVisible()) && event.getRepeatCount() == 0 && event.getAction() == KeyEvent.ACTION_DOWN && (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) {
-
-        }*/
-        return super.dispatchKeyEvent(event);
-    }
-
-    @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_MENU) {
-            /*if (PhotoViewer.hasInstance() && PhotoViewer.getInstance().isVisible()) {
-                return super.onKeyUp(keyCode, event);
-            }*/
             if (actionBarLayout.fragmentsStack.size() == 1) {
                 if (!drawerLayoutContainer.isDrawerOpened()) {
                     if (getCurrentFocus() != null) {

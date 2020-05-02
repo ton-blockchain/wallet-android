@@ -269,6 +269,7 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
 
     @Override
     public boolean onFragmentCreate() {
+        walletAddress = getUserConfig().tonAccountAddress;
         getNotificationCenter().addObserver(this, NotificationCenter.walletPendingTransactionsChanged);
         getNotificationCenter().addObserver(this, NotificationCenter.walletSyncProgressChanged);
         getTonController().setTransactionCallback((reload, t) -> {
@@ -570,15 +571,7 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
                             AlertsCreator.showSimpleAlert(WalletActivity.this, LocaleController.getString("Wallet", R.string.Wallet), LocaleController.getString("WalletPendingWait", R.string.WalletPendingWait));
                             return;
                         }
-                        walletActionSheet = new WalletActionSheet(WalletActivity.this, WalletActionSheet.TYPE_SEND, walletAddress);
-                        walletActionSheet.setDelegate(WalletActivity.this);
-                        walletActionSheet.setRecipientString(address, true);
-                        walletActionSheet.setOnDismissListener(dialog -> {
-                            if (walletActionSheet == dialog) {
-                                walletActionSheet = null;
-                            }
-                        });
-                        walletActionSheet.show();
+                        openTransfer(null, address);
                     }
                 });
                 showDialog(walletActionSheet, (dialog) -> {
@@ -603,7 +596,7 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
         if (adapter != null) {
             adapter.notifyDataSetChanged();
         }
-        if (askCredentialsOnResume) {
+        if (askCredentialsOnResume && walletActionSheet == null) {
             askForDecryptCredentials();
             askCredentialsOnResume = false;
         }
@@ -691,17 +684,32 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
     @Override
     protected void onTransitionAnimationEnd(boolean isOpen, boolean backward) {
         if (isOpen && !backward && !TextUtils.isEmpty(openTransferAfterOpen)) {
-            walletActionSheet = new WalletActionSheet(WalletActivity.this, WalletActionSheet.TYPE_SEND, walletAddress);
-            walletActionSheet.setDelegate(this);
-            walletActionSheet.parseTonUrl(null, openTransferAfterOpen);
-            walletActionSheet.setOnDismissListener(dialog -> {
-                if (walletActionSheet == dialog) {
-                    walletActionSheet = null;
-                }
-            });
-            walletActionSheet.show();
+            openTransfer(openTransferAfterOpen, null);
             openTransferAfterOpen = null;
         }
+    }
+
+    public void openTransfer(String url, String address) {
+        if (getParentActivity() == null || walletAddress == null) {
+            return;
+        }
+        walletActionSheet = new WalletActionSheet(WalletActivity.this, WalletActionSheet.TYPE_SEND, walletAddress);
+        walletActionSheet.setDelegate(this);
+        if (url != null) {
+            walletActionSheet.parseTonUrl(null, url);
+        } else if (address != null) {
+            walletActionSheet.setRecipientString(address, true);
+        }
+        walletActionSheet.setOnDismissListener(dialog -> {
+            if (walletActionSheet == dialog) {
+                walletActionSheet = null;
+                if (askCredentialsOnResume) {
+                    askForDecryptCredentials();
+                    askCredentialsOnResume = false;
+                }
+            }
+        });
+        walletActionSheet.show();
     }
 
     private void processOpenQrReader() {
@@ -949,6 +957,9 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
     }
 
     private void askForDecryptCredentials() {
+        if (biometricPromtHelper == null) {
+            return;
+        }
         switch (getTonController().getKeyProtectionType()) {
             case TonController.KEY_PROTECTION_TYPE_LOCKSCREEN: {
                 if (Build.VERSION.SDK_INT >= 23) {
@@ -1155,14 +1166,7 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
                                 AlertsCreator.showSimpleAlert(WalletActivity.this, LocaleController.getString("Wallet", R.string.Wallet), LocaleController.getString("WalletSendSyncInProgress", R.string.WalletSendSyncInProgress));
                                 return;
                             }
-                            walletActionSheet = new WalletActionSheet(WalletActivity.this, WalletActionSheet.TYPE_SEND, walletAddress);
-                            walletActionSheet.setDelegate(WalletActivity.this);
-                            walletActionSheet.setOnDismissListener(dialog -> {
-                                if (walletActionSheet == dialog) {
-                                    walletActionSheet = null;
-                                }
-                            });
-                            walletActionSheet.show();
+                            openTransfer(null, null);
                         }
                     };
                     break;
