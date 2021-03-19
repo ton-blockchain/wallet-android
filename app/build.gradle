@@ -23,7 +23,7 @@ android {
     buildToolsVersion '29.0.3'
     ndkVersion "20.0.5594570"
 
-    defaultConfig.applicationId = "org.telegram.testwallet"
+    defaultConfig.applicationId = "toncoin.wallet"
 
     sourceSets.main.jniLibs.srcDirs = ['./jni/']
 
@@ -154,7 +154,7 @@ android {
         }
     }
 
-    defaultConfig.versionCode = 1002
+    defaultConfig.versionCode = 1061
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
@@ -187,8 +187,8 @@ android {
 
     defaultConfig {
         minSdkVersion 18
-        targetSdkVersion 28
-        versionName "1.2"
+        targetSdkVersion 29
+        versionName "1.6"
 
         vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
 
