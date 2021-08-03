@@ -936,7 +936,7 @@ public class TonController extends BaseController {
         } else {
             config = userConfig.getWalletConfig();
         }
-        return new TonApi.Config(config, userConfig.getWalletBlockchainName(), !BuildVars.TON_WALLET_STANDALONE, false);
+        return new TonApi.Config(config, userConfig.getWalletBlockchainName().toLowerCase(), !BuildVars.TON_WALLET_STANDALONE, false);
     }
 
     public boolean onTonConfigUpdated() {

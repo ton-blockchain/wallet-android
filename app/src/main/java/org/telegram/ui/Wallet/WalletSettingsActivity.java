@@ -21,6 +21,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.TypedValue;
@@ -295,8 +297,12 @@ public class WalletSettingsActivity extends BaseFragment {
             return;
         }
         UserConfig userConfig = getUserConfig();
+        if (blockchainName[networkType].isEmpty()) {
+            AlertsCreator.showSimpleAlert(this, LocaleController.getString("WalletError", R.string.WalletError), LocaleController.getString("WalletBlockchainNameEmpty", R.string.WalletBlockchainNameEmpty));
+            return;
+        }
         boolean needApply = false;
-        boolean blockchainNameChanged = networkType != userConfig.getCurrentNetworkType() || !TextUtils.equals(userConfig.getWalletBlockchainName(networkType), blockchainName[networkType]);
+        boolean blockchainNameChanged = networkType != userConfig.getCurrentNetworkType() || !TextUtils.equals(userConfig.getWalletBlockchainName(networkType).toLowerCase(), blockchainName[networkType].toLowerCase());
         if (configType[networkType] != userConfig.getWalletConfigType(networkType) || blockchainNameChanged) {
             needApply = true;
         } else if (configType[networkType] == TonController.CONFIG_TYPE_URL) {
@@ -333,7 +339,8 @@ public class WalletSettingsActivity extends BaseFragment {
                     }
                     return;
                 }
-            } else if (configType[networkType] == TonController.CONFIG_TYPE_JSON) {
+            }
+            if (configType[networkType] == TonController.CONFIG_TYPE_JSON) {
                 if (TextUtils.isEmpty(blockchainJson[networkType])) {
                     return;
                 }
@@ -344,7 +351,8 @@ public class WalletSettingsActivity extends BaseFragment {
                     AlertsCreator.showSimpleAlert(this, LocaleController.getString("WalletError", R.string.WalletError), LocaleController.getString("WalletBlockchainConfigInvalid", R.string.WalletBlockchainConfigInvalid));
                     return;
                 }
-            } else if (verify && configType[networkType] == TonController.CONFIG_TYPE_URL) {
+            }
+            if (verify && configType[networkType] == TonController.CONFIG_TYPE_URL) {
                 AlertDialog progressDialog = new AlertDialog(getParentActivity(), 3);
                 progressDialog.setCanCacnel(false);
                 progressDialog.show();
@@ -858,6 +866,14 @@ public class WalletSettingsActivity extends BaseFragment {
                     PollEditTextCell textCell = (PollEditTextCell) holder.itemView;
                     textCell.setTag(null);
                     if (position == blockchainNameRow) {
+                        textCell.getTextView().setFilters(new InputFilter[] {
+                                new InputFilter.AllCaps() {
+                                    @Override
+                                    public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                                        return String.valueOf(source).toLowerCase();
+                                    }
+                                }
+                        });
                         textCell.setTextAndHint(blockchainName[networkType], LocaleController.getString("WalletBlockchainNameHint", R.string.WalletBlockchainNameHint), false);
                     } else if (position == fieldRow) {
                         if (configType[networkType] == TonController.CONFIG_TYPE_URL) {

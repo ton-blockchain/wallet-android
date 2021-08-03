@@ -17,7 +17,7 @@ namespace lite_api {
 std::string to_string(const BaseObject &value) {
   td::TlStorerToString storer;
   value.store(storer, "");
-  return storer.str();
+  return storer.move_as_str();
 }
 
 object_ptr<Object> Object::fetch(td::TlParser &p) {

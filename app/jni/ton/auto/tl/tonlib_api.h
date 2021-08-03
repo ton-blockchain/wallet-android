@@ -315,54 +315,6 @@ class raw_accountState final : public AccountState {
   static void init_jni_vars(JNIEnv *env, const char *package_name);
 };
 
-class testWallet_accountState final : public AccountState {
- public:
-  static jclass Class;
-  std::int32_t seqno_;
-  static jfieldID seqno_fieldID;
-
-  testWallet_accountState();
-
-  explicit testWallet_accountState(std::int32_t seqno_);
-
-  static const std::int32_t ID = -2053909931;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  static object_ptr<AccountState> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class wallet_accountState final : public AccountState {
- public:
-  static jclass Class;
-  std::int32_t seqno_;
-  static jfieldID seqno_fieldID;
-
-  wallet_accountState();
-
-  explicit wallet_accountState(std::int32_t seqno_);
-
-  static const std::int32_t ID = -390017192;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  static object_ptr<AccountState> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
 class wallet_v3_accountState final : public AccountState {
  public:
   static jclass Class;
@@ -426,30 +378,6 @@ class wallet_highload_v2_accountState final : public AccountState {
   explicit wallet_highload_v2_accountState(std::int64_t wallet_id_);
 
   static const std::int32_t ID = -1803723441;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  static object_ptr<AccountState> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class testGiver_accountState final : public AccountState {
- public:
-  static jclass Class;
-  std::int32_t seqno_;
-  static jfieldID seqno_fieldID;
-
-  testGiver_accountState();
-
-  explicit testGiver_accountState(std::int32_t seqno_);
-
-  static const std::int32_t ID = -696813142;
   std::int32_t get_id() const final {
     return ID;
   }
@@ -1008,74 +936,6 @@ class raw_initialAccountState final : public InitialAccountState {
   raw_initialAccountState(std::string const &code_, std::string const &data_);
 
   static const std::int32_t ID = -337945529;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  static object_ptr<InitialAccountState> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class testGiver_initialAccountState final : public InitialAccountState {
- public:
-  static jclass Class;
-
-  testGiver_initialAccountState();
-
-  static const std::int32_t ID = -1448412176;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  static object_ptr<InitialAccountState> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class testWallet_initialAccountState final : public InitialAccountState {
- public:
-  static jclass Class;
-  std::string public_key_;
-  static jfieldID public_key_fieldID;
-
-  testWallet_initialAccountState();
-
-  explicit testWallet_initialAccountState(std::string const &public_key_);
-
-  static const std::int32_t ID = 819380068;
-  std::int32_t get_id() const final {
-    return ID;
-  }
-
-  static object_ptr<InitialAccountState> fetch(JNIEnv *env, jobject &p);
-
-  void store(JNIEnv *env, jobject &s) const final;
-
-  void store(td::TlStorerToString &s, const char *field_name) const final;
-
-  static void init_jni_vars(JNIEnv *env, const char *package_name);
-};
-
-class wallet_initialAccountState final : public InitialAccountState {
- public:
-  static jclass Class;
-  std::string public_key_;
-  static jfieldID public_key_fieldID;
-
-  wallet_initialAccountState();
-
-  explicit wallet_initialAccountState(std::string const &public_key_);
-
-  static const std::int32_t ID = -1122166790;
   std::int32_t get_id() const final {
     return ID;
   }

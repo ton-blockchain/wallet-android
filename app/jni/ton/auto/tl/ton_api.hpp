@@ -74,6 +74,9 @@ bool downcast_call(Object &obj, const T &func) {
     case hashable_validatorSession::ID:
       func(static_cast<hashable_validatorSession &>(obj));
       return true;
+    case storage_ok::ID:
+      func(static_cast<storage_ok &>(obj));
+      return true;
     case pk_unenc::ID:
       func(static_cast<pk_unenc &>(obj));
       return true;
@@ -686,6 +689,33 @@ bool downcast_call(Object &obj, const T &func) {
     case rldp_complete::ID:
       func(static_cast<rldp_complete &>(obj));
       return true;
+    case rldp2_messagePart::ID:
+      func(static_cast<rldp2_messagePart &>(obj));
+      return true;
+    case rldp2_confirm::ID:
+      func(static_cast<rldp2_confirm &>(obj));
+      return true;
+    case rldp2_complete::ID:
+      func(static_cast<rldp2_complete &>(obj));
+      return true;
+    case storage_piece::ID:
+      func(static_cast<storage_piece &>(obj));
+      return true;
+    case storage_pong::ID:
+      func(static_cast<storage_pong &>(obj));
+      return true;
+    case storage_state::ID:
+      func(static_cast<storage_state &>(obj));
+      return true;
+    case storage_updateInit::ID:
+      func(static_cast<storage_updateInit &>(obj));
+      return true;
+    case storage_updateHavePieces::ID:
+      func(static_cast<storage_updateHavePieces &>(obj));
+      return true;
+    case storage_updateState::ID:
+      func(static_cast<storage_updateState &>(obj));
+      return true;
     case tcp_authentificate::ID:
       func(static_cast<tcp_authentificate &>(obj));
       return true;
@@ -958,6 +988,9 @@ bool downcast_call(Function &obj, const T &func) {
     case engine_validator_controlQuery::ID:
       func(static_cast<engine_validator_controlQuery &>(obj));
       return true;
+    case engine_validator_createComplaintVote::ID:
+      func(static_cast<engine_validator_createComplaintVote &>(obj));
+      return true;
     case engine_validator_createElectionBid::ID:
       func(static_cast<engine_validator_createElectionBid &>(obj));
       return true;
@@ -1032,6 +1065,18 @@ bool downcast_call(Function &obj, const T &func) {
       return true;
     case overlay_query::ID:
       func(static_cast<overlay_query &>(obj));
+      return true;
+    case storage_addUpdate::ID:
+      func(static_cast<storage_addUpdate &>(obj));
+      return true;
+    case storage_getPiece::ID:
+      func(static_cast<storage_getPiece &>(obj));
+      return true;
+    case storage_ping::ID:
+      func(static_cast<storage_ping &>(obj));
+      return true;
+    case storage_queryPrefix::ID:
+      func(static_cast<storage_queryPrefix &>(obj));
       return true;
     case tcp_ping::ID:
       func(static_cast<tcp_ping &>(obj));
@@ -1874,6 +1919,52 @@ bool downcast_call(rldp_MessagePart &obj, const T &func) {
       return true;
     case rldp_complete::ID:
       func(static_cast<rldp_complete &>(obj));
+      return true;
+    default:
+      return false;
+  }
+}
+
+/**
+ * Calls specified function object with the specified object downcasted to the most-derived type.
+ * \param[in] obj Object to pass as an argument to the function object.
+ * \param[in] func Function object to which the object will be passed.
+ * \returns whether function object call has happened. Should always return true for correct parameters.
+ */
+template <class T>
+bool downcast_call(rldp2_MessagePart &obj, const T &func) {
+  switch (obj.get_id()) {
+    case rldp2_messagePart::ID:
+      func(static_cast<rldp2_messagePart &>(obj));
+      return true;
+    case rldp2_confirm::ID:
+      func(static_cast<rldp2_confirm &>(obj));
+      return true;
+    case rldp2_complete::ID:
+      func(static_cast<rldp2_complete &>(obj));
+      return true;
+    default:
+      return false;
+  }
+}
+
+/**
+ * Calls specified function object with the specified object downcasted to the most-derived type.
+ * \param[in] obj Object to pass as an argument to the function object.
+ * \param[in] func Function object to which the object will be passed.
+ * \returns whether function object call has happened. Should always return true for correct parameters.
+ */
+template <class T>
+bool downcast_call(storage_Update &obj, const T &func) {
+  switch (obj.get_id()) {
+    case storage_updateInit::ID:
+      func(static_cast<storage_updateInit &>(obj));
+      return true;
+    case storage_updateHavePieces::ID:
+      func(static_cast<storage_updateHavePieces &>(obj));
+      return true;
+    case storage_updateState::ID:
+      func(static_cast<storage_updateState &>(obj));
       return true;
     default:
       return false;

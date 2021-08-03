@@ -183,6 +183,7 @@
     <string name="WalletConfigTypeUrlHint">Enter config url</string>
     <string name="WalletBlockchainNameHint">Enter blockchain ID</string>
     <string name="WalletBlockchainNameInfo">This setting is for developers. Change it only if you are working on creating your own TON network.</string>
+    <string name="WalletBlockchainNameEmpty">Blockchain ID cannot be empty</string>
     <string name="WalletBlockchainNameWarning">Are you sure you want to change the blockchain ID?</string>
     <string name="WalletError">Error</string>
     <string name="WalletBlockchainConfigLoadError">App was unable to load blockchain config from the given url. Please make sure that url is corrent and you have an active Internet connection.</string>

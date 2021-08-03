@@ -16,7 +16,7 @@ namespace tonlib_api {
 std::string to_string(const BaseObject &value) {
   td::TlStorerToString storer;
   value.store(storer, "");
-  return storer.str();
+  return storer.move_as_str();
 }
 
 jclass Object::Class;
@@ -33,18 +33,12 @@ object_ptr<Object> Object::fetch(JNIEnv *env, jobject &p) {
       return accountRevisionList::fetch(env, p);
     case raw_accountState::ID:
       return raw_accountState::fetch(env, p);
-    case testWallet_accountState::ID:
-      return testWallet_accountState::fetch(env, p);
-    case wallet_accountState::ID:
-      return wallet_accountState::fetch(env, p);
     case wallet_v3_accountState::ID:
       return wallet_v3_accountState::fetch(env, p);
     case wallet_highload_v1_accountState::ID:
       return wallet_highload_v1_accountState::fetch(env, p);
     case wallet_highload_v2_accountState::ID:
       return wallet_highload_v2_accountState::fetch(env, p);
-    case testGiver_accountState::ID:
-      return testGiver_accountState::fetch(env, p);
     case dns_accountState::ID:
       return dns_accountState::fetch(env, p);
     case rwallet_accountState::ID:
@@ -87,12 +81,6 @@ object_ptr<Object> Object::fetch(JNIEnv *env, jobject &p) {
       return fullAccountState::fetch(env, p);
     case raw_initialAccountState::ID:
       return raw_initialAccountState::fetch(env, p);
-    case testGiver_initialAccountState::ID:
-      return testGiver_initialAccountState::fetch(env, p);
-    case testWallet_initialAccountState::ID:
-      return testWallet_initialAccountState::fetch(env, p);
-    case wallet_initialAccountState::ID:
-      return wallet_initialAccountState::fetch(env, p);
     case wallet_v3_initialAccountState::ID:
       return wallet_v3_initialAccountState::fetch(env, p);
     case wallet_highload_v1_initialAccountState::ID:
@@ -656,18 +644,12 @@ object_ptr<AccountState> AccountState::fetch(JNIEnv *env, jobject &p) {
   switch (id) {
     case raw_accountState::ID:
       return raw_accountState::fetch(env, p);
-    case testWallet_accountState::ID:
-      return testWallet_accountState::fetch(env, p);
-    case wallet_accountState::ID:
-      return wallet_accountState::fetch(env, p);
     case wallet_v3_accountState::ID:
       return wallet_v3_accountState::fetch(env, p);
     case wallet_highload_v1_accountState::ID:
       return wallet_highload_v1_accountState::fetch(env, p);
     case wallet_highload_v2_accountState::ID:
       return wallet_highload_v2_accountState::fetch(env, p);
-    case testGiver_accountState::ID:
-      return testGiver_accountState::fetch(env, p);
     case dns_accountState::ID:
       return dns_accountState::fetch(env, p);
     case rwallet_accountState::ID:
@@ -685,12 +667,9 @@ object_ptr<AccountState> AccountState::fetch(JNIEnv *env, jobject &p) {
 void AccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
   Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$AccountState").c_str());
   raw_accountState::init_jni_vars(env, package_name);
-  testWallet_accountState::init_jni_vars(env, package_name);
-  wallet_accountState::init_jni_vars(env, package_name);
   wallet_v3_accountState::init_jni_vars(env, package_name);
   wallet_highload_v1_accountState::init_jni_vars(env, package_name);
   wallet_highload_v2_accountState::init_jni_vars(env, package_name);
-  testGiver_accountState::init_jni_vars(env, package_name);
   dns_accountState::init_jni_vars(env, package_name);
   rwallet_accountState::init_jni_vars(env, package_name);
   pchan_accountState::init_jni_vars(env, package_name);
@@ -748,84 +727,6 @@ void raw_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
   code_fieldID = td::jni::get_field_id(env, Class, "code", "[B");
   data_fieldID = td::jni::get_field_id(env, Class, "data", "[B");
   frozen_hash_fieldID = td::jni::get_field_id(env, Class, "frozenHash", "[B");
-}
-
-jclass testWallet_accountState::Class;
-jfieldID testWallet_accountState::seqno_fieldID;
-
-testWallet_accountState::testWallet_accountState()
-  : seqno_()
-{}
-
-testWallet_accountState::testWallet_accountState(std::int32_t seqno_)
-  : seqno_(seqno_)
-{}
-
-const std::int32_t testWallet_accountState::ID;
-
-object_ptr<AccountState> testWallet_accountState::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<testWallet_accountState> res = make_object<testWallet_accountState>();
-  res->seqno_ = env->GetIntField(p, res->seqno_fieldID);
-  return std::move(res);
-}
-
-void testWallet_accountState::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  env->SetIntField(s, seqno_fieldID, seqno_);
-}
-
-void testWallet_accountState::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "TestWalletAccountState");
-    s.store_field("seqno", seqno_);
-    s.store_class_end();
-  }
-}
-
-void testWallet_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TestWalletAccountState").c_str());
-  seqno_fieldID = td::jni::get_field_id(env, Class, "seqno", "I");
-}
-
-jclass wallet_accountState::Class;
-jfieldID wallet_accountState::seqno_fieldID;
-
-wallet_accountState::wallet_accountState()
-  : seqno_()
-{}
-
-wallet_accountState::wallet_accountState(std::int32_t seqno_)
-  : seqno_(seqno_)
-{}
-
-const std::int32_t wallet_accountState::ID;
-
-object_ptr<AccountState> wallet_accountState::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<wallet_accountState> res = make_object<wallet_accountState>();
-  res->seqno_ = env->GetIntField(p, res->seqno_fieldID);
-  return std::move(res);
-}
-
-void wallet_accountState::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  env->SetIntField(s, seqno_fieldID, seqno_);
-}
-
-void wallet_accountState::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "WalletAccountState");
-    s.store_field("seqno", seqno_);
-    s.store_class_end();
-  }
-}
-
-void wallet_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletAccountState").c_str());
-  seqno_fieldID = td::jni::get_field_id(env, Class, "seqno", "I");
 }
 
 jclass wallet_v3_accountState::Class;
@@ -957,45 +858,6 @@ void wallet_highload_v2_accountState::store(td::TlStorerToString &s, const char 
 void wallet_highload_v2_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
   Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletHighloadV2AccountState").c_str());
   wallet_id_fieldID = td::jni::get_field_id(env, Class, "walletId", "J");
-}
-
-jclass testGiver_accountState::Class;
-jfieldID testGiver_accountState::seqno_fieldID;
-
-testGiver_accountState::testGiver_accountState()
-  : seqno_()
-{}
-
-testGiver_accountState::testGiver_accountState(std::int32_t seqno_)
-  : seqno_(seqno_)
-{}
-
-const std::int32_t testGiver_accountState::ID;
-
-object_ptr<AccountState> testGiver_accountState::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<testGiver_accountState> res = make_object<testGiver_accountState>();
-  res->seqno_ = env->GetIntField(p, res->seqno_fieldID);
-  return std::move(res);
-}
-
-void testGiver_accountState::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  env->SetIntField(s, seqno_fieldID, seqno_);
-}
-
-void testGiver_accountState::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "TestGiverAccountState");
-    s.store_field("seqno", seqno_);
-    s.store_class_end();
-  }
-}
-
-void testGiver_accountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TestGiverAccountState").c_str());
-  seqno_fieldID = td::jni::get_field_id(env, Class, "seqno", "I");
 }
 
 jclass dns_accountState::Class;
@@ -1940,12 +1802,6 @@ object_ptr<InitialAccountState> InitialAccountState::fetch(JNIEnv *env, jobject 
   switch (id) {
     case raw_initialAccountState::ID:
       return raw_initialAccountState::fetch(env, p);
-    case testGiver_initialAccountState::ID:
-      return testGiver_initialAccountState::fetch(env, p);
-    case testWallet_initialAccountState::ID:
-      return testWallet_initialAccountState::fetch(env, p);
-    case wallet_initialAccountState::ID:
-      return wallet_initialAccountState::fetch(env, p);
     case wallet_v3_initialAccountState::ID:
       return wallet_v3_initialAccountState::fetch(env, p);
     case wallet_highload_v1_initialAccountState::ID:
@@ -1967,9 +1823,6 @@ object_ptr<InitialAccountState> InitialAccountState::fetch(JNIEnv *env, jobject 
 void InitialAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
   Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$InitialAccountState").c_str());
   raw_initialAccountState::init_jni_vars(env, package_name);
-  testGiver_initialAccountState::init_jni_vars(env, package_name);
-  testWallet_initialAccountState::init_jni_vars(env, package_name);
-  wallet_initialAccountState::init_jni_vars(env, package_name);
   wallet_v3_initialAccountState::init_jni_vars(env, package_name);
   wallet_highload_v1_initialAccountState::init_jni_vars(env, package_name);
   wallet_highload_v2_initialAccountState::init_jni_vars(env, package_name);
@@ -2022,113 +1875,6 @@ void raw_initialAccountState::init_jni_vars(JNIEnv *env, const char *package_nam
   Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$RawInitialAccountState").c_str());
   code_fieldID = td::jni::get_field_id(env, Class, "code", "[B");
   data_fieldID = td::jni::get_field_id(env, Class, "data", "[B");
-}
-
-jclass testGiver_initialAccountState::Class;
-
-testGiver_initialAccountState::testGiver_initialAccountState() {
-}
-
-const std::int32_t testGiver_initialAccountState::ID;
-
-object_ptr<InitialAccountState> testGiver_initialAccountState::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<testGiver_initialAccountState> res = make_object<testGiver_initialAccountState>();
-  return std::move(res);
-}
-
-void testGiver_initialAccountState::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-}
-
-void testGiver_initialAccountState::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "TestGiverInitialAccountState");
-    s.store_class_end();
-  }
-}
-
-void testGiver_initialAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TestGiverInitialAccountState").c_str());
-}
-
-jclass testWallet_initialAccountState::Class;
-jfieldID testWallet_initialAccountState::public_key_fieldID;
-
-testWallet_initialAccountState::testWallet_initialAccountState()
-  : public_key_()
-{}
-
-testWallet_initialAccountState::testWallet_initialAccountState(std::string const &public_key_)
-  : public_key_(std::move(public_key_))
-{}
-
-const std::int32_t testWallet_initialAccountState::ID;
-
-object_ptr<InitialAccountState> testWallet_initialAccountState::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<testWallet_initialAccountState> res = make_object<testWallet_initialAccountState>();
-  res->public_key_ = td::jni::fetch_string(env, p, res->public_key_fieldID);
-  return std::move(res);
-}
-
-void testWallet_initialAccountState::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  { jstring nextString = td::jni::to_jstring(env, public_key_); if (nextString) { env->SetObjectField(s, public_key_fieldID, nextString); env->DeleteLocalRef(nextString); } }
-}
-
-void testWallet_initialAccountState::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "TestWalletInitialAccountState");
-    s.store_field("publicKey", public_key_);
-    s.store_class_end();
-  }
-}
-
-void testWallet_initialAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$TestWalletInitialAccountState").c_str());
-  public_key_fieldID = td::jni::get_field_id(env, Class, "publicKey", "Ljava/lang/String;");
-}
-
-jclass wallet_initialAccountState::Class;
-jfieldID wallet_initialAccountState::public_key_fieldID;
-
-wallet_initialAccountState::wallet_initialAccountState()
-  : public_key_()
-{}
-
-wallet_initialAccountState::wallet_initialAccountState(std::string const &public_key_)
-  : public_key_(std::move(public_key_))
-{}
-
-const std::int32_t wallet_initialAccountState::ID;
-
-object_ptr<InitialAccountState> wallet_initialAccountState::fetch(JNIEnv *env, jobject &p) {
-  if (p == nullptr) return nullptr;
-  object_ptr<wallet_initialAccountState> res = make_object<wallet_initialAccountState>();
-  res->public_key_ = td::jni::fetch_string(env, p, res->public_key_fieldID);
-  return std::move(res);
-}
-
-void wallet_initialAccountState::store(JNIEnv *env, jobject &s) const {
-  s = env->AllocObject(Class);
-  if (!s) { return; }
-  { jstring nextString = td::jni::to_jstring(env, public_key_); if (nextString) { env->SetObjectField(s, public_key_fieldID, nextString); env->DeleteLocalRef(nextString); } }
-}
-
-void wallet_initialAccountState::store(td::TlStorerToString &s, const char *field_name) const {
-  if (!LOG_IS_STRIPPED(ERROR)) {
-    s.store_class_begin(field_name, "WalletInitialAccountState");
-    s.store_field("publicKey", public_key_);
-    s.store_class_end();
-  }
-}
-
-void wallet_initialAccountState::init_jni_vars(JNIEnv *env, const char *package_name) {
-  Class = td::jni::get_jclass(env, (PSLICE() << package_name << "/TonApi$WalletInitialAccountState").c_str());
-  public_key_fieldID = td::jni::get_field_id(env, Class, "publicKey", "Ljava/lang/String;");
 }
 
 jclass wallet_v3_initialAccountState::Class;
