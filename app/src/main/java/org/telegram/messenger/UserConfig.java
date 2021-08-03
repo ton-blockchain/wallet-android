@@ -129,9 +129,9 @@ public class UserConfig extends BaseController {
                 }
             }
             walletConfig[NETWORK_TYPE_TEST] = preferences.getString("walletConfig", "");
-            walletConfigUrl[NETWORK_TYPE_TEST] = preferences.getString("walletConfigUrl", "https://newton-blockchain.github.io/global.config.json");
+            walletConfigUrl[NETWORK_TYPE_TEST] = preferences.getString("walletConfigUrl", "https://ton.org/global-config-wallet.json");
             walletConfigType[NETWORK_TYPE_TEST] = preferences.getInt("walletConfigType", TonController.CONFIG_TYPE_URL);
-            walletBlockchainName[NETWORK_TYPE_TEST] = preferences.getString("walletBlockchainName", "testnet2");
+            walletBlockchainName[NETWORK_TYPE_TEST] = preferences.getString("walletBlockchainName", "mainnet");
             walletConfigFromUrl[NETWORK_TYPE_TEST] = preferences.getString("walletConfigFromUrl", "");
 
             walletConfig[NETWORK_TYPE_MAIN] = preferences.getString("walletConfigMain", "");
