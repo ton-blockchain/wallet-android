@@ -1,6 +1,6 @@
-## Test Gram Wallet (Android)
+## TON Wallet (Android)
 
-This is the source code and build instructions for a TON Testnet Wallet implementation for Android.
+This is the source code and build instructions for a TON Wallet implementation for Android.
 
 ### How to build
 
