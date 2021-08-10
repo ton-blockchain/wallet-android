@@ -1502,7 +1502,7 @@ public class TonController extends BaseController {
     }
 
     public void getSendFee(String fromWallet, String toWallet, long amount, String message, FeeCallback feeCallback) {
-        getSendFee(fromWallet, toWallet, amount, message, false, feeCallback);
+        getSendFee(fromWallet, toWallet, amount, message, true, feeCallback);
     }
 
     private void getSendFee(String fromWallet, String toWallet, long amount, String message, boolean unencrypted, FeeCallback feeCallback) {
