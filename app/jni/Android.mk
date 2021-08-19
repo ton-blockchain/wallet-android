@@ -97,6 +97,8 @@ LOCAL_ARM_MODE  := arm
 LOCAL_MODULE := tonlib
 LOCAL_CPPFLAGS := -DNDEBUG -Wall -std=c++14 -DANDROID -frtti -DHAVE_PTHREAD -finline-functions -ffast-math -Os -fexceptions -fno-unwind-tables -fno-asynchronous-unwind-tables -Wnon-virtual-dtor -Woverloaded-virtual -Wno-unused-parameter -fvisibility=hidden
 LOCAL_STATIC_LIBRARIES := crypto
+LOCAL_SHORT_COMMANDS := true
+APP_SHORT_COMMANDS := true
 
 LOCAL_C_INCLUDES := \
 ./jni/ton \
