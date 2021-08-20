@@ -1,4 +1,4 @@
-## TON Wallet (Android)
+## Toncoin Wallet (Android)
 
 This is the source code and build instructions for a TON Wallet implementation for Android.
 
