@@ -1906,16 +1906,37 @@ const MasterConfig& get_default_master_config() {
   "validator": {
     "@type": "validator.config.global",
     "zero_state": {
-      "workchain": -1,
-      "shard": -9223372036854775808,
-      "seqno": 0,
-      "root_hash": "VCSXxDHhTALFxReyTZRd8E4Ya3ySOmpOWAS4rBX9XBY=",
-      "file_hash": "eh9yveSz1qMdJ7mOsO+I+H77jkLr9NpAuEkoJuseXBo="
-    },
-    "init_block":
-{"workchain":-1,"shard":-9223372036854775808,"seqno":870721,"root_hash":"jYKhSQ1xeSPprzgjqiUOnAWwc2yqs7nCVAU21k922s4=","file_hash":"kHidF02CZpaz2ia9jtXUJLp0AiWMWwfzprTUIsddHSo="}
-  }
-})abc");
+          "file_hash": "BzgfRpFgyNjHI7aR5KQhq4Wtr2wN+sXzLaW+rfHvP5A=",
+          "seqno": 0,
+          "root_hash": "WPsS1IiRjT0MSD6Xvys4QYQh7rrc9x0ybzXojwJ4gH0=",
+          "workchain": -1,
+          "shard": -9223372036854775808
+        },
+          "init_block":{
+             "file_hash":"CXvKA37GFugspx6U7sv4Sh7KIVqR1R+Pj4AmGx2Ezi0=",
+             "seqno":2908533,
+             "root_hash":"oFi1uMHmELXV/AfjuvTZREmRY7TtNgq608sFjnRJCAo=",
+             "workchain":-1,
+             "shard":-9223372036854775808
+          },
+          "hardforks":[
+             {
+                "file_hash":"x97xobbkPDggz7/u6KQzlT3pBmM5XfGE6vN7AiuTMU0=",
+                "seqno":1907338,
+                "root_hash":"BuZOCJvbg0ys2JBnfocqCf1T4rt0OzLLslOG3CjcSgU=",
+                "workchain":-1,
+                "shard":-9223372036854775808
+             },
+             {
+               "file_hash": "CXvKA37GFugspx6U7sv4Sh7KIVqR1R+Pj4AmGx2Ezi0=",
+               "seqno": 2908533,
+               "root_hash": "oFi1uMHmELXV/AfjuvTZREmRY7TtNgq608sFjnRJCAo=",
+               "workchain": -1,
+               "shard": -9223372036854775808
+             }
+          ]
+      }
+    })abc");
     res.add_config("testnet2", R"abc({
   "liteservers": [
   ],

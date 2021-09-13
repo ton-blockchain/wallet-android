@@ -41,6 +41,7 @@ public class WalletBalanceCell extends FrameLayout {
     private TextView yourBalanceTextView;
     private FrameLayout receiveButton;
     private FrameLayout sendButton;
+    private TextView buyButton;
     private SimpleTextView receiveTextView;
     private SimpleTextView sendTextView;
     private Drawable sendDrawable;
@@ -57,7 +58,7 @@ public class WalletBalanceCell extends FrameLayout {
         valueTextView.setDrawablePadding(AndroidUtilities.dp(7));
         valueTextView.setGravity(Gravity.CENTER_HORIZONTAL);
         valueTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        addView(valueTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, 35, 0, 0));
+        addView(valueTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, 10, 0, 0));
 
         gemDrawable = new RLottieDrawable(R.raw.wallet_gem, "" + R.raw.wallet_gem, AndroidUtilities.dp(42), AndroidUtilities.dp(42), false);
         gemDrawable.setAutoRepeat(1);
@@ -70,7 +71,7 @@ public class WalletBalanceCell extends FrameLayout {
         yourBalanceTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         yourBalanceTextView.setTextColor(Theme.getColor(Theme.key_wallet_whiteText));
         defaultTypeFace = yourBalanceTextView.getTypeface();
-        addView(yourBalanceTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, 90, 0, 0));
+        addView(yourBalanceTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, 60, 0, 0));
 
         receiveDrawable = context.getResources().getDrawable(R.drawable.wallet_receive).mutate();
         receiveDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_wallet_buttonText), PorterDuff.Mode.MULTIPLY));
@@ -80,7 +81,7 @@ public class WalletBalanceCell extends FrameLayout {
         for (int a = 0; a < 2; a++) {
             FrameLayout frameLayout = new FrameLayout(context);
             frameLayout.setBackgroundDrawable(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(4), Theme.getColor(Theme.key_wallet_buttonBackground), Theme.getColor(Theme.key_wallet_buttonPressedBackground)));
-            addView(frameLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 42, Gravity.LEFT | Gravity.TOP, a == 0 ? 32 : 16, 168, 0, 0));
+            addView(frameLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 42, Gravity.LEFT | Gravity.TOP, a == 0 ? 32 : 16, 110, 0, 0));
             frameLayout.setOnClickListener(v -> {
                 if (v == receiveButton) {
                     onReceivePressed();
@@ -108,6 +109,17 @@ public class WalletBalanceCell extends FrameLayout {
             }
             frameLayout.addView(buttonTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
         }
+
+        buyButton = new TextView(context);
+        buyButton.setPadding(AndroidUtilities.dp(34), 0, AndroidUtilities.dp(34), 0);
+        buyButton.setGravity(Gravity.CENTER);
+        buyButton.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
+        buyButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+        buyButton.setText(LocaleController.getString("WalletBuyTonCoins", R.string.WalletBuyTonCoins));
+        buyButton.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        buyButton.setBackground(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(4), Theme.getColor(Theme.key_featuredStickers_addButton), Theme.getColor(Theme.key_featuredStickers_addButtonPressed)));
+        addView(buyButton, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 42, Gravity.LEFT | Gravity.TOP, 32, 168, 32, 0));
+        buyButton.setOnClickListener(v -> onBuyPressed());
     }
 
     @Override
@@ -192,6 +204,10 @@ public class WalletBalanceCell extends FrameLayout {
     }
 
     protected void onSendPressed() {
+
+    }
+
+    protected void onBuyPressed() {
 
     }
 }

@@ -48,6 +48,7 @@ import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.TonController;
 import org.telegram.messenger.UserConfig;
+import org.telegram.messenger.support.customtabs.CustomTabsIntent;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.ActionBarLayout;
 import org.telegram.ui.ActionBar.ActionBarMenu;
@@ -1126,6 +1127,14 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
         showDialog(bottomSheet);
     }
 
+    private void showBuySheet(){
+        Context context = getParentActivity();
+        String url = "https://exchange.mercuryo.io/?widget_id=67710925-8b40-4767-846e-3b88db69f04d&address=" + walletAddress + "&currency=TONCOIN&fix_currency=true";
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        CustomTabsIntent customTabsIntent = builder.build();
+        customTabsIntent.launchUrl(context, Uri.parse(url));
+    }
+
     private class Adapter extends RecyclerListView.SectionsAdapter {
 
         private Context context;
@@ -1167,6 +1176,11 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
                                 return;
                             }
                             openTransfer(null, null);
+                        }
+
+                        @Override
+                        protected void onBuyPressed() {
+                            showBuySheet();
                         }
                     };
                     break;
