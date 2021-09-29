@@ -113,7 +113,8 @@
     <string name="WalletComment">Comment (optional)</string>
     <string name="WalletInvoiceInfo">You can specify the amount and purpose of the payment to save the sender some time:</string>
     <string name="WalletShareInvoiceUrl">Share Invoice URL</string>
-    <string name="WalletBuyTonCoins">Buy TON Coins</string>
+    <string name="WalletBuy">Buy</string>
+    <string name="WalletSell">Sell</string>
     <string name="WalletShareInfo">Share this address to receive Toncoin.</string>
     <string name="WalletTestShareInfo">Share this address to receive Toncoin.</string>
     <string name="WalletShareInvoiceUrlInfo">Share this link to receive **%1$s Toncoin**.</string>

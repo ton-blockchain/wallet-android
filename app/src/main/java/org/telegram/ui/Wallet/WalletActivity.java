@@ -41,6 +41,7 @@ import android.widget.Toast;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
+import org.telegram.messenger.BuildConfig;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
@@ -1127,9 +1128,9 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
         showDialog(bottomSheet);
     }
 
-    private void showBuySheet(){
+    private void showTrade(boolean isBuy){
         Context context = getParentActivity();
-        String url = "https://exchange.mercuryo.io/?widget_id=67710925-8b40-4767-846e-3b88db69f04d&address=" + walletAddress + "&currency=TONCOIN&fix_currency=true";
+        String url = "https://exchange.mercuryo.io/?widget_id=" + BuildConfig.WIDGET_ID + "&address=" + walletAddress + "&currency=TONCOIN&fix_currency=true&type=" + (isBuy ? "buy" : "sell");
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
         CustomTabsIntent customTabsIntent = builder.build();
         customTabsIntent.launchUrl(context, Uri.parse(url));
@@ -1180,7 +1181,12 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
 
                         @Override
                         protected void onBuyPressed() {
-                            showBuySheet();
+                            showTrade(true);
+                        }
+
+                        @Override
+                        protected void onSellPressed() {
+                            showTrade(false);
                         }
                     };
                     break;

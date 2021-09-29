@@ -72,6 +72,7 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled true
             shrinkResources false
+            buildConfigField "String", "WIDGET_ID", MERCURIO_WIDGET_ID
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -154,7 +155,7 @@ android {
         }
     }
 
-    defaultConfig.versionCode = 100001
+    defaultConfig.versionCode = 100002
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
@@ -188,7 +189,7 @@ android {
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 30
-        versionName "1.0.1"
+        versionName "1.0.2"
 
         vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
 
