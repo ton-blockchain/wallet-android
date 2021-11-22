@@ -67,6 +67,8 @@ import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -1128,12 +1130,28 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
         showDialog(bottomSheet);
     }
 
+    private String sha512(String input) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        byte[] digest = md.digest("Hello, world!".getBytes());
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < digest.length; i++) {
+            sb.append(Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1));
+        }
+        return sb.toString();
+    }
+
     private void showTrade(boolean isBuy){
         Context context = getParentActivity();
-        String url = "https://exchange.mercuryo.io/?widget_id=" + BuildConfig.WIDGET_ID + "&address=" + walletAddress + "&currency=TONCOIN&fix_currency=true&type=" + (isBuy ? "buy" : "sell");
-        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-        CustomTabsIntent customTabsIntent = builder.build();
-        customTabsIntent.launchUrl(context, Uri.parse(url));
+        try {
+            String signature = sha512(walletAddress + BuildConfig.MERСURIO_SECRET);
+            String url = "https://exchange.mercuryo.io/?widget_id=" + BuildConfig.WIDGET_ID + "&address=" + walletAddress + "&currency=TONCOIN&fix_currency=true&type=" + (isBuy ? "buy" : "sell") + "&signature=" + signature;
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            CustomTabsIntent customTabsIntent = builder.build();
+            customTabsIntent.launchUrl(context, Uri.parse(url));
+        } catch (NoSuchAlgorithmException e) {
+            Toast.makeText(getParentActivity(), "Error", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     private class Adapter extends RecyclerListView.SectionsAdapter {
