@@ -74,6 +74,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.UUID;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -1144,7 +1145,8 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
         Context context = getParentActivity();
         try {
             String signature = sha512(walletAddress + BuildConfig.MERСURIO_SECRET);
-            String url = "https://exchange.mercuryo.io/?widget_id=" + BuildConfig.WIDGET_ID + "&address=" + walletAddress + "&currency=TONCOIN&fix_currency=true&type=" + (isBuy ? "buy" : "sell") + "&signature=" + signature;
+            String uuid = UUID.randomUUID().toString();
+            String url = "https://exchange.mercuryo.io/?widget_id=" + BuildConfig.WIDGET_ID + "&address=" + walletAddress + "&currency=TONCOIN&fix_currency=true&type=" + (isBuy ? "buy" : "sell") + "&signature=" + signature + "&merchant_transaction_id=" + uuid;
             CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
             CustomTabsIntent customTabsIntent = builder.build();
             customTabsIntent.launchUrl(context, Uri.parse(url));
