@@ -1133,7 +1133,7 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
 
     private String sha512(String input) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-512");
-        byte[] digest = md.digest("Hello, world!".getBytes());
+        byte[] digest = md.digest(input.getBytes());
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < digest.length; i++) {
             sb.append(Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1));
