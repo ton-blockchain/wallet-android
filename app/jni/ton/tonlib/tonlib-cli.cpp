@@ -25,10 +25,16 @@
 
     Copyright 2019-2020 Telegram Systems LLP
 */
+#include "auto/tl/tonlib_api.h"
+#include "block/block.h"
+#include "common/bigint.hpp"
+#include "common/refint.h"
 #include "td/actor/actor.h"
 
+#include "td/actor/common.h"
+#include "td/utils/Time.h"
 #include "td/utils/filesystem.h"
-#include "td/utils/OptionsParser.h"
+#include "td/utils/OptionParser.h"
 #include "td/utils/overloaded.h"
 #include "td/utils/Parser.h"
 #include "td/utils/port/signals.h"
@@ -47,6 +53,10 @@
 #include "smc-envelope/PaymentChannel.h"
 
 #include "auto/tl/tonlib_api.hpp"
+
+#include "crypto/util/Miner.h"
+#include "vm/boc.h"
+#include "vm/cells/CellBuilder.h"
 
 #include <cinttypes>
 #include <iostream>
@@ -106,6 +116,9 @@ td::Result<Grams> parse_grams(td::Slice grams) {
   return Grams{value};
 }
 
+// Temporary hack
+td::actor::Scheduler* global_scheduler_{nullptr};
+
 class TonlibCli : public td::actor::Actor {
  public:
   struct Options {
@@ -153,6 +166,9 @@ class TonlibCli : public td::actor::Actor {
                                    make_object<tonlib_api::key>(public_key, secret.copy()), td::SecureString(password))
                              : nullptr;
     }
+    auto tonlib_api() const {
+      return make_object<tonlib_api::accountAddress>(address->account_address_);
+    }
   };
 
   std::map<std::uint64_t, td::Promise<tonlib_api::object_ptr<tonlib_api::Object>>> query_handlers_;
@@ -177,9 +193,9 @@ class TonlibCli : public td::actor::Actor {
      private:
       td::actor::ActorShared<TonlibCli> id_;
     };
-    ref_cnt_++;
     if (!options_.one_shot) {
-      io_ = td::TerminalIO::create("> ", options_.enable_readline, std::make_unique<Cb>(actor_shared(this)));
+      ref_cnt_++;
+      io_ = td::TerminalIO::create("> ", options_.enable_readline, false, std::make_unique<Cb>(actor_shared(this)));
       td::actor::send_closure(io_, &td::TerminalIO::set_log_interface);
     }
 
@@ -317,6 +333,11 @@ class TonlibCli : public td::actor::Actor {
     td::TerminalIO::out() << "rwallet address <key_id> <public_key>\n";
     td::TerminalIO::out() << "rwallet init <key_id> <public_key> <start_at> [<seconds>:<value> ...]\n";
   }
+  void pminer_help() {
+    td::TerminalIO::out() << "pminer help\n";
+    td::TerminalIO::out() << "pminer start <giver_addess> <my_address>\n";
+    td::TerminalIO::out() << "pminer stop\n";
+  }
 
   void parse_line(td::BufferSlice line) {
     if (is_closing_) {
@@ -374,6 +395,7 @@ class TonlibCli : public td::actor::Actor {
       dns_help();
       pchan_help();
       rwallet_help();
+      pminer_help();
 
       td::TerminalIO::out()
           << "blockmode auto|manual\tWith auto mode, all queries will be executed with respect to the latest block. "
@@ -477,6 +499,8 @@ class TonlibCli : public td::actor::Actor {
       run_pchan_cmd(parser, std::move(cmd_promise));
     } else if (cmd == "rwallet") {
       run_rwallet_cmd(parser, std::move(cmd_promise));
+    } else if (cmd == "pminer") {
+      run_pminer_cmd(parser, std::move(cmd_promise));
     } else if (cmd == "gethistory") {
       get_history(parser.read_word(), std::move(cmd_promise));
     } else if (cmd == "guessrevision") {
@@ -553,6 +577,216 @@ class TonlibCli : public td::actor::Actor {
       return rwallet_init(parser, std::move(promise));
     }
 
+    promise.set_error(td::Status::Error("Unknown command"));
+  }
+
+  class PowMiner : public td::actor::Actor {
+   public:
+    class Callback {
+     public:
+    };
+    struct Options {
+      Address giver_address;
+      Address my_address;
+    };
+
+    PowMiner(Options options, td::actor::ActorId<tonlib::TonlibClient> client)
+        : options_(std::move(options)), client_(std::move(client)) {
+    }
+
+   private:
+    Options options_;
+    td::actor::ActorId<tonlib::TonlibClient> client_;
+
+    td::optional<ton::Miner::Options> miner_options_;
+    static constexpr double QUERY_EACH = 5.0;
+    td::Timestamp next_options_query_at_;
+
+    bool need_run_miners_{false};
+    td::CancellationTokenSource source_;
+    ton::Miner::Options miner_options_copy_;
+    std::size_t threads_alive_{0};
+    std::vector<td::thread> threads_;
+
+    bool close_flag_{false};
+
+    template <class QueryT>
+    void send_query(QueryT query, td::Promise<typename QueryT::ReturnType> promise) {
+      td::actor::send_lambda(client_,
+                             [self = client_, query = std::move(query), promise = std::move(promise)]() mutable {
+                               self.get_actor_unsafe().make_request(std::move(query), std::move(promise));
+                             });
+    }
+
+    void start_up() override {
+      next_options_query_at_ = td::Timestamp::now();
+      loop();
+    }
+    void hangup() override {
+      close_flag_ = true;
+      source_.cancel();
+      try_stop();
+    }
+    void try_stop() {
+      if (threads_alive_ == 0) {
+        td::TerminalIO::out() << "pminer: stopped\n";
+        stop();
+      }
+    }
+
+    void loop() override {
+      if (close_flag_) {
+        try_stop();
+        return;
+      }
+      if (next_options_query_at_ && next_options_query_at_.is_in_past()) {
+        send_query(tonlib_api::smc_load(options_.giver_address.tonlib_api()),
+                   promise_send_closure(td::actor::actor_id(this), &PowMiner::with_giver_state));
+        next_options_query_at_ = {};
+      }
+
+      if (miner_options_ && threads_.empty() && need_run_miners_) {
+        td::TerminalIO::out() << "pminer: start workers\n";
+        need_run_miners_ = false;
+        miner_options_copy_ = miner_options_.value();
+        miner_options_copy_.token_ = source_.get_cancellation_token();
+        auto n = td::thread::hardware_concurrency();
+        threads_alive_ = n;
+        for (td::uint32 i = 0; i < n; i++) {
+          threads_.emplace_back([this, actor_id = actor_id(this)] {
+            auto res = ton::Miner::run(miner_options_copy_);
+            global_scheduler_->run_in_context_external(
+                [&] { send_closure(actor_id, &PowMiner::got_answer, std::move(res)); });
+          });
+        }
+      }
+
+      alarm_timestamp().relax(next_options_query_at_);
+    }
+
+    void got_answer(td::optional<std::string> answer) {
+      source_.cancel();
+      if (--threads_alive_ == 0) {
+        threads_.clear();
+      }
+      if (answer) {
+        td::TerminalIO::out() << "pminer: got some result - sending query to the giver\n";
+        vm::CellBuilder cb;
+        cb.store_bytes(answer.unwrap());
+        send_query(tonlib_api::raw_createAndSendMessage(
+                       options_.giver_address.tonlib_api(), "",
+                       vm::std_boc_serialize(cb.finalize_novm()).move_as_ok().as_slice().str()),
+                   promise_send_closure(td::actor::actor_id(this), &PowMiner::on_query_sent));
+      }
+      loop();
+    }
+
+    void on_query_sent(td::Result<tonlib_api::object_ptr<tonlib_api::ok>> r_ok) {
+      LOG_IF(ERROR, r_ok.is_error()) << "pminer: " << r_ok.error();
+    }
+
+    void with_giver_state(td::Result<tonlib_api::object_ptr<tonlib_api::smc_info>> r_info) {
+      if (r_info.is_error()) {
+        return with_giver_info(r_info.move_as_error());
+      }
+      send_query(tonlib_api::smc_runGetMethod(r_info.ok()->id_,
+                                              make_object<tonlib_api::smc_methodIdName>("get_pow_params"), {}),
+                 promise_send_closure(td::actor::actor_id(this), &PowMiner::with_giver_info));
+    }
+
+    void with_giver_info(td::Result<tonlib_api::object_ptr<tonlib_api::smc_runResult>> r_info) {
+      auto status = do_with_giver_info(std::move(r_info));
+      LOG_IF(ERROR, status.is_error()) << "pminer: " << status;
+      next_options_query_at_ = td::Timestamp::in(QUERY_EACH);
+      return loop();
+    }
+
+    td::Result<td::RefInt256> to_number(const tonlib_api::object_ptr<tonlib_api::tvm_StackEntry>& entry,
+                                        td::int32 bits) {
+      if (entry->get_id() != tonlib_api::tvm_stackEntryNumber::ID) {
+        return td::Status::Error("Expected stackEntryNumber");
+      }
+      auto& number_str = static_cast<const tonlib_api::tvm_stackEntryNumber&>(*entry.get()).number_->number_;
+      auto num = td::make_refint();
+      if (num.write().parse_dec(number_str.data(), (int)number_str.size()) < (int)number_str.size()) {
+        return td::Status::Error("Failed to parse a number");
+      }
+      if (!num->unsigned_fits_bits(bits)) {
+        return td::Status::Error(PSLICE() << "Number is too big " << num->to_dec_string() << " " << bits);
+      }
+      return num;
+    }
+
+    td::Status do_with_giver_info(td::Result<tonlib_api::object_ptr<tonlib_api::smc_runResult>> r_info) {
+      TRY_RESULT(info, std::move(r_info));
+      if (info->stack_.size() < 2) {
+        return td::Status::Error("Unexpected `get_pow_params` result format");
+      }
+      TRY_RESULT(seed, to_number(info->stack_[0], 128));
+      TRY_RESULT(complexity, to_number(info->stack_[1], 256));
+      ton::Miner::Options options;
+      seed->export_bytes(options.seed.data(), 16, false);
+      complexity->export_bytes(options.complexity.data(), 32, false);
+
+      TRY_RESULT(address, block::StdAddress::parse(options_.my_address.address->account_address_));
+      options.my_address = std::move(address);
+      options.token_ = source_.get_cancellation_token();
+
+      if (miner_options_ && miner_options_.value().seed == options.seed) {
+        return td::Status::OK();
+      }
+
+      td::TerminalIO::out() << "pminer: got new options\n";
+      td::BigInt256 bigpower, hrate;
+      bigpower.set_pow2(256).mod_div(*complexity, hrate);
+      long long hash_rate = hrate.to_long();
+      td::TerminalIO::out() << "[ expected required hashes for success: " << hash_rate << " ]\n";
+      miner_options_ = std::move(options);
+      need_run_miners_ = true;
+      source_.cancel();
+
+      return td::Status::OK();
+    }
+  };
+
+  td::uint64 pow_miner_id_{0};
+  std::map<td::uint64, td::actor::ActorOwn<PowMiner>> pow_miners_;
+
+  void pminer_start(td::ConstParser& parser, td::Promise<td::Unit> promise) {
+    if (!pow_miners_.empty()) {
+      promise.set_error(td::Status::Error("One pminer is already running"));
+    }
+    TRY_RESULT_PROMISE_PREFIX(promise, giver_address, to_account_address(parser.read_word(), false), "giver address");
+    TRY_RESULT_PROMISE_PREFIX(promise, my_address, to_account_address(parser.read_word(), false), "my address");
+
+    auto id = ++pow_miner_id_;
+
+    PowMiner::Options options;
+    options.giver_address = std::move(giver_address);
+    options.my_address = std::move(my_address);
+    pow_miners_.emplace(id, td::actor::create_actor<PowMiner>("PowMiner", std::move(options), client_.get()));
+    td::TerminalIO::out() << "Miner #" << id << " created";
+    promise.set_value({});
+  }
+
+  void pminer_stop(td::ConstParser& parser, td::Promise<td::Unit> promise) {
+    pow_miners_.clear();
+    promise.set_value({});
+  }
+
+  void run_pminer_cmd(td::ConstParser& parser, td::Promise<td::Unit> promise) {
+    auto cmd = parser.read_word();
+    if (cmd == "help") {
+      pminer_help();
+      return promise.set_value(td::Unit());
+    }
+
+    if (cmd == "start") {
+      return pminer_start(parser, std::move(promise));
+    }
+    if (cmd == "stop") {
+      return pminer_stop(parser, std::move(promise));
+    }
     promise.set_error(td::Status::Error("Unknown command"));
   }
 
@@ -1587,12 +1821,6 @@ class TonlibCli : public td::actor::Actor {
 
   template <class F>
   auto with_account_state(int version, std::string public_key, td::uint32 wallet_id, F&& f) {
-    if (version == 1) {
-      return f(make_object<tonlib_api::testWallet_initialAccountState>(public_key));
-    }
-    if (version == 2) {
-      return f(make_object<tonlib_api::wallet_initialAccountState>(public_key));
-    }
     if (version == 4) {
       return f(make_object<tonlib_api::wallet_highload_v1_initialAccountState>(public_key, wallet_id));
     }
@@ -1652,17 +1880,6 @@ class TonlibCli : public td::actor::Actor {
         Address res = r_addr.move_as_ok();
         res.secret = keys_[r_key_i.ok()].secret.copy();
         return std::move(res);
-      }
-    }
-    if (key == "giver") {
-      auto obj = tonlib::TonlibClient::static_request(
-          make_object<tonlib_api::getAccountAddress>(make_object<tonlib_api::testGiver_initialAccountState>(), 0, -1));
-      if (obj->get_id() != tonlib_api::error::ID) {
-        Address res;
-        res.address = ton::move_tl_object_as<tonlib_api::accountAddress>(obj);
-        return std::move(res);
-      } else {
-        LOG(ERROR) << "Unexpected error during testGiver_getAccountAddress: " << to_string(obj);
       }
     }
     if (!need_private_key) {
@@ -2071,71 +2288,53 @@ int main(int argc, char* argv[]) {
   SET_VERBOSITY_LEVEL(verbosity_INFO);
   td::set_default_failure_signal_handler();
 
-  td::OptionsParser p;
+  td::OptionParser p;
   TonlibCli::Options options;
-  p.set_description("console for validator for TON Blockchain");
+  p.set_description("cli wrapper around tonlib");
   p.add_option('h', "help", "prints_help", [&]() {
     std::cout << (PSLICE() << p).c_str();
     std::exit(2);
-    return td::Status::OK();
   });
-  p.add_option('r', "disable-readline", "disable readline", [&]() {
-    options.enable_readline = false;
-    return td::Status::OK();
-  });
-  p.add_option('R', "enable-readline", "enable readline", [&]() {
-    options.enable_readline = true;
-    return td::Status::OK();
-  });
-  p.add_option('D', "directory", "set keys directory", [&](td::Slice arg) {
-    options.key_dir = arg.str();
-    return td::Status::OK();
-  });
-  p.add_option('M', "in-memory", "store keys only in-memory", [&]() {
-    options.in_memory = true;
-    return td::Status::OK();
-  });
+  p.add_option('r', "disable-readline", "disable readline", [&]() { options.enable_readline = false; });
+  p.add_option('R', "enable-readline", "enable readline", [&]() { options.enable_readline = true; });
+  p.add_option('D', "directory", "set keys directory", [&](td::Slice arg) { options.key_dir = arg.str(); });
+  p.add_option('M', "in-memory", "store keys only in-memory", [&]() { options.in_memory = true; });
   p.add_option('E', "execute", "execute one command", [&](td::Slice arg) {
     options.one_shot = true;
     options.cmd = arg.str();
-    return td::Status::OK();
   });
-  p.add_option('v', "verbosity", "set verbosity level", [&](td::Slice arg) {
+  p.add_checked_option('v', "verbosity", "set verbosity level", [&](td::Slice arg) {
     auto verbosity = td::to_integer<int>(arg);
     SET_VERBOSITY_LEVEL(VERBOSITY_NAME(FATAL) + verbosity);
     return (verbosity >= 0 && verbosity <= 20) ? td::Status::OK() : td::Status::Error("verbosity must be 0..20");
   });
-  p.add_option('C', "config-force", "set lite server config, drop config related blockchain cache", [&](td::Slice arg) {
+  p.add_checked_option('C', "config-force", "set lite server config, drop config related blockchain cache",
+                       [&](td::Slice arg) {
+                         TRY_RESULT(data, td::read_file_str(arg.str()));
+                         options.config = std::move(data);
+                         options.ignore_cache = true;
+                         return td::Status::OK();
+                       });
+  p.add_checked_option('c', "config", "set lite server config", [&](td::Slice arg) {
     TRY_RESULT(data, td::read_file_str(arg.str()));
     options.config = std::move(data);
-    options.ignore_cache = true;
     return td::Status::OK();
   });
-  p.add_option('c', "config", "set lite server config", [&](td::Slice arg) {
-    TRY_RESULT(data, td::read_file_str(arg.str()));
-    options.config = std::move(data);
-    return td::Status::OK();
-  });
-  p.add_option('N', "config-name", "set lite server config name", [&](td::Slice arg) {
-    options.name = arg.str();
-    return td::Status::OK();
-  });
-  p.add_option('n', "use-callbacks-for-network", "do not use this", [&]() {
-    options.use_callbacks_for_network = true;
-    return td::Status::OK();
-  });
-  p.add_option('w', "wallet-id", "do not use this", [&](td::Slice arg) {
+  p.add_option('N', "config-name", "set lite server config name", [&](td::Slice arg) { options.name = arg.str(); });
+  p.add_option('n', "use-callbacks-for-network", "do not use this",
+               [&]() { options.use_callbacks_for_network = true; });
+  p.add_checked_option('w', "wallet-id", "do not use this", [&](td::Slice arg) {
     TRY_RESULT(wallet_id, td::to_integer_safe<td::uint32>((arg)));
     options.wallet_id = wallet_id;
     return td::Status::OK();
   });
-  p.add_option('x', "workchain", "default workchain", [&](td::Slice arg) {
+  p.add_checked_option('x', "workchain", "default workchain", [&](td::Slice arg) {
     TRY_RESULT(workchain_id, td::to_integer_safe<td::int32>((arg)));
     options.workchain_id = workchain_id;
     LOG(INFO) << "Use workchain_id = " << workchain_id;
     return td::Status::OK();
   });
-  p.add_option('W', "wallet-version", "do not use this (version[.revision])", [&](td::Slice arg) {
+  p.add_checked_option('W', "wallet-version", "do not use this (version[.revision])", [&](td::Slice arg) {
     td::ConstParser parser(arg);
     TRY_RESULT(version, td::to_integer_safe<td::int32>((parser.read_till_nofail('.'))));
     options.wallet_version = version;
@@ -2156,6 +2355,8 @@ int main(int argc, char* argv[]) {
   }
 
   td::actor::Scheduler scheduler({2});
+  // temporaty hack
+  global_scheduler_ = &scheduler;
   scheduler.run_in_context([&] { td::actor::create_actor<TonlibCli>("console", options).release(); });
   scheduler.run();
   return 0;

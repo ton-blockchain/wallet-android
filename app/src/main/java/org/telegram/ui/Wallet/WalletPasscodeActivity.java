@@ -922,7 +922,7 @@ public class WalletPasscodeActivity extends BaseFragment {
         sendingMessage = message;
         hasWalletInBack = hasWallet;
         sendingCipher = cipher;
-        sendUnencrypted = unecrypted;
+        sendUnencrypted = true;
         if (!passcode) {
             checkPasscode(null);
         }

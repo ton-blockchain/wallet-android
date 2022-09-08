@@ -41,8 +41,12 @@ public class WalletBalanceCell extends FrameLayout {
     private TextView yourBalanceTextView;
     private FrameLayout receiveButton;
     private FrameLayout sendButton;
+    private FrameLayout buyButton;
+    private FrameLayout sellButton;
     private SimpleTextView receiveTextView;
     private SimpleTextView sendTextView;
+    private SimpleTextView buyTextView;
+    private SimpleTextView sellTextView;
     private Drawable sendDrawable;
     private Drawable receiveDrawable;
     private Typeface defaultTypeFace;
@@ -57,7 +61,7 @@ public class WalletBalanceCell extends FrameLayout {
         valueTextView.setDrawablePadding(AndroidUtilities.dp(7));
         valueTextView.setGravity(Gravity.CENTER_HORIZONTAL);
         valueTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        addView(valueTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, 35, 0, 0));
+        addView(valueTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, 10, 0, 0));
 
         gemDrawable = new RLottieDrawable(R.raw.wallet_gem, "" + R.raw.wallet_gem, AndroidUtilities.dp(42), AndroidUtilities.dp(42), false);
         gemDrawable.setAutoRepeat(1);
@@ -70,22 +74,26 @@ public class WalletBalanceCell extends FrameLayout {
         yourBalanceTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         yourBalanceTextView.setTextColor(Theme.getColor(Theme.key_wallet_whiteText));
         defaultTypeFace = yourBalanceTextView.getTypeface();
-        addView(yourBalanceTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, 90, 0, 0));
+        addView(yourBalanceTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, 60, 0, 0));
 
         receiveDrawable = context.getResources().getDrawable(R.drawable.wallet_receive).mutate();
         receiveDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_wallet_buttonText), PorterDuff.Mode.MULTIPLY));
         sendDrawable = context.getResources().getDrawable(R.drawable.wallet_send).mutate();
         sendDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_wallet_buttonText), PorterDuff.Mode.MULTIPLY));
 
-        for (int a = 0; a < 2; a++) {
+        for (int a = 0; a < 3; a++) {
             FrameLayout frameLayout = new FrameLayout(context);
             frameLayout.setBackgroundDrawable(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(4), Theme.getColor(Theme.key_wallet_buttonBackground), Theme.getColor(Theme.key_wallet_buttonPressedBackground)));
             addView(frameLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 42, Gravity.LEFT | Gravity.TOP, a == 0 ? 32 : 16, 168, 0, 0));
             frameLayout.setOnClickListener(v -> {
                 if (v == receiveButton) {
                     onReceivePressed();
-                } else {
+                } else if (v == sendButton){
                     onSendPressed();
+                } else if (v == buyButton) {
+                    onBuyPressed();
+                } else {
+                    onSellPressed();
                 }
             });
 
@@ -95,16 +103,24 @@ public class WalletBalanceCell extends FrameLayout {
             buttonTextView.setDrawablePadding(AndroidUtilities.dp(6));
             buttonTextView.setGravity(Gravity.CENTER_HORIZONTAL);
             buttonTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-            if (a == 0) {
+            if (a == 1) {
                 buttonTextView.setText(LocaleController.getString("WalletReceive", R.string.WalletReceive));
                 buttonTextView.setLeftDrawable(receiveDrawable);
                 receiveTextView = buttonTextView;
                 receiveButton = frameLayout;
-            } else {
+            } else if (a == 2) {
                 buttonTextView.setText(LocaleController.getString("WalletSend", R.string.WalletSend));
                 buttonTextView.setLeftDrawable(sendDrawable);
                 sendTextView = buttonTextView;
                 sendButton = frameLayout;
+            } else if (a == 0) {
+                buttonTextView.setText(LocaleController.getString("WalletBuy", R.string.WalletBuy));
+                buyTextView = buttonTextView;
+                buyButton = frameLayout;
+            } else {
+                buttonTextView.setText(LocaleController.getString("WalletSell", R.string.WalletSell));
+                sellTextView = buttonTextView;
+                sellButton = frameLayout;
             }
             frameLayout.addView(buttonTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
         }
@@ -115,16 +131,21 @@ public class WalletBalanceCell extends FrameLayout {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int buttonWidth;
         if (sendButton.getVisibility() == VISIBLE) {
-            buttonWidth = (width - AndroidUtilities.dp(80)) / 2;
+            buttonWidth = (width - AndroidUtilities.dp(96)) / 3;
         } else {
-            buttonWidth = width - AndroidUtilities.dp(64);
+            buttonWidth = (width - AndroidUtilities.dp(80)) / 2;
         }
-        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) receiveButton.getLayoutParams();
+
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) buyButton.getLayoutParams();
         layoutParams.width = buttonWidth;
+
+        layoutParams = (FrameLayout.LayoutParams) receiveButton.getLayoutParams();
+        layoutParams.width = buttonWidth;
+        layoutParams.leftMargin = AndroidUtilities.dp(16 + 32) + buttonWidth;
 
         layoutParams = (FrameLayout.LayoutParams) sendButton.getLayoutParams();
         layoutParams.width = buttonWidth;
-        layoutParams.leftMargin = AndroidUtilities.dp(16 + 32) + buttonWidth;
+        layoutParams.leftMargin = AndroidUtilities.dp(16 + 16 + 32) + 2 * buttonWidth;
 
         super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(236 + 6), MeasureSpec.EXACTLY));
     }
@@ -184,6 +205,7 @@ public class WalletBalanceCell extends FrameLayout {
         int visibility = balance <= 0 ? GONE : VISIBLE;
         if (sendButton.getVisibility() != visibility) {
             sendButton.setVisibility(visibility);
+//            sellButton.setVisibility(visibility);
         }
     }
 
@@ -192,6 +214,14 @@ public class WalletBalanceCell extends FrameLayout {
     }
 
     protected void onSendPressed() {
+
+    }
+
+    protected void onBuyPressed() {
+
+    }
+
+    protected void onSellPressed() {
 
     }
 }

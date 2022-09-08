@@ -41,6 +41,7 @@ import android.widget.Toast;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
+import org.telegram.messenger.BuildConfig;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
@@ -48,6 +49,7 @@ import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.TonController;
 import org.telegram.messenger.UserConfig;
+import org.telegram.messenger.support.customtabs.CustomTabsIntent;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.ActionBarLayout;
 import org.telegram.ui.ActionBar.ActionBarMenu;
@@ -65,11 +67,14 @@ import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.UUID;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -1126,6 +1131,31 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
         showDialog(bottomSheet);
     }
 
+    private String sha512(String input) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        byte[] digest = md.digest(input.getBytes());
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < digest.length; i++) {
+            sb.append(Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1));
+        }
+        return sb.toString();
+    }
+
+    private void showTrade(boolean isBuy){
+        Context context = getParentActivity();
+        try {
+            String signature = sha512(walletAddress + BuildConfig.MERСURIO_SECRET);
+            String uuid = UUID.randomUUID().toString();
+            String url = "https://exchange.mercuryo.io/?widget_id=" + BuildConfig.WIDGET_ID + "&address=" + walletAddress + "&currency=TONCOIN&fix_currency=true&type=" + (isBuy ? "buy" : "sell") + "&signature=" + signature + "&merchant_transaction_id=" + uuid;
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            CustomTabsIntent customTabsIntent = builder.build();
+            customTabsIntent.launchUrl(context, Uri.parse(url));
+        } catch (NoSuchAlgorithmException e) {
+            Toast.makeText(getParentActivity(), "Error", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
     private class Adapter extends RecyclerListView.SectionsAdapter {
 
         private Context context;
@@ -1167,6 +1197,16 @@ public class WalletActivity extends BaseFragment implements NotificationCenter.N
                                 return;
                             }
                             openTransfer(null, null);
+                        }
+
+                        @Override
+                        protected void onBuyPressed() {
+                            showTrade(true);
+                        }
+
+                        @Override
+                        protected void onSellPressed() {
+                            showTrade(false);
                         }
                     };
                     break;

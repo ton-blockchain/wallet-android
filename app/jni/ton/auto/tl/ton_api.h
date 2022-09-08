@@ -56,6 +56,8 @@ std::string to_string(const object_ptr<T> &value) {
 
 class Hashable;
 
+class storage_ok;
+
 class PrivateKey;
 
 class PublicKey;
@@ -327,6 +329,16 @@ class overlay_node_toSign;
 class rldp_Message;
 
 class rldp_MessagePart;
+
+class rldp2_MessagePart;
+
+class storage_piece;
+
+class storage_pong;
+
+class storage_state;
+
+class storage_Update;
 
 class tcp_Message;
 
@@ -915,6 +927,27 @@ class hashable_validatorSession final : public Hashable {
   static object_ptr<Hashable> fetch(td::TlParser &p);
 
   explicit hashable_validatorSession(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+};
+
+class storage_ok final : public Object {
+ public:
+
+  storage_ok();
+
+  static const std::int32_t ID = -1020584955;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<storage_ok> fetch(td::TlParser &p);
+
+  explicit storage_ok(td::TlParser &p);
 
   void store(td::TlStorerCalcLength &s) const final;
 
@@ -6185,6 +6218,244 @@ class rldp_complete final : public rldp_MessagePart {
   void store(td::TlStorerToString &s, const char *field_name) const final;
 };
 
+class rldp2_MessagePart: public Object {
+ public:
+
+  static object_ptr<rldp2_MessagePart> fetch(td::TlParser &p);
+};
+
+class rldp2_messagePart final : public rldp2_MessagePart {
+ public:
+  td::Bits256 transfer_id_;
+  object_ptr<fec_Type> fec_type_;
+  std::int32_t part_;
+  std::int64_t total_size_;
+  std::int32_t seqno_;
+  td::BufferSlice data_;
+
+  rldp2_messagePart();
+
+  rldp2_messagePart(td::Bits256 const &transfer_id_, object_ptr<fec_Type> &&fec_type_, std::int32_t part_, std::int64_t total_size_, std::int32_t seqno_, td::BufferSlice &&data_);
+
+  static const std::int32_t ID = 289934190;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<rldp2_MessagePart> fetch(td::TlParser &p);
+
+  explicit rldp2_messagePart(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+};
+
+class rldp2_confirm final : public rldp2_MessagePart {
+ public:
+  td::Bits256 transfer_id_;
+  std::int32_t part_;
+  std::int32_t max_seqno_;
+  std::int32_t received_mask_;
+  std::int32_t received_count_;
+
+  rldp2_confirm();
+
+  rldp2_confirm(td::Bits256 const &transfer_id_, std::int32_t part_, std::int32_t max_seqno_, std::int32_t received_mask_, std::int32_t received_count_);
+
+  static const std::int32_t ID = 602315077;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<rldp2_MessagePart> fetch(td::TlParser &p);
+
+  explicit rldp2_confirm(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+};
+
+class rldp2_complete final : public rldp2_MessagePart {
+ public:
+  td::Bits256 transfer_id_;
+  std::int32_t part_;
+
+  rldp2_complete();
+
+  rldp2_complete(td::Bits256 const &transfer_id_, std::int32_t part_);
+
+  static const std::int32_t ID = 918095903;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<rldp2_MessagePart> fetch(td::TlParser &p);
+
+  explicit rldp2_complete(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+};
+
+class storage_piece final : public Object {
+ public:
+  td::BufferSlice proof_;
+  td::BufferSlice data_;
+
+  storage_piece();
+
+  storage_piece(td::BufferSlice &&proof_, td::BufferSlice &&data_);
+
+  static const std::int32_t ID = -2135623155;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<storage_piece> fetch(td::TlParser &p);
+
+  explicit storage_piece(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+};
+
+class storage_pong final : public Object {
+ public:
+
+  storage_pong();
+
+  static const std::int32_t ID = 1828046501;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<storage_pong> fetch(td::TlParser &p);
+
+  explicit storage_pong(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+};
+
+class storage_state final : public Object {
+ public:
+  bool will_upload_;
+  bool want_download_;
+
+  storage_state();
+
+  storage_state(bool will_upload_, bool want_download_);
+
+  static const std::int32_t ID = 856912010;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<storage_state> fetch(td::TlParser &p);
+
+  explicit storage_state(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+};
+
+class storage_Update: public Object {
+ public:
+
+  static object_ptr<storage_Update> fetch(td::TlParser &p);
+};
+
+class storage_updateInit final : public storage_Update {
+ public:
+  td::BufferSlice have_pieces_;
+  object_ptr<storage_state> state_;
+
+  storage_updateInit();
+
+  storage_updateInit(td::BufferSlice &&have_pieces_, object_ptr<storage_state> &&state_);
+
+  static const std::int32_t ID = 1851782872;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<storage_Update> fetch(td::TlParser &p);
+
+  explicit storage_updateInit(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+};
+
+class storage_updateHavePieces final : public storage_Update {
+ public:
+  std::vector<std::int32_t> piece_id_;
+
+  storage_updateHavePieces();
+
+  explicit storage_updateHavePieces(std::vector<std::int32_t> &&piece_id_);
+
+  static const std::int32_t ID = 1006116937;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<storage_Update> fetch(td::TlParser &p);
+
+  explicit storage_updateHavePieces(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+};
+
+class storage_updateState final : public storage_Update {
+ public:
+  object_ptr<storage_state> state_;
+
+  storage_updateState();
+
+  explicit storage_updateState(object_ptr<storage_state> &&state_);
+
+  static const std::int32_t ID = 95433909;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  static object_ptr<storage_Update> fetch(td::TlParser &p);
+
+  explicit storage_updateState(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+};
+
 class tcp_Message: public Object {
  public:
 
@@ -8504,6 +8775,35 @@ class engine_validator_controlQuery final : public Function {
   static ReturnType fetch_result(td::TlParser &p);
 };
 
+class engine_validator_createComplaintVote final : public Function {
+ public:
+  std::int32_t election_id_;
+  td::BufferSlice vote_;
+
+  engine_validator_createComplaintVote();
+
+  engine_validator_createComplaintVote(std::int32_t election_id_, td::BufferSlice &&vote_);
+
+  static const std::int32_t ID = -1333526742;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<engine_validator_proposalVote>;
+
+  static object_ptr<engine_validator_createComplaintVote> fetch(td::TlParser &p);
+
+  explicit engine_validator_createComplaintVote(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(td::TlParser &p);
+};
+
 class engine_validator_createElectionBid final : public Function {
  public:
   std::int32_t election_date_;
@@ -9196,6 +9496,120 @@ class overlay_query final : public Function {
   static object_ptr<overlay_query> fetch(td::TlParser &p);
 
   explicit overlay_query(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(td::TlParser &p);
+};
+
+class storage_addUpdate final : public Function {
+ public:
+  std::int64_t session_id_;
+  std::int32_t seqno_;
+  object_ptr<storage_Update> update_;
+
+  storage_addUpdate();
+
+  storage_addUpdate(std::int64_t session_id_, std::int32_t seqno_, object_ptr<storage_Update> &&update_);
+
+  static const std::int32_t ID = 1295070674;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<storage_ok>;
+
+  static object_ptr<storage_addUpdate> fetch(td::TlParser &p);
+
+  explicit storage_addUpdate(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(td::TlParser &p);
+};
+
+class storage_getPiece final : public Function {
+ public:
+  std::int32_t piece_id_;
+
+  storage_getPiece();
+
+  explicit storage_getPiece(std::int32_t piece_id_);
+
+  static const std::int32_t ID = -2139429280;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<storage_piece>;
+
+  static object_ptr<storage_getPiece> fetch(td::TlParser &p);
+
+  explicit storage_getPiece(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(td::TlParser &p);
+};
+
+class storage_ping final : public Function {
+ public:
+  std::int64_t session_id_;
+
+  storage_ping();
+
+  explicit storage_ping(std::int64_t session_id_);
+
+  static const std::int32_t ID = 1156837905;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<storage_pong>;
+
+  static object_ptr<storage_ping> fetch(td::TlParser &p);
+
+  explicit storage_ping(td::TlParser &p);
+
+  void store(td::TlStorerCalcLength &s) const final;
+
+  void store(td::TlStorerUnsafe &s) const final;
+
+  void store(td::TlStorerToString &s, const char *field_name) const final;
+
+  static ReturnType fetch_result(td::TlParser &p);
+};
+
+class storage_queryPrefix final : public Function {
+ public:
+  td::Bits256 id_;
+
+  storage_queryPrefix();
+
+  explicit storage_queryPrefix(td::Bits256 const &id_);
+
+  static const std::int32_t ID = -333845113;
+  std::int32_t get_id() const final {
+    return ID;
+  }
+
+  using ReturnType = object_ptr<Object>;
+
+  static object_ptr<storage_queryPrefix> fetch(td::TlParser &p);
+
+  explicit storage_queryPrefix(td::TlParser &p);
 
   void store(td::TlStorerCalcLength &s) const final;
 

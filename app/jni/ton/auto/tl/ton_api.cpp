@@ -17,7 +17,7 @@ namespace ton_api {
 std::string to_string(const BaseObject &value) {
   td::TlStorerToString storer;
   value.store(storer, "");
-  return storer.str();
+  return storer.move_as_str();
 }
 
 object_ptr<Object> Object::fetch(td::TlParser &p) {
@@ -64,6 +64,8 @@ object_ptr<Object> Object::fetch(td::TlParser &p) {
       return hashable_cntSortedVector::fetch(p);
     case hashable_validatorSession::ID:
       return hashable_validatorSession::fetch(p);
+    case storage_ok::ID:
+      return storage_ok::fetch(p);
     case pk_unenc::ID:
       return pk_unenc::fetch(p);
     case pk_ed25519::ID:
@@ -472,6 +474,24 @@ object_ptr<Object> Object::fetch(td::TlParser &p) {
       return rldp_confirm::fetch(p);
     case rldp_complete::ID:
       return rldp_complete::fetch(p);
+    case rldp2_messagePart::ID:
+      return rldp2_messagePart::fetch(p);
+    case rldp2_confirm::ID:
+      return rldp2_confirm::fetch(p);
+    case rldp2_complete::ID:
+      return rldp2_complete::fetch(p);
+    case storage_piece::ID:
+      return storage_piece::fetch(p);
+    case storage_pong::ID:
+      return storage_pong::fetch(p);
+    case storage_state::ID:
+      return storage_state::fetch(p);
+    case storage_updateInit::ID:
+      return storage_updateInit::fetch(p);
+    case storage_updateHavePieces::ID:
+      return storage_updateHavePieces::fetch(p);
+    case storage_updateState::ID:
+      return storage_updateState::fetch(p);
     case tcp_authentificate::ID:
       return tcp_authentificate::fetch(p);
     case tcp_authentificationNonce::ID:
@@ -654,6 +674,8 @@ object_ptr<Function> Function::fetch(td::TlParser &p) {
       return engine_validator_checkDhtServers::fetch(p);
     case engine_validator_controlQuery::ID:
       return engine_validator_controlQuery::fetch(p);
+    case engine_validator_createComplaintVote::ID:
+      return engine_validator_createComplaintVote::fetch(p);
     case engine_validator_createElectionBid::ID:
       return engine_validator_createElectionBid::fetch(p);
     case engine_validator_createProposalVote::ID:
@@ -704,6 +726,14 @@ object_ptr<Function> Function::fetch(td::TlParser &p) {
       return overlay_getRandomPeers::fetch(p);
     case overlay_query::ID:
       return overlay_query::fetch(p);
+    case storage_addUpdate::ID:
+      return storage_addUpdate::fetch(p);
+    case storage_getPiece::ID:
+      return storage_getPiece::fetch(p);
+    case storage_ping::ID:
+      return storage_ping::fetch(p);
+    case storage_queryPrefix::ID:
+      return storage_queryPrefix::fetch(p);
     case tcp_ping::ID:
       return tcp_ping::fetch(p);
     case tonNode_downloadBlock::ID:
@@ -1723,6 +1753,37 @@ void hashable_validatorSession::store(td::TlStorerToString &s, const char *field
     s.store_field("ts", ts_);
     s.store_field("old_rounds", old_rounds_);
     s.store_field("cur_round", cur_round_);
+    s.store_class_end();
+  }
+}
+
+storage_ok::storage_ok() {
+}
+
+const std::int32_t storage_ok::ID;
+
+object_ptr<storage_ok> storage_ok::fetch(td::TlParser &p) {
+  return make_object<storage_ok>(p);
+}
+
+storage_ok::storage_ok(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+#undef FAIL
+{
+  (void)p;
+}
+
+void storage_ok::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+}
+
+void storage_ok::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+}
+
+void storage_ok::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "storage_ok");
     s.store_class_end();
   }
 }
@@ -11439,6 +11500,451 @@ void rldp_complete::store(td::TlStorerToString &s, const char *field_name) const
   }
 }
 
+object_ptr<rldp2_MessagePart> rldp2_MessagePart::fetch(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return nullptr;
+  int constructor = p.fetch_int();
+  switch (constructor) {
+    case rldp2_messagePart::ID:
+      return rldp2_messagePart::fetch(p);
+    case rldp2_confirm::ID:
+      return rldp2_confirm::fetch(p);
+    case rldp2_complete::ID:
+      return rldp2_complete::fetch(p);
+    default:
+      FAIL(PSTRING() << "Unknown constructor found " << td::format::as_hex(constructor));
+  }
+#undef FAIL
+}
+
+rldp2_messagePart::rldp2_messagePart()
+  : transfer_id_()
+  , fec_type_()
+  , part_()
+  , total_size_()
+  , seqno_()
+  , data_()
+{}
+
+rldp2_messagePart::rldp2_messagePart(td::Bits256 const &transfer_id_, object_ptr<fec_Type> &&fec_type_, std::int32_t part_, std::int64_t total_size_, std::int32_t seqno_, td::BufferSlice &&data_)
+  : transfer_id_(transfer_id_)
+  , fec_type_(std::move(fec_type_))
+  , part_(part_)
+  , total_size_(total_size_)
+  , seqno_(seqno_)
+  , data_(std::move(data_))
+{}
+
+const std::int32_t rldp2_messagePart::ID;
+
+object_ptr<rldp2_MessagePart> rldp2_messagePart::fetch(td::TlParser &p) {
+  return make_object<rldp2_messagePart>(p);
+}
+
+rldp2_messagePart::rldp2_messagePart(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : transfer_id_(TlFetchInt256::parse(p))
+  , fec_type_(TlFetchObject<fec_Type>::parse(p))
+  , part_(TlFetchInt::parse(p))
+  , total_size_(TlFetchLong::parse(p))
+  , seqno_(TlFetchInt::parse(p))
+  , data_(TlFetchBytes<td::BufferSlice>::parse(p))
+#undef FAIL
+{}
+
+void rldp2_messagePart::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(transfer_id_, s);
+  TlStoreBoxedUnknown<TlStoreObject>::store(fec_type_, s);
+  TlStoreBinary::store(part_, s);
+  TlStoreBinary::store(total_size_, s);
+  TlStoreBinary::store(seqno_, s);
+  TlStoreString::store(data_, s);
+}
+
+void rldp2_messagePart::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(transfer_id_, s);
+  TlStoreBoxedUnknown<TlStoreObject>::store(fec_type_, s);
+  TlStoreBinary::store(part_, s);
+  TlStoreBinary::store(total_size_, s);
+  TlStoreBinary::store(seqno_, s);
+  TlStoreString::store(data_, s);
+}
+
+void rldp2_messagePart::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "rldp2_messagePart");
+    s.store_field("transfer_id", transfer_id_);
+    if (fec_type_ == nullptr) { s.store_field("fec_type", "null"); } else { fec_type_->store(s, "fec_type"); }
+    s.store_field("part", part_);
+    s.store_field("total_size", total_size_);
+    s.store_field("seqno", seqno_);
+    s.store_bytes_field("data", data_);
+    s.store_class_end();
+  }
+}
+
+rldp2_confirm::rldp2_confirm()
+  : transfer_id_()
+  , part_()
+  , max_seqno_()
+  , received_mask_()
+  , received_count_()
+{}
+
+rldp2_confirm::rldp2_confirm(td::Bits256 const &transfer_id_, std::int32_t part_, std::int32_t max_seqno_, std::int32_t received_mask_, std::int32_t received_count_)
+  : transfer_id_(transfer_id_)
+  , part_(part_)
+  , max_seqno_(max_seqno_)
+  , received_mask_(received_mask_)
+  , received_count_(received_count_)
+{}
+
+const std::int32_t rldp2_confirm::ID;
+
+object_ptr<rldp2_MessagePart> rldp2_confirm::fetch(td::TlParser &p) {
+  return make_object<rldp2_confirm>(p);
+}
+
+rldp2_confirm::rldp2_confirm(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : transfer_id_(TlFetchInt256::parse(p))
+  , part_(TlFetchInt::parse(p))
+  , max_seqno_(TlFetchInt::parse(p))
+  , received_mask_(TlFetchInt::parse(p))
+  , received_count_(TlFetchInt::parse(p))
+#undef FAIL
+{}
+
+void rldp2_confirm::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(transfer_id_, s);
+  TlStoreBinary::store(part_, s);
+  TlStoreBinary::store(max_seqno_, s);
+  TlStoreBinary::store(received_mask_, s);
+  TlStoreBinary::store(received_count_, s);
+}
+
+void rldp2_confirm::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(transfer_id_, s);
+  TlStoreBinary::store(part_, s);
+  TlStoreBinary::store(max_seqno_, s);
+  TlStoreBinary::store(received_mask_, s);
+  TlStoreBinary::store(received_count_, s);
+}
+
+void rldp2_confirm::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "rldp2_confirm");
+    s.store_field("transfer_id", transfer_id_);
+    s.store_field("part", part_);
+    s.store_field("max_seqno", max_seqno_);
+    s.store_field("received_mask", received_mask_);
+    s.store_field("received_count", received_count_);
+    s.store_class_end();
+  }
+}
+
+rldp2_complete::rldp2_complete()
+  : transfer_id_()
+  , part_()
+{}
+
+rldp2_complete::rldp2_complete(td::Bits256 const &transfer_id_, std::int32_t part_)
+  : transfer_id_(transfer_id_)
+  , part_(part_)
+{}
+
+const std::int32_t rldp2_complete::ID;
+
+object_ptr<rldp2_MessagePart> rldp2_complete::fetch(td::TlParser &p) {
+  return make_object<rldp2_complete>(p);
+}
+
+rldp2_complete::rldp2_complete(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : transfer_id_(TlFetchInt256::parse(p))
+  , part_(TlFetchInt::parse(p))
+#undef FAIL
+{}
+
+void rldp2_complete::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(transfer_id_, s);
+  TlStoreBinary::store(part_, s);
+}
+
+void rldp2_complete::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreBinary::store(transfer_id_, s);
+  TlStoreBinary::store(part_, s);
+}
+
+void rldp2_complete::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "rldp2_complete");
+    s.store_field("transfer_id", transfer_id_);
+    s.store_field("part", part_);
+    s.store_class_end();
+  }
+}
+
+storage_piece::storage_piece()
+  : proof_()
+  , data_()
+{}
+
+storage_piece::storage_piece(td::BufferSlice &&proof_, td::BufferSlice &&data_)
+  : proof_(std::move(proof_))
+  , data_(std::move(data_))
+{}
+
+const std::int32_t storage_piece::ID;
+
+object_ptr<storage_piece> storage_piece::fetch(td::TlParser &p) {
+  return make_object<storage_piece>(p);
+}
+
+storage_piece::storage_piece(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : proof_(TlFetchBytes<td::BufferSlice>::parse(p))
+  , data_(TlFetchBytes<td::BufferSlice>::parse(p))
+#undef FAIL
+{}
+
+void storage_piece::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreString::store(proof_, s);
+  TlStoreString::store(data_, s);
+}
+
+void storage_piece::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreString::store(proof_, s);
+  TlStoreString::store(data_, s);
+}
+
+void storage_piece::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "storage_piece");
+    s.store_bytes_field("proof", proof_);
+    s.store_bytes_field("data", data_);
+    s.store_class_end();
+  }
+}
+
+storage_pong::storage_pong() {
+}
+
+const std::int32_t storage_pong::ID;
+
+object_ptr<storage_pong> storage_pong::fetch(td::TlParser &p) {
+  return make_object<storage_pong>(p);
+}
+
+storage_pong::storage_pong(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+#undef FAIL
+{
+  (void)p;
+}
+
+void storage_pong::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+}
+
+void storage_pong::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+}
+
+void storage_pong::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "storage_pong");
+    s.store_class_end();
+  }
+}
+
+storage_state::storage_state()
+  : will_upload_()
+  , want_download_()
+{}
+
+storage_state::storage_state(bool will_upload_, bool want_download_)
+  : will_upload_(will_upload_)
+  , want_download_(want_download_)
+{}
+
+const std::int32_t storage_state::ID;
+
+object_ptr<storage_state> storage_state::fetch(td::TlParser &p) {
+  return make_object<storage_state>(p);
+}
+
+storage_state::storage_state(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : will_upload_(TlFetchBool::parse(p))
+  , want_download_(TlFetchBool::parse(p))
+#undef FAIL
+{}
+
+void storage_state::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreBool::store(will_upload_, s);
+  TlStoreBool::store(want_download_, s);
+}
+
+void storage_state::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreBool::store(will_upload_, s);
+  TlStoreBool::store(want_download_, s);
+}
+
+void storage_state::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "storage_state");
+    s.store_field("will_upload", will_upload_);
+    s.store_field("want_download", want_download_);
+    s.store_class_end();
+  }
+}
+
+object_ptr<storage_Update> storage_Update::fetch(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return nullptr;
+  int constructor = p.fetch_int();
+  switch (constructor) {
+    case storage_updateInit::ID:
+      return storage_updateInit::fetch(p);
+    case storage_updateHavePieces::ID:
+      return storage_updateHavePieces::fetch(p);
+    case storage_updateState::ID:
+      return storage_updateState::fetch(p);
+    default:
+      FAIL(PSTRING() << "Unknown constructor found " << td::format::as_hex(constructor));
+  }
+#undef FAIL
+}
+
+storage_updateInit::storage_updateInit()
+  : have_pieces_()
+  , state_()
+{}
+
+storage_updateInit::storage_updateInit(td::BufferSlice &&have_pieces_, object_ptr<storage_state> &&state_)
+  : have_pieces_(std::move(have_pieces_))
+  , state_(std::move(state_))
+{}
+
+const std::int32_t storage_updateInit::ID;
+
+object_ptr<storage_Update> storage_updateInit::fetch(td::TlParser &p) {
+  return make_object<storage_updateInit>(p);
+}
+
+storage_updateInit::storage_updateInit(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : have_pieces_(TlFetchBytes<td::BufferSlice>::parse(p))
+  , state_(TlFetchBoxed<TlFetchObject<storage_state>, 856912010>::parse(p))
+#undef FAIL
+{}
+
+void storage_updateInit::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreString::store(have_pieces_, s);
+  TlStoreBoxed<TlStoreObject, 856912010>::store(state_, s);
+}
+
+void storage_updateInit::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreString::store(have_pieces_, s);
+  TlStoreBoxed<TlStoreObject, 856912010>::store(state_, s);
+}
+
+void storage_updateInit::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "storage_updateInit");
+    s.store_bytes_field("have_pieces", have_pieces_);
+    if (state_ == nullptr) { s.store_field("state", "null"); } else { state_->store(s, "state"); }
+    s.store_class_end();
+  }
+}
+
+storage_updateHavePieces::storage_updateHavePieces()
+  : piece_id_()
+{}
+
+storage_updateHavePieces::storage_updateHavePieces(std::vector<std::int32_t> &&piece_id_)
+  : piece_id_(std::move(piece_id_))
+{}
+
+const std::int32_t storage_updateHavePieces::ID;
+
+object_ptr<storage_Update> storage_updateHavePieces::fetch(td::TlParser &p) {
+  return make_object<storage_updateHavePieces>(p);
+}
+
+storage_updateHavePieces::storage_updateHavePieces(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : piece_id_(TlFetchVector<TlFetchInt>::parse(p))
+#undef FAIL
+{}
+
+void storage_updateHavePieces::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreVector<TlStoreBinary>::store(piece_id_, s);
+}
+
+void storage_updateHavePieces::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreVector<TlStoreBinary>::store(piece_id_, s);
+}
+
+void storage_updateHavePieces::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "storage_updateHavePieces");
+    { const std::vector<std::int32_t> &v = piece_id_; const std::uint32_t multiplicity = static_cast<std::uint32_t>(v.size()); const auto vector_name = "vector[" + td::to_string(multiplicity)+ "]"; s.store_class_begin("piece_id", vector_name.c_str()); for (std::uint32_t i = 0; i < multiplicity; i++) { s.store_field("", v[i]); } s.store_class_end(); }
+    s.store_class_end();
+  }
+}
+
+storage_updateState::storage_updateState()
+  : state_()
+{}
+
+storage_updateState::storage_updateState(object_ptr<storage_state> &&state_)
+  : state_(std::move(state_))
+{}
+
+const std::int32_t storage_updateState::ID;
+
+object_ptr<storage_Update> storage_updateState::fetch(td::TlParser &p) {
+  return make_object<storage_updateState>(p);
+}
+
+storage_updateState::storage_updateState(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : state_(TlFetchBoxed<TlFetchObject<storage_state>, 856912010>::parse(p))
+#undef FAIL
+{}
+
+void storage_updateState::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  TlStoreBoxed<TlStoreObject, 856912010>::store(state_, s);
+}
+
+void storage_updateState::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  TlStoreBoxed<TlStoreObject, 856912010>::store(state_, s);
+}
+
+void storage_updateState::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "storage_updateState");
+    if (state_ == nullptr) { s.store_field("state", "null"); } else { state_->store(s, "state"); }
+    s.store_class_end();
+  }
+}
+
 object_ptr<tcp_Message> tcp_Message::fetch(td::TlParser &p) {
 #define FAIL(error) p.set_error(error); return nullptr;
   int constructor = p.fetch_int();
@@ -15721,6 +16227,58 @@ engine_validator_controlQuery::ReturnType engine_validator_controlQuery::fetch_r
 #undef FAIL
 }
 
+engine_validator_createComplaintVote::engine_validator_createComplaintVote()
+  : election_id_()
+  , vote_()
+{}
+
+engine_validator_createComplaintVote::engine_validator_createComplaintVote(std::int32_t election_id_, td::BufferSlice &&vote_)
+  : election_id_(election_id_)
+  , vote_(std::move(vote_))
+{}
+
+const std::int32_t engine_validator_createComplaintVote::ID;
+
+object_ptr<engine_validator_createComplaintVote> engine_validator_createComplaintVote::fetch(td::TlParser &p) {
+  return make_object<engine_validator_createComplaintVote>(p);
+}
+
+engine_validator_createComplaintVote::engine_validator_createComplaintVote(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : election_id_(TlFetchInt::parse(p))
+  , vote_(TlFetchBytes<td::BufferSlice>::parse(p))
+#undef FAIL
+{}
+
+void engine_validator_createComplaintVote::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  s.store_binary(-1333526742);
+  TlStoreBinary::store(election_id_, s);
+  TlStoreString::store(vote_, s);
+}
+
+void engine_validator_createComplaintVote::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  s.store_binary(-1333526742);
+  TlStoreBinary::store(election_id_, s);
+  TlStoreString::store(vote_, s);
+}
+
+void engine_validator_createComplaintVote::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "engine_validator_createComplaintVote");
+    s.store_field("election_id", election_id_);
+    s.store_bytes_field("vote", vote_);
+    s.store_class_end();
+  }
+}
+
+engine_validator_createComplaintVote::ReturnType engine_validator_createComplaintVote::fetch_result(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return ReturnType()
+  return TlFetchBoxed<TlFetchObject<engine_validator_proposalVote>, 2137401069>::parse(p);
+#undef FAIL
+}
+
 engine_validator_createElectionBid::engine_validator_createElectionBid()
   : election_date_()
   , election_addr_()
@@ -16935,6 +17493,202 @@ void overlay_query::store(td::TlStorerToString &s, const char *field_name) const
 overlay_query::ReturnType overlay_query::fetch_result(td::TlParser &p) {
 #define FAIL(error) p.set_error(error); return ReturnType()
   return TlFetchBoxed<TlFetchTrue, 1072550713>::parse(p);
+#undef FAIL
+}
+
+storage_addUpdate::storage_addUpdate()
+  : session_id_()
+  , seqno_()
+  , update_()
+{}
+
+storage_addUpdate::storage_addUpdate(std::int64_t session_id_, std::int32_t seqno_, object_ptr<storage_Update> &&update_)
+  : session_id_(session_id_)
+  , seqno_(seqno_)
+  , update_(std::move(update_))
+{}
+
+const std::int32_t storage_addUpdate::ID;
+
+object_ptr<storage_addUpdate> storage_addUpdate::fetch(td::TlParser &p) {
+  return make_object<storage_addUpdate>(p);
+}
+
+storage_addUpdate::storage_addUpdate(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : session_id_(TlFetchLong::parse(p))
+  , seqno_(TlFetchInt::parse(p))
+  , update_(TlFetchObject<storage_Update>::parse(p))
+#undef FAIL
+{}
+
+void storage_addUpdate::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  s.store_binary(1295070674);
+  TlStoreBinary::store(session_id_, s);
+  TlStoreBinary::store(seqno_, s);
+  TlStoreBoxedUnknown<TlStoreObject>::store(update_, s);
+}
+
+void storage_addUpdate::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  s.store_binary(1295070674);
+  TlStoreBinary::store(session_id_, s);
+  TlStoreBinary::store(seqno_, s);
+  TlStoreBoxedUnknown<TlStoreObject>::store(update_, s);
+}
+
+void storage_addUpdate::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "storage_addUpdate");
+    s.store_field("session_id", session_id_);
+    s.store_field("seqno", seqno_);
+    if (update_ == nullptr) { s.store_field("update", "null"); } else { update_->store(s, "update"); }
+    s.store_class_end();
+  }
+}
+
+storage_addUpdate::ReturnType storage_addUpdate::fetch_result(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return ReturnType()
+  return TlFetchBoxed<TlFetchObject<storage_ok>, -1020584955>::parse(p);
+#undef FAIL
+}
+
+storage_getPiece::storage_getPiece()
+  : piece_id_()
+{}
+
+storage_getPiece::storage_getPiece(std::int32_t piece_id_)
+  : piece_id_(piece_id_)
+{}
+
+const std::int32_t storage_getPiece::ID;
+
+object_ptr<storage_getPiece> storage_getPiece::fetch(td::TlParser &p) {
+  return make_object<storage_getPiece>(p);
+}
+
+storage_getPiece::storage_getPiece(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : piece_id_(TlFetchInt::parse(p))
+#undef FAIL
+{}
+
+void storage_getPiece::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  s.store_binary(-2139429280);
+  TlStoreBinary::store(piece_id_, s);
+}
+
+void storage_getPiece::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  s.store_binary(-2139429280);
+  TlStoreBinary::store(piece_id_, s);
+}
+
+void storage_getPiece::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "storage_getPiece");
+    s.store_field("piece_id", piece_id_);
+    s.store_class_end();
+  }
+}
+
+storage_getPiece::ReturnType storage_getPiece::fetch_result(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return ReturnType()
+  return TlFetchBoxed<TlFetchObject<storage_piece>, -2135623155>::parse(p);
+#undef FAIL
+}
+
+storage_ping::storage_ping()
+  : session_id_()
+{}
+
+storage_ping::storage_ping(std::int64_t session_id_)
+  : session_id_(session_id_)
+{}
+
+const std::int32_t storage_ping::ID;
+
+object_ptr<storage_ping> storage_ping::fetch(td::TlParser &p) {
+  return make_object<storage_ping>(p);
+}
+
+storage_ping::storage_ping(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : session_id_(TlFetchLong::parse(p))
+#undef FAIL
+{}
+
+void storage_ping::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  s.store_binary(1156837905);
+  TlStoreBinary::store(session_id_, s);
+}
+
+void storage_ping::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  s.store_binary(1156837905);
+  TlStoreBinary::store(session_id_, s);
+}
+
+void storage_ping::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "storage_ping");
+    s.store_field("session_id", session_id_);
+    s.store_class_end();
+  }
+}
+
+storage_ping::ReturnType storage_ping::fetch_result(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return ReturnType()
+  return TlFetchBoxed<TlFetchObject<storage_pong>, 1828046501>::parse(p);
+#undef FAIL
+}
+
+storage_queryPrefix::storage_queryPrefix()
+  : id_()
+{}
+
+storage_queryPrefix::storage_queryPrefix(td::Bits256 const &id_)
+  : id_(id_)
+{}
+
+const std::int32_t storage_queryPrefix::ID;
+
+object_ptr<storage_queryPrefix> storage_queryPrefix::fetch(td::TlParser &p) {
+  return make_object<storage_queryPrefix>(p);
+}
+
+storage_queryPrefix::storage_queryPrefix(td::TlParser &p)
+#define FAIL(error) p.set_error(error)
+  : id_(TlFetchInt256::parse(p))
+#undef FAIL
+{}
+
+void storage_queryPrefix::store(td::TlStorerCalcLength &s) const {
+  (void)sizeof(s);
+  s.store_binary(-333845113);
+  TlStoreBinary::store(id_, s);
+}
+
+void storage_queryPrefix::store(td::TlStorerUnsafe &s) const {
+  (void)sizeof(s);
+  s.store_binary(-333845113);
+  TlStoreBinary::store(id_, s);
+}
+
+void storage_queryPrefix::store(td::TlStorerToString &s, const char *field_name) const {
+  if (!LOG_IS_STRIPPED(ERROR)) {
+    s.store_class_begin(field_name, "storage_queryPrefix");
+    s.store_field("id", id_);
+    s.store_class_end();
+  }
+}
+
+storage_queryPrefix::ReturnType storage_queryPrefix::fetch_result(td::TlParser &p) {
+#define FAIL(error) p.set_error(error); return ReturnType()
+  return TlFetchBoxed<TlFetchObject<Object>, 695225504>::parse(p);
 #undef FAIL
 }
 

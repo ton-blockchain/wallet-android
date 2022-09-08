@@ -23,9 +23,10 @@
 #include "vm/cells.h"
 #include "vm/cellslice.h"
 #include "td/utils/bits.h"
-#include "td/utils/Slice-decl.h"
-#include "td/utils/format.h"
 #include "td/utils/crypto.h"
+#include "td/utils/format.h"
+#include "td/utils/misc.h"
+#include "td/utils/Slice-decl.h"
 
 namespace vm {
 using td::Ref;
@@ -374,7 +375,7 @@ td::uint64 BagOfCells::compute_sizes(int mode, int& r_size, int& o_size) {
     r_size = o_size = 0;
     return 0;
   }
-  while (cell_count >= (1 << (rs << 3))) {
+  while (cell_count >= (1LL << (rs << 3))) {
     rs++;
   }
   td::uint64 hashes =

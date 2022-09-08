@@ -19,11 +19,11 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion '29.0.3'
+    compileSdkVersion 30
+    buildToolsVersion '30.0.3'
     ndkVersion "20.0.5594570"
 
-    defaultConfig.applicationId = "org.telegram.testwallet"
+    defaultConfig.applicationId = "ton.coin.wallet"
 
     sourceSets.main.jniLibs.srcDirs = ['./jni/']
 
@@ -58,6 +58,11 @@ android {
     }
 
     buildTypes {
+        all {
+            buildConfigField "String", "WIDGET_ID", MERCURIO_WIDGET_ID
+            buildConfigField "String", "MERСURIO_SECRET", MERCURIO_SECRET
+        }
+
         debug {
             debuggable true
             jniDebuggable true
@@ -154,7 +159,7 @@ android {
         }
     }
 
-    defaultConfig.versionCode = 1002
+    defaultConfig.versionCode = 100006
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
@@ -187,8 +192,8 @@ android {
 
     defaultConfig {
         minSdkVersion 18
-        targetSdkVersion 28
-        versionName "1.2"
+        targetSdkVersion 30
+        versionName "1.0.6"
 
         vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
 

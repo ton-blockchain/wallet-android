@@ -26,12 +26,6 @@ bool downcast_call(Object &obj, const T &func) {
     case raw_accountState::ID:
       func(static_cast<raw_accountState &>(obj));
       return true;
-    case testWallet_accountState::ID:
-      func(static_cast<testWallet_accountState &>(obj));
-      return true;
-    case wallet_accountState::ID:
-      func(static_cast<wallet_accountState &>(obj));
-      return true;
     case wallet_v3_accountState::ID:
       func(static_cast<wallet_v3_accountState &>(obj));
       return true;
@@ -40,9 +34,6 @@ bool downcast_call(Object &obj, const T &func) {
       return true;
     case wallet_highload_v2_accountState::ID:
       func(static_cast<wallet_highload_v2_accountState &>(obj));
-      return true;
-    case testGiver_accountState::ID:
-      func(static_cast<testGiver_accountState &>(obj));
       return true;
     case dns_accountState::ID:
       func(static_cast<dns_accountState &>(obj));
@@ -106,15 +97,6 @@ bool downcast_call(Object &obj, const T &func) {
       return true;
     case raw_initialAccountState::ID:
       func(static_cast<raw_initialAccountState &>(obj));
-      return true;
-    case testGiver_initialAccountState::ID:
-      func(static_cast<testGiver_initialAccountState &>(obj));
-      return true;
-    case testWallet_initialAccountState::ID:
-      func(static_cast<testWallet_initialAccountState &>(obj));
-      return true;
-    case wallet_initialAccountState::ID:
-      func(static_cast<wallet_initialAccountState &>(obj));
       return true;
     case wallet_v3_initialAccountState::ID:
       func(static_cast<wallet_v3_initialAccountState &>(obj));
@@ -573,12 +555,6 @@ bool downcast_call(AccountState &obj, const T &func) {
     case raw_accountState::ID:
       func(static_cast<raw_accountState &>(obj));
       return true;
-    case testWallet_accountState::ID:
-      func(static_cast<testWallet_accountState &>(obj));
-      return true;
-    case wallet_accountState::ID:
-      func(static_cast<wallet_accountState &>(obj));
-      return true;
     case wallet_v3_accountState::ID:
       func(static_cast<wallet_v3_accountState &>(obj));
       return true;
@@ -587,9 +563,6 @@ bool downcast_call(AccountState &obj, const T &func) {
       return true;
     case wallet_highload_v2_accountState::ID:
       func(static_cast<wallet_highload_v2_accountState &>(obj));
-      return true;
-    case testGiver_accountState::ID:
-      func(static_cast<testGiver_accountState &>(obj));
       return true;
     case dns_accountState::ID:
       func(static_cast<dns_accountState &>(obj));
@@ -648,15 +621,6 @@ bool downcast_call(InitialAccountState &obj, const T &func) {
   switch (obj.get_id()) {
     case raw_initialAccountState::ID:
       func(static_cast<raw_initialAccountState &>(obj));
-      return true;
-    case testGiver_initialAccountState::ID:
-      func(static_cast<testGiver_initialAccountState &>(obj));
-      return true;
-    case testWallet_initialAccountState::ID:
-      func(static_cast<testWallet_initialAccountState &>(obj));
-      return true;
-    case wallet_initialAccountState::ID:
-      func(static_cast<wallet_initialAccountState &>(obj));
       return true;
     case wallet_v3_initialAccountState::ID:
       func(static_cast<wallet_v3_initialAccountState &>(obj));

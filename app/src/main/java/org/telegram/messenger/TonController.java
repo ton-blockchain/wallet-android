@@ -936,7 +936,7 @@ public class TonController extends BaseController {
         } else {
             config = userConfig.getWalletConfig();
         }
-        return new TonApi.Config(config, userConfig.getWalletBlockchainName(), !BuildVars.TON_WALLET_STANDALONE, false);
+        return new TonApi.Config(config, userConfig.getWalletBlockchainName().toLowerCase(), !BuildVars.TON_WALLET_STANDALONE, false);
     }
 
     public boolean onTonConfigUpdated() {
@@ -1502,7 +1502,7 @@ public class TonController extends BaseController {
     }
 
     public void getSendFee(String fromWallet, String toWallet, long amount, String message, FeeCallback feeCallback) {
-        getSendFee(fromWallet, toWallet, amount, message, false, feeCallback);
+        getSendFee(fromWallet, toWallet, amount, message, true, feeCallback);
     }
 
     private void getSendFee(String fromWallet, String toWallet, long amount, String message, boolean unencrypted, FeeCallback feeCallback) {
