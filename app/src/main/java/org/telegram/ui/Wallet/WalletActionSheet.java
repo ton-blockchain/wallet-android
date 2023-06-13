@@ -889,7 +889,7 @@ public class WalletActionSheet extends BottomSheet {
                 linearLayout.addView(feeTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, 6, 0, 0));
             }
 
-            if (sendUnencrypted) { // was unencrypted
+            if (sendUnencrypted) {
                 TextView messageTextView = new TextView(getContext());
                 messageTextView.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
                 messageTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
