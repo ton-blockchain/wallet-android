@@ -3049,7 +3049,7 @@ class GenericCreateSendGrams : public TonlibQueryActor {
         }
 
         if (!o_public_key) {
-          return TonlibError::MessageEncryption("Get public key (in destination)");
+          return TonlibError::MessageEncryption("Cannot get public key of destination (possibly unknown wallet type)");
         }
 
         auto addr = source_->get_address();

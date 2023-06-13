@@ -4,12 +4,8 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := crypto
 
-ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
-    LOCAL_SRC_FILES := ./boringssl/lib/libcrypto_armeabi-v7a.a
-else ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
+ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
     LOCAL_SRC_FILES := ./boringssl/lib/libcrypto_arm64-v8a.a
-else ifeq ($(TARGET_ARCH_ABI),x86)
-    LOCAL_SRC_FILES := ./boringssl/lib/libcrypto_x86.a
 else ifeq ($(TARGET_ARCH_ABI),x86_64)
     LOCAL_SRC_FILES := ./boringssl/lib/libcrypto_x86_64.a
 endif
@@ -34,10 +30,7 @@ include $(CLEAR_VARS)
 LOCAL_ARM_MODE  := arm
 LOCAL_MODULE := rlottie
 LOCAL_CPPFLAGS := -DNDEBUG -Wall -std=c++14 -DANDROID -fno-rtti -DHAVE_PTHREAD -finline-functions -ffast-math -Os -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables -Wnon-virtual-dtor -Woverloaded-virtual -Wno-unused-parameter -fvisibility=hidden
-ifeq ($(TARGET_ARCH_ABI),$(filter $(TARGET_ARCH_ABI),armeabi-v7a))
- LOCAL_CFLAGS := -DUSE_ARM_NEON  -fno-integrated-as
- LOCAL_CPPFLAGS += -DUSE_ARM_NEON  -fno-integrated-as
-else ifeq ($(TARGET_ARCH_ABI),$(filter $(TARGET_ARCH_ABI),arm64-v8a))
+ifeq ($(TARGET_ARCH_ABI),$(filter $(TARGET_ARCH_ABI),arm64-v8a))
  LOCAL_CFLAGS := -DUSE_ARM_NEON -D__ARM64_NEON__ -fno-integrated-as
  LOCAL_CPPFLAGS += -DUSE_ARM_NEON -D__ARM64_NEON__ -fno-integrated-as
 endif
@@ -82,9 +75,7 @@ LOCAL_SRC_FILES     := \
 ./rlottie/src/vector/vrect.cpp \
 ./rlottie/src/vector/vrle.cpp
 
-ifeq ($(TARGET_ARCH_ABI),$(filter $(TARGET_ARCH_ABI),armeabi-v7a))
-    LOCAL_SRC_FILES += ./rlottie/src/vector/pixman/pixman-arm-neon-asm.S.neon
-else ifeq ($(TARGET_ARCH_ABI),$(filter $(TARGET_ARCH_ABI),arm64-v8a))
+ifeq ($(TARGET_ARCH_ABI),$(filter $(TARGET_ARCH_ABI),arm64-v8a))
     LOCAL_SRC_FILES += ./rlottie/src/vector/pixman/pixman-arma64-neon-asm.S.neon
 endif
 
