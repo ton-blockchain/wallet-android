@@ -2196,30 +2196,33 @@ struct ToRawTransactions {
 
     auto get_data = [body = std::move(body), body_cell, this](td::Slice salt) mutable {
       tonlib_api::object_ptr<tonlib_api::msg_Data> data;
-      if (body->size() >= 32 && static_cast<td::uint32>(body->prefetch_long(32)) <= 1) {
-        auto type = body.write().fetch_long(32);
-        td::Status status;
+      if (body->size() >= 32) {
+        auto type = static_cast<td::uint32>(body.write().fetch_long(32));
+        if (type == 0 || type == 0x2167da4b) {
 
-        auto r_body_message = vm::CellString::load(body.write());
-        LOG_IF(WARNING, r_body_message.is_error()) << "Failed to parse a message: " << r_body_message.error();
+          td::Status status;
 
-        if (r_body_message.is_ok()) {
-          if (type == 0) {
-            data = tonlib_api::make_object<tonlib_api::msg_dataText>(r_body_message.move_as_ok());
-          } else {
-            LOG(ERROR) << "TRY DECRYPT";
-            auto encrypted_message = r_body_message.move_as_ok();
-            auto r_decrypted_message = [&]() -> td::Result<std::string> {
-              if (!private_key_) {
-                return TonlibError::EmptyField("private_key");
-              }
-              TRY_RESULT(decrypted, SimpleEncryptionV2::decrypt_data(encrypted_message, private_key_.value(), salt));
-              return decrypted.data.as_slice().str();
-            }();
-            if (r_decrypted_message.is_ok()) {
-              data = tonlib_api::make_object<tonlib_api::msg_dataDecryptedText>(r_decrypted_message.move_as_ok());
+          auto r_body_message = vm::CellString::load(body.write());
+          LOG_IF(WARNING, r_body_message.is_error()) << "Failed to parse a message: " << r_body_message.error();
+
+          if (r_body_message.is_ok()) {
+            if (type == 0) {
+              data = tonlib_api::make_object<tonlib_api::msg_dataText>(r_body_message.move_as_ok());
             } else {
-              data = tonlib_api::make_object<tonlib_api::msg_dataEncryptedText>(encrypted_message);
+              LOG(ERROR) << "TRY DECRYPT";
+              auto encrypted_message = r_body_message.move_as_ok();
+              auto r_decrypted_message = [&]() -> td::Result<std::string> {
+                if (!private_key_) {
+                  return TonlibError::EmptyField("private_key");
+                }
+                TRY_RESULT(decrypted, SimpleEncryptionV2::decrypt_data(encrypted_message, private_key_.value(), salt));
+                return decrypted.data.as_slice().str();
+              }();
+              if (r_decrypted_message.is_ok()) {
+                data = tonlib_api::make_object<tonlib_api::msg_dataDecryptedText>(r_decrypted_message.move_as_ok());
+              } else {
+                data = tonlib_api::make_object<tonlib_api::msg_dataEncryptedText>(encrypted_message);
+              }
             }
           }
         }
