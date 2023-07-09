@@ -111,6 +111,7 @@
     <string name="WalletAddressCopy">Copy the 48-letter wallet address of the recipient here or ask them to send you a ton:// link.</string>
     <string name="WalletAmount">Amount</string>
     <string name="WalletComment">Comment (optional)</string>
+    <string name="WalletCommentEncrypted">Encrypt Comment</string>
     <string name="WalletInvoiceInfo">You can specify the amount and purpose of the payment to save the sender some time:</string>
     <string name="WalletShareInvoiceUrl">Share Invoice URL</string>
     <string name="WalletBuy">Buy</string>
@@ -197,6 +198,7 @@
     <string name="WalletEncryptedMessage">Encrypted message</string>
     <string name="WalletDecryptConfirmCredentials">Please confirm your credentials to decrypt transactions messages.</string>
     <string name="WalletCantEncryptComment">**Note:** Your comment \"%1$s\" will **not be encrypted**.</string>
+    <string name="WalletEncryptComment">**Note:** You are sending an **encrypted message**.</string>
     <string name="WalletTestNetworkSwitch">Are you sure you want to switch TON network?</string>
     <string name="WalletMainNetworkSwitch">Are you sure you want to switch TON network?</string>
     <string name="WalletMainNetwork">TON Network</string>

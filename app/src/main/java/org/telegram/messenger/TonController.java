@@ -1501,11 +1501,8 @@ public class TonController extends BaseController {
         });
     }
 
-    public void getSendFee(String fromWallet, String toWallet, long amount, String message, FeeCallback feeCallback) {
-        getSendFee(fromWallet, toWallet, amount, message, true, feeCallback);
-    }
 
-    private void getSendFee(String fromWallet, String toWallet, long amount, String message, boolean unencrypted, FeeCallback feeCallback) {
+    public void getSendFee(String fromWallet, String toWallet, long amount, String message, boolean unencrypted, FeeCallback feeCallback) {
         Utilities.globalQueue.postRunnable(() -> {
             TonApi.MsgData msgData;
             if (unencrypted || TextUtils.isEmpty(message)) {
@@ -1524,19 +1521,17 @@ public class TonController extends BaseController {
                             TonApi.QueryFees queryFees = (TonApi.QueryFees) result1;
                             long fee = queryFees.sourceFees.fwdFee + queryFees.sourceFees.gasFee + queryFees.sourceFees.inFwdFee + queryFees.sourceFees.storageFee;
                             AndroidUtilities.runOnUIThread(() -> feeCallback.run(fee, unencrypted));
-                        } else {
-                            AndroidUtilities.runOnUIThread(() -> feeCallback.run(0, false));
                         }
                     });
                 } else {
                     if (result instanceof TonApi.Error) {
                         TonApi.Error error = (TonApi.Error) result;
                         if (error.message != null && error.message.startsWith("MESSAGE_ENCRYPTION")) {
-                            getSendFee(fromWallet, toWallet, amount, message, true, feeCallback);
+                            getSendFee(fromWallet, toWallet, amount, message, unencrypted, feeCallback);
                             return;
                         }
                     }
-                    AndroidUtilities.runOnUIThread(() -> feeCallback.run(0, false));
+                    AndroidUtilities.runOnUIThread(() -> feeCallback.run(0, unencrypted));
                 }
             });
         });

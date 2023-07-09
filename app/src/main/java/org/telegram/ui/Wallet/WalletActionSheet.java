@@ -15,6 +15,7 @@ import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -36,11 +37,14 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -115,7 +119,7 @@ public class WalletActionSheet extends BottomSheet {
     private long currentBalance = -1;
     private WalletTransaction currentTransaction;
 
-    private boolean sendUnencrypted;
+    private static boolean sendUnencrypted = true;
 
     private int titleRow;
     private int recipientHeaderRow;
@@ -124,6 +128,7 @@ public class WalletActionSheet extends BottomSheet {
     private int amountHeaderRow;
     private int amountRow;
     private int commentRow;
+    private int encryptedRow;
     private int commentHeaderRow;
     private int balanceRow;
     private int dateHeaderRow;
@@ -205,6 +210,40 @@ public class WalletActionSheet extends BottomSheet {
 
         public void setText(String text) {
             titleView.setText(text);
+        }
+    }
+
+    @SuppressWarnings("FieldCanBeLocal")
+    private static class EncryptedCell extends FrameLayout {
+
+        private CheckBox encryptedView;
+
+        public EncryptedCell(Context context) {
+            super(context);
+
+            encryptedView = new CheckBox(getContext());
+            encryptedView.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+            encryptedView.setText(LocaleController.getString("WalletCommentEncrypted", R.string.WalletCommentEncrypted));
+            encryptedView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+            encryptedView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader));
+            encryptedView.setLineSpacing(AndroidUtilities.dp(4), 1);
+            encryptedView.setChecked(false);
+            encryptedView.setOnClickListener(view -> {
+                if(((CompoundButton) view).isChecked()){
+                    sendUnencrypted = false;
+                } else {
+                    sendUnencrypted = true;
+                }
+            });
+            if (Build.VERSION.SDK_INT >= 21) {
+                encryptedView.setButtonTintList(ColorStateList.valueOf(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader)));
+            }
+            addView(encryptedView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT, 21, 16, 14, 0));
+        }
+
+        @Override
+        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(60), MeasureSpec.EXACTLY));
         }
     }
 
@@ -815,7 +854,7 @@ public class WalletActionSheet extends BottomSheet {
         AlertDialog progressDialog = new AlertDialog(getContext(), 3);
         progressDialog.setCanCacnel(false);
         progressDialog.show();
-        TonController.getInstance(currentAccount).getSendFee(walletAddress, recipientString, amountValue, commentString, (fee, unencrypted) -> {
+        TonController.getInstance(currentAccount).getSendFee(walletAddress, recipientString, amountValue, commentString, sendUnencrypted, (fee, unencrypted) -> {
             progressDialog.dismiss();
 
             Context context = getContext();
@@ -850,12 +889,20 @@ public class WalletActionSheet extends BottomSheet {
                 linearLayout.addView(feeTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, 6, 0, 0));
             }
 
-            if (unencrypted) {
+            if (sendUnencrypted) {
                 TextView messageTextView = new TextView(getContext());
                 messageTextView.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
                 messageTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
                 messageTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP);
                 messageTextView.setText(AndroidUtilities.replaceTags(LocaleController.formatString("WalletCantEncryptComment", R.string.WalletCantEncryptComment, commentString)));
+                linearLayout.addView(messageTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 24, 8, 24, 0));
+            }
+            else {
+                TextView messageTextView = new TextView(getContext());
+                messageTextView.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
+                messageTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
+                messageTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP);
+                messageTextView.setText(AndroidUtilities.replaceTags(LocaleController.formatString("WalletEncryptComment", R.string.WalletEncryptComment, commentString)));
                 linearLayout.addView(messageTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 24, 8, 24, 0));
             }
             builder.setView(linearLayout);
@@ -867,7 +914,6 @@ public class WalletActionSheet extends BottomSheet {
                 switch (TonController.getInstance(currentAccount).getKeyProtectionType()) {
                     case TonController.KEY_PROTECTION_TYPE_LOCKSCREEN: {
                         if (Build.VERSION.SDK_INT >= 23) {
-                            sendUnencrypted = unencrypted;
                             KeyguardManager keyguardManager = (KeyguardManager) ApplicationLoader.applicationContext.getSystemService(Context.KEYGUARD_SERVICE);
                             Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(LocaleController.getString("Wallet", R.string.Wallet), LocaleController.getString("WalletSendConfirmCredentials", R.string.WalletSendConfirmCredentials));
                             parentFragment.getParentActivity().startActivityForResult(intent, SEND_ACTIVITY_RESULT_CODE);
@@ -906,6 +952,7 @@ public class WalletActionSheet extends BottomSheet {
         amountHeaderRow = -1;
         amountRow = -1;
         commentRow = -1;
+        encryptedRow = -1;
         commentHeaderRow = -1;
         balanceRow = -1;
         dateRow = -1;
@@ -919,6 +966,7 @@ public class WalletActionSheet extends BottomSheet {
             amountHeaderRow = rowCount++;
             amountRow = rowCount++;
             commentRow = rowCount++;
+            encryptedRow = rowCount++;
         } else if (currentType == TYPE_TRANSACTION) {
             balanceRow = rowCount++;
             if (!TextUtils.isEmpty(recipientString)) {
@@ -938,6 +986,7 @@ public class WalletActionSheet extends BottomSheet {
             amountRow = rowCount++;
             sendBalanceRow = rowCount++;
             commentRow = rowCount++;
+            encryptedRow = rowCount++;
         }
     }
 
@@ -1285,6 +1334,9 @@ public class WalletActionSheet extends BottomSheet {
                     view = new BalanceCell(context);
                     break;
                 }
+                case 10:
+                    view = new EncryptedCell(context);
+                    break;
                 case 9:
                 default: {
                     view = new TitleCell(context);
@@ -1310,6 +1362,8 @@ public class WalletActionSheet extends BottomSheet {
                 return 7;
             } else if (position == balanceRow) {
                 return 8;
+            } else if (position == encryptedRow) {
+                return 10;
             } else {
                 return 9;
             }
